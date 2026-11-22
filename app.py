@@ -3,7 +3,7 @@
 APIShield — Automated API Security Testing & Vulnerability Assessment
 =============================================================================
 Course: Secure Software Engineering (SSE - 26B11CS219)
-Group:  Group 6 (Semester 3, B.Tech CSE Cybersecurity, JIIT Noida)
+Module: Automated API Security Testing Engine
 
 Key Concepts Implemented:
 1. Authentication & Authorization Testing (Broken Auth - CRITICAL)
