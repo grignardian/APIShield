@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIShield — API Security Testing Platform</title>
+  <title>APIShield — Automated API Security Testing Platform</title>
   
   <!-- Inter Font (Full Optical Size & Weight Range) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,38 +16,51 @@
   
   <style>
     :root {
-      /* Apple-style Pitch Black & Lime Green Palette */
-      --bg-canvas: #000000;
-      --bg-surface: #0e0e11;
-      --bg-surface-elevated: #15151a;
-      --bg-surface-card: #121216;
+      /* Forest Dark Theme Palette (Exact match to Task Analysis / Forest) */
+      --bg-canvas: #0c1513;
+      --bg-surface: #13221f;
+      --bg-surface-elevated: #182a26;
+      --bg-surface-card: #152522;
       
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.16);
-      --border-active: rgba(255, 255, 255, 0.25);
+      --border-subtle: #233c36;
+      --border-hover: #31524a;
+      --border-active: #3e685e;
       
-      --lime-primary: #84cc16;
-      --lime-bright: #a3e635;
-      --lime-text: #bef264;
-      --lime-dark: rgba(132, 204, 22, 0.12);
-      --lime-border: rgba(132, 204, 22, 0.3);
-      --lime-glow: rgba(132, 204, 22, 0.25);
+      /* Chartreuse Lime Accent */
+      --lime-primary: #dcf836;
+      --lime-bright: #e7fb55;
+      --lime-text: #e1f848;
+      --lime-dark: rgba(220, 248, 54, 0.12);
+      --lime-border: rgba(220, 248, 54, 0.32);
+      --lime-glow: rgba(220, 248, 54, 0.28);
 
+      /* Mint Cyan / Teal Accent */
+      --teal-accent: #3ebbb0;
+      --teal-light: #5de0d5;
+      --teal-dark: rgba(62, 187, 176, 0.12);
+      --teal-border: rgba(62, 187, 176, 0.32);
+
+      /* Sage / Olive Accent */
+      --sage-accent: #8ec843;
+      --sage-dark: rgba(142, 200, 67, 0.15);
+
+      /* Neutral Typography */
       --text-main: #ffffff;
-      --text-muted: #a1a1aa;
-      --text-dim: #71717a;
+      --text-muted: #8dafa7;
+      --text-dim: #5b7a73;
 
-      --danger-text: #f87171;
-      --danger-bg: rgba(239, 68, 68, 0.1);
-      --danger-border: rgba(239, 68, 68, 0.3);
+      /* Risk Indicators */
+      --danger-text: #ff7675;
+      --danger-bg: rgba(255, 118, 117, 0.12);
+      --danger-border: rgba(255, 118, 117, 0.35);
 
-      --warn-text: #fbbf24;
-      --warn-bg: rgba(245, 158, 11, 0.1);
-      --warn-border: rgba(245, 158, 11, 0.3);
+      --warn-text: #fed330;
+      --warn-bg: rgba(254, 211, 48, 0.12);
+      --warn-border: rgba(254, 211, 48, 0.35);
 
-      --pass-text: #bef264;
-      --pass-bg: rgba(132, 204, 22, 0.1);
-      --pass-border: rgba(132, 204, 22, 0.3);
+      --pass-text: #dcf836;
+      --pass-bg: rgba(220, 248, 54, 0.12);
+      --pass-border: rgba(220, 248, 54, 0.35);
     }
 
     * {
@@ -69,13 +82,13 @@
       text-rendering: optimizeLegibility;
     }
 
-    /* Apple-style Frosted Glass Navigation Bar */
+    /* Forest Frosted Navigation Bar */
     header {
-      background-color: rgba(10, 10, 14, 0.85);
+      background-color: rgba(12, 21, 19, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0.9rem 2.25rem;
+      padding: 0.95rem 2.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -113,20 +126,20 @@
 
     .brand-tag {
       font-size: 0.7rem;
-      background-color: var(--lime-dark);
-      color: var(--lime-text);
-      border: 1px solid var(--lime-border);
-      padding: 0.2rem 0.55rem;
+      background-color: var(--teal-dark);
+      color: var(--teal-light);
+      border: 1px solid var(--teal-border);
+      padding: 0.22rem 0.6rem;
       border-radius: 980px;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.03em;
     }
 
-    /* Apple Pill Segmented Navigation */
+    /* Pill Segmented Navigation */
     nav {
       display: flex;
       gap: 0.35rem;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(19, 34, 31, 0.7);
       padding: 0.3rem;
       border-radius: 980px;
       border: 1px solid var(--border-subtle);
@@ -136,7 +149,7 @@
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 0.45rem 1.05rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 980px;
       cursor: pointer;
       font-weight: 600;
@@ -147,14 +160,14 @@
 
     .nav-btn:hover {
       color: #ffffff;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(62, 187, 176, 0.1);
     }
 
     .nav-btn.active {
-      color: #000000;
+      color: #0c1513;
       background-color: var(--lime-primary);
-      font-weight: 700;
-      box-shadow: 0 2px 10px rgba(132, 204, 22, 0.35);
+      font-weight: 800;
+      box-shadow: 0 2px 10px rgba(220, 248, 54, 0.35);
     }
 
     main {
@@ -165,14 +178,14 @@
       width: 100%;
     }
 
-    /* Apple Dark Elevated Cards */
+    /* Forest Dark Surface Cards */
     .card {
-      background: linear-gradient(180deg, #131317 0%, #0e0e12 100%);
+      background: linear-gradient(180deg, #152522 0%, #111e1b 100%);
       border: 1px solid var(--border-subtle);
       border-radius: 14px;
       padding: 1.75rem;
       margin-bottom: 1.75rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
     }
 
     .card-title {
@@ -195,14 +208,14 @@
     }
 
     .stat-card {
-      background: linear-gradient(180deg, #141418 0%, #0e0e12 100%);
+      background: linear-gradient(180deg, #162724 0%, #12201d 100%);
       border: 1px solid var(--border-subtle);
       padding: 1.5rem;
       border-radius: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s, border-color 0.2s;
     }
 
@@ -232,7 +245,11 @@
       color: var(--lime-primary);
     }
 
-    /* Apple-style Buttons */
+    .stat-val.teal {
+      color: var(--teal-accent);
+    }
+
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -254,14 +271,14 @@
 
     .btn-primary {
       background-color: var(--lime-primary);
-      color: #000000;
+      color: #0c1513;
       border-color: var(--lime-primary);
-      box-shadow: 0 2px 12px rgba(132, 204, 22, 0.25);
+      box-shadow: 0 2px 12px rgba(220, 248, 54, 0.25);
     }
 
     .btn-primary:hover:not(:disabled) {
       background-color: var(--lime-bright);
-      box-shadow: 0 4px 18px rgba(132, 204, 22, 0.4);
+      box-shadow: 0 4px 18px rgba(220, 248, 54, 0.4);
     }
 
     .btn-primary:disabled {
@@ -270,52 +287,52 @@
     }
 
     .btn-secondary {
-      background-color: rgba(255, 255, 255, 0.06);
-      color: #ffffff;
+      background-color: rgba(62, 187, 176, 0.08);
+      color: #e8f7f5;
       border-color: var(--border-subtle);
     }
 
     .btn-secondary:hover {
-      background-color: rgba(255, 255, 255, 0.12);
+      background-color: rgba(62, 187, 176, 0.16);
       border-color: var(--border-hover);
     }
 
     .btn-demo-vuln {
-      background-color: rgba(239, 68, 68, 0.1);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background-color: rgba(255, 118, 117, 0.12);
+      color: #ff9f9e;
+      border: 1px solid rgba(255, 118, 117, 0.35);
     }
 
     .btn-demo-vuln:hover:not(:disabled) {
-      background-color: rgba(239, 68, 68, 0.2);
-      border-color: #ef4444;
+      background-color: rgba(255, 118, 117, 0.22);
+      border-color: #ff7675;
       color: #ffffff;
     }
 
     .btn-demo-sec {
-      background-color: rgba(132, 204, 22, 0.1);
-      color: #bef264;
-      border: 1px solid rgba(132, 204, 22, 0.3);
+      background-color: rgba(62, 187, 176, 0.12);
+      color: #5de0d5;
+      border: 1px solid rgba(62, 187, 176, 0.35);
     }
 
     .btn-demo-sec:hover:not(:disabled) {
-      background-color: rgba(132, 204, 22, 0.2);
-      border-color: var(--lime-primary);
+      background-color: rgba(62, 187, 176, 0.22);
+      border-color: var(--teal-accent);
       color: #ffffff;
     }
 
     .btn-danger {
-      background-color: rgba(239, 68, 68, 0.1);
+      background-color: rgba(255, 118, 117, 0.12);
       color: var(--danger-text);
       border-color: var(--danger-border);
     }
 
     .btn-danger:hover {
-      background-color: rgba(239, 68, 68, 0.25);
+      background-color: rgba(255, 118, 117, 0.25);
       color: #ffffff;
     }
 
-    /* Apple-style Tables */
+    /* Forest Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -334,7 +351,7 @@
 
     td {
       padding: 1rem 1.15rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(35, 60, 54, 0.4);
       font-size: 0.9rem;
       font-weight: 500;
       letter-spacing: -0.01em;
@@ -342,7 +359,7 @@
 
     tr:last-child td { border-bottom: none; }
 
-    /* Apple-style Pill Badges */
+    /* Pill Badges */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -373,30 +390,30 @@
     }
 
     .badge-CRITICAL {
-      background: rgba(220, 38, 38, 0.2);
-      color: #fca5a5;
-      border: 1px solid rgba(220, 38, 38, 0.5);
+      background: rgba(255, 118, 117, 0.18);
+      color: #ff9f9e;
+      border: 1px solid rgba(255, 118, 117, 0.45);
     }
 
     .badge-HIGH {
-      background: rgba(234, 88, 12, 0.2);
-      color: #fdba74;
-      border: 1px solid rgba(234, 88, 12, 0.5);
+      background: rgba(254, 150, 48, 0.18);
+      color: #fdb974;
+      border: 1px solid rgba(254, 150, 48, 0.45);
     }
 
     .badge-MEDIUM {
-      background: rgba(217, 119, 6, 0.2);
-      color: #fde047;
-      border: 1px solid rgba(217, 119, 6, 0.5);
+      background: rgba(254, 211, 48, 0.18);
+      color: #fed330;
+      border: 1px solid rgba(254, 211, 48, 0.45);
     }
 
     .badge-LOW {
-      background: rgba(132, 204, 22, 0.15);
-      color: #bef264;
-      border: 1px solid var(--lime-border);
+      background: rgba(62, 187, 176, 0.14);
+      color: #5de0d5;
+      border: 1px solid var(--teal-border);
     }
 
-    /* Apple-style Forms */
+    /* Forms */
     .form-group { margin-bottom: 1.25rem; }
 
     label {
@@ -411,7 +428,7 @@
     input, select {
       width: 100%;
       padding: 0.75rem 1rem;
-      background: #070709;
+      background: #0a1412;
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       color: #ffffff;
@@ -423,22 +440,22 @@
 
     input:focus, select:focus {
       outline: none;
-      border-color: var(--lime-primary);
-      box-shadow: 0 0 0 3px var(--lime-dark);
-      background: #0a0a0e;
+      border-color: var(--teal-accent);
+      box-shadow: 0 0 0 3px var(--teal-dark);
+      background: #0d1a17;
     }
 
-    /* Apple Score Gauge Banner */
+    /* Score Gauge Banner */
     .score-banner {
       display: flex;
       align-items: center;
       gap: 2.25rem;
-      background: linear-gradient(180deg, #131318 0%, #0c0c0f 100%);
+      background: linear-gradient(180deg, #162724 0%, #111e1b 100%);
       border: 1px solid var(--border-subtle);
       border-radius: 16px;
       padding: 2rem;
       margin-bottom: 1.75rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .score-circle {
@@ -453,20 +470,20 @@
       font-weight: 900;
       letter-spacing: -0.06em;
       border: 4px solid;
-      background: #060608;
+      background: #091311;
       flex-shrink: 0;
       line-height: 1;
     }
 
-    /* Apple Health style Finding Cards */
+    /* Finding Cards */
     .finding-card {
-      background: linear-gradient(180deg, #111115 0%, #0c0c0f 100%);
+      background: linear-gradient(180deg, #142320 0%, #0f1a18 100%);
       border: 1px solid var(--border-subtle);
       border-left: 4px solid;
       border-radius: 12px;
       padding: 1.25rem;
       margin-bottom: 1rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
     }
 
     .finding-card.FAIL { border-left-color: var(--danger-text); }
@@ -497,13 +514,39 @@
 
     .finding-remedy {
       font-size: 0.825rem;
-      background: rgba(132, 204, 22, 0.06);
-      border: 1px solid var(--lime-border);
-      color: var(--lime-text);
+      background: rgba(62, 187, 176, 0.08);
+      border: 1px solid var(--teal-border);
+      color: #9ceae3;
       padding: 0.75rem 1rem;
       border-radius: 8px;
       line-height: 1.5;
       font-weight: 500;
+    }
+
+    /* Visual Task Analysis Breakdown Chart Elements */
+    .visual-breakdown-card {
+      background: linear-gradient(180deg, #162724 0%, #12201d 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .meter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text-muted);
+    }
+
+    .meter-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
     }
 
     footer {
@@ -514,7 +557,7 @@
       letter-spacing: -0.01em;
       color: var(--text-dim);
       border-top: 1px solid var(--border-subtle);
-      background-color: #000000;
+      background-color: #080f0e;
     }
   </style>
 </head>
@@ -620,7 +663,7 @@
               "API",
               h("span", null, "Shield")
             ),
-            h("span", { className: "brand-tag" }, "SECURITY PLATFORM")
+            h("span", { className: "brand-tag" }, "FOREST EDITION")
           ),
           h("nav", null,
             h("button", {
@@ -648,11 +691,21 @@
           ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) 
           : 0;
 
+        const totalPassed = reports.reduce((acc, r) => acc + (r.passed_tests || 0), 0);
+        const totalFailed = reports.reduce((acc, r) => acc + (r.failed_tests || 0), 0);
+        const totalWarned = reports.reduce((acc, r) => acc + (r.warn_tests || 0), 0);
+        const totalChecks = totalPassed + totalFailed + totalWarned;
+
+        const passPct = totalChecks > 0 ? Math.round((totalPassed / totalChecks) * 100) : 0;
+        const failPct = totalChecks > 0 ? Math.round((totalFailed / totalChecks) * 100) : 0;
+        const warnPct = totalChecks > 0 ? Math.round((totalWarned / totalChecks) * 100) : 0;
+
         return h("div", null,
-          h("div", { className: "card", style: { border: "1px solid var(--lime-border)", background: "linear-gradient(180deg, #121c0b 0%, #0b1107 100%)" } },
-            h("div", { className: "card-title", style: { color: "var(--lime-text)", fontWeight: 800 } }, "Quick Demonstration Targets"),
+          /* Demonstration Targets Card */
+          h("div", { className: "card", style: { border: "1px solid var(--lime-border)", background: "linear-gradient(180deg, #162724 0%, #101c19 100%)" } },
+            h("div", { className: "card-title", style: { color: "var(--lime-primary)", fontWeight: 800 } }, "Demonstration Targets"),
             h("p", { style: { color: "var(--text-muted)", marginBottom: "1.25rem", fontSize: "0.9rem", fontWeight: 500, letterSpacing: "-0.01em" } },
-              "Execute automated security evaluations against built-in vulnerable and hardened targets:"
+              "Execute automated security evaluations against built-in vulnerable and hardened endpoints:"
             ),
             h("div", { style: { display: "flex", gap: "0.85rem", flexWrap: "wrap" } },
               h("button", {
@@ -676,24 +729,88 @@
             )
           ),
           
+          /* Key Metrics Cards */
           h("div", { className: "grid-3" },
             h("div", { className: "stat-card" },
               h("div", { className: "stat-lbl" }, "Configured Endpoints"),
-              h("div", { className: "stat-val" }, endpoints.length)
+              h("div", { className: "stat-val teal" }, endpoints.length)
             ),
             h("div", { className: "stat-card" },
-              h("div", { className: "stat-lbl" }, "Total Scans Completed"),
+              h("div", { className: "stat-lbl" }, "Security Assessments"),
               h("div", { className: "stat-val" }, reports.length)
             ),
             h("div", { className: "stat-card" },
               h("div", { className: "stat-lbl" }, "Average Security Score"),
               h("div", {
-                className: `stat-val ${avgScore >= 80 ? 'lime' : ''}`,
-                style: { color: avgScore >= 80 ? '#84cc16' : avgScore >= 50 ? '#f59e0b' : '#ef4444' }
+                className: "stat-val",
+                style: { color: avgScore >= 80 ? "var(--lime-primary)" : avgScore >= 50 ? "var(--warn-text)" : "var(--danger-text)" }
               }, `${avgScore}%`)
             )
           ),
 
+          /* Visual Task Analysis & Security Breakdown Section */
+          h("div", { className: "visual-breakdown-card" },
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" } },
+              h("div", { className: "card-title", style: { margin: 0, color: "var(--teal-light)" } }, "Security Analysis & Test Distribution"),
+              h("div", { style: { display: "flex", gap: "1rem" } },
+                h("span", { className: "meter-pill" },
+                  h("span", { className: "meter-dot", style: { background: "var(--lime-primary)" } }),
+                  `Passed (${passPct}%)`
+                ),
+                h("span", { className: "meter-pill" },
+                  h("span", { className: "meter-dot", style: { background: "var(--warn-text)" } }),
+                  `Warnings (${warnPct}%)`
+                ),
+                h("span", { className: "meter-pill" },
+                  h("span", { className: "meter-dot", style: { background: "var(--danger-text)" } }),
+                  `Failed (${failPct}%)`
+                )
+              )
+            ),
+            /* Visual Progress Bar */
+            h("div", {
+              style: {
+                width: "100%",
+                height: "12px",
+                background: "#0a1412",
+                borderRadius: "980px",
+                overflow: "hidden",
+                display: "flex",
+                border: "1px solid var(--border-subtle)",
+                marginBottom: "1.25rem"
+              }
+            },
+              totalChecks > 0 ? [
+                h("div", { key: "p", style: { width: `${passPct}%`, background: "var(--lime-primary)", transition: "width 0.5s" } }),
+                h("div", { key: "w", style: { width: `${warnPct}%`, background: "var(--warn-text)", transition: "width 0.5s" } }),
+                h("div", { key: "f", style: { width: `${failPct}%`, background: "var(--danger-text)", transition: "width 0.5s" } })
+              ] : h("div", { style: { width: "100%", background: "#1c322c" } })
+            ),
+            /* Coverage Sub-Grid */
+            h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "0.85rem" } },
+              [
+                { label: "Authentication Check", status: "Active", col: "var(--lime-primary)" },
+                { label: "SQL Injection Probe", status: "Active", col: "var(--teal-accent)" },
+                { label: "XSS Sanitization", status: "Active", col: "var(--lime-primary)" },
+                { label: "Rate Limiting", status: "Active", col: "var(--sage-accent)" },
+                { label: "Security Headers", status: "Active", col: "var(--teal-accent)" },
+                { label: "Information Disclosure", status: "Active", col: "var(--lime-primary)" }
+              ].map((item, i) => h("div", {
+                key: i,
+                style: {
+                  background: "#0e1a17",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "10px",
+                  padding: "0.85rem 1rem"
+                }
+              },
+                h("div", { style: { fontSize: "0.725rem", color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: "0.25rem" } }, item.label),
+                h("div", { style: { fontSize: "0.875rem", fontWeight: 800, color: item.col } }, item.status)
+              ))
+            )
+          ),
+
+          /* Assessment Audit Log Table */
           h("div", { className: "card" },
             h("div", { className: "card-title" }, "Assessment Audit Log"),
             reports.length === 0 
@@ -828,8 +945,8 @@
               h("tbody", null,
                 endpoints.map(ep => h("tr", { key: ep.id },
                   h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" } }, ep.name)),
-                  h("td", null, h("span", { className: "badge", style: { background: "rgba(255,255,255,0.06)", color: "#ffffff", border: "1px solid rgba(255,255,255,0.12)" } }, ep.method)),
-                  h("td", { style: { fontWeight: 600, color: "var(--lime-text)", fontSize: "0.85rem", letterSpacing: "-0.02em" } }, ep.url),
+                  h("td", null, h("span", { className: "badge", style: { background: "var(--teal-dark)", color: "var(--teal-light)", border: "1px solid var(--teal-border)" } }, ep.method)),
+                  h("td", { style: { fontWeight: 600, color: "var(--teal-light)", fontSize: "0.85rem", letterSpacing: "-0.02em" } }, ep.url),
                   h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)", fontWeight: 500 } }, ep.auth_type),
                   h("td", null,
                     h("button", {
@@ -880,7 +997,7 @@
                 style: {
                   borderColor: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
                   color: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
-                  boxShadow: activeReport.score >= 80 ? "0 0 24px rgba(132, 204, 22, 0.3)" : "none"
+                  boxShadow: activeReport.score >= 80 ? "0 0 24px rgba(220, 248, 54, 0.3)" : "none"
                 }
               },
                 activeReport.score,
@@ -893,7 +1010,7 @@
                     className: `badge badge-${activeReport.risk_level === 'LOW' ? 'LOW' : activeReport.risk_level === 'MEDIUM' ? 'MEDIUM' : 'CRITICAL'}`
                   }, `${activeReport.risk_level} RISK`)
                 ),
-                h("div", { style: { color: "var(--lime-text)", fontWeight: 600, fontSize: "0.875rem", letterSpacing: "-0.02em", marginBottom: "0.75rem" } },
+                h("div", { style: { color: "var(--teal-light)", fontWeight: 600, fontSize: "0.875rem", letterSpacing: "-0.02em", marginBottom: "0.75rem" } },
                   activeReport.endpoint_url
                 ),
                 h("div", { style: { display: "flex", gap: "1.5rem", fontSize: "0.825rem", fontWeight: 700 } },
@@ -939,25 +1056,25 @@
                 " targeting the OWASP API Top 10 vulnerabilities:"
               ),
               h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginTop: "1rem" } },
-                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
                   h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Authentication & Access Control"),
                   h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Prevents Broken Object Level Authorization & Broken Authentication by enforcing valid Bearer tokens and denying unauthenticated access."
                   )
                 ),
-                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Input Sanitization & Output Encoding"),
+                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                  h("div", { style: { color: "var(--teal-light)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Input Sanitization & Output Encoding"),
                   h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Neutralizes SQL Injection and Cross-Site Scripting (XSS) via parameter binding and HTML entity escaping."
                   )
                 ),
-                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Rate Limiting & Anti-Abuse"),
+                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                  h("div", { style: { color: "var(--sage-accent)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Rate Limiting & Anti-Abuse"),
                   h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Mitigates denial-of-service and automated brute-force attacks by returning HTTP 429 upon request burst thresholds."
                   )
                 ),
-                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
                   h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Defense in Depth & Header Hardening"),
                   h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Deploys protective browser headers (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options) to minimize attack surface."
