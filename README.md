@@ -117,3 +117,4 @@ bandit -r src/ --skip B104
 
 **Q3: How are reports persisted?**  
 > "Audit records are stored in a local SQLite database (`apishield.db`), recording timestamps, scores, risk ratings, and actionable developer remediation advice."
+# APIShield
