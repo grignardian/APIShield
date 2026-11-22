@@ -1,120 +1,118 @@
-# APIShield — Automated API Security Testing Platform
+# APIShield
 
-**Course:** Secure Software Engineering (`26B11CS219`)  
-**Department:** Computer Science and Engineering (Cybersecurity), JIIT Noida  
-**Group 6 — Semester 3**  
+**Automated API Security Testing & Vulnerability Assessment Platform**
 
-| S. No. | Name | Roll Number |
-|---|---|---|
-| 1 | Shambhavi Singh | 992501230049 |
-| 2 | Labhansh Vashisht | 992501230050 |
-| 3 | Mohd. Nauman Ali | 992501230060 |
-| 4 | Kartik Virmani | 992501230039 |
+APIShield is a lightweight, automated security scanner that analyzes REST APIs for common vulnerabilities, misconfigurations, and attack vectors defined in the OWASP API Security Top 10. It evaluates endpoints against real-world security checks, calculates an overall security risk score (0–100), and provides actionable developer remediation guidance.
+
+---
+
+## Features
+
+- **Automated Vulnerability Probing:** Scans endpoints for Broken Authentication, SQL Injection, Cross-Site Scripting (XSS), Rate Limiting deficiencies, Missing Security Headers, and Information Leakage.
+- **Weighted Security Scoring:** Calculates an objective 0–100 score and risk rating (`LOW`, `MEDIUM`, `HIGH`) based on finding severity.
+- **Interactive Dark Dashboard:** Modern, stats-driven web UI featuring real-time metrics, test distribution meters, and target inventory management.
+- **Side-by-Side Reference Targets:** Includes built-in vulnerable and hardened endpoints for immediate demonstration and testing.
+- **Zero-Configuration Storage:** Uses an embedded SQLite database to persist configured endpoints, audit logs, and scan history.
+- **Automated Test Suite:** Built-in unit and integration tests powered by Pytest.
 
 ---
 
 ## Repository Structure
 
 ```
-├── documentation/          # Software Requirements (SRS), UML diagrams, and Synopsis
+├── documentation/          # Software Requirements (SRS), UML diagrams, and architecture docs
 │   ├── SRS.md
 │   ├── UML_DIAGRAMS.md
 │   ├── architecture.md
-│   └── SSEMiniProjectSynopsis_Group6.pdf
-├── src/                    # FastAPI backend, SQLite database, and React frontend
-│   ├── app.py
-│   └── static/
-│       ├── index.html
-│       └── js/
-├── tests/                  # Automated pytest security test suite
-│   └── test_apishield.py
-├── .gitignore              # Git ignore rules
+│   └── project_synopsis.pdf
+├── src/                    # Application source code
+│   ├── app.py              # FastAPI server, security test engine, and SQLite database
+│   └── static/             # Frontend assets
+│       ├── index.html      # React single-page dashboard
+│       └── js/             # Local offline React libraries
+├── tests/                  # Automated test suite
+│   └── test_apishield.py   # Pytest unit & integration tests
+├── .gitignore              # Standard git exclusion rules
 ├── README.md               # Project documentation
-└── requirements.txt        # Minimal Python dependencies
+└── requirements.txt        # Python package dependencies
 ```
-
-All services run on **port 8000**:
-- Web Dashboard: `http://localhost:8000`
-- Swagger API Documentation: `http://localhost:8000/docs`
-- Vulnerable Demo Target: `http://localhost:8000/demo/vulnerable/notes`
-- Hardened Secure Target: `http://localhost:8000/demo/secure/notes`
 
 ---
 
-## Instructions to Run
+## Quick Start
 
-### 1. Install Dependencies
+### 1. Prerequisites
+- Python 3.10 or higher
+- Git
+
+### 2. Clone and Install Dependencies
 ```bash
+git clone <repository-url>
+cd SsePBL
 pip install -r requirements.txt
 ```
 
-### 2. Start the Server
+### 3. Run the Application
 ```bash
 python src/app.py
 ```
 
-### 3. Access the Dashboard
-Open your browser at:
-**http://localhost:8000**
+The application will start on **port 8000**:
+- **Web Dashboard:** [http://localhost:8000](http://localhost:8000)
+- **Interactive OpenAPI (Swagger) Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## Automated Security Checks Implemented
+## Automated Security Checks
 
-| Check Name | Target Threat | Severity | Implementation Logic |
+APIShield executes six automated security checks against any configured API endpoint:
+
+| Security Check | OWASP API Category | Severity | Detection Logic |
 |---|---|:---:|---|
-| **Broken Authentication** | OWASP API 1 | **CRITICAL** | Evaluates response when credentials are omitted. Exposing data returns status FAIL. |
-| **SQL Injection** | OWASP API 8 | **HIGH** | Injects `' OR '1'='1` in query strings; checks for database syntax errors or data exposure. |
-| **Cross-Site Scripting (XSS)** | OWASP API 8 | **HIGH** | Injects script payloads; evaluates whether the server echoes raw, unescaped tags. |
-| **Rate Limiting / Abuse** | OWASP API 4 | **MEDIUM** | Emits rapid request bursts; validates whether the endpoint throttles with HTTP 429. |
-| **Information Disclosure** | OWASP API 7 | **MEDIUM** | Sends malformed bodies; evaluates whether internal stack traces or debug info leak. |
-| **Defense-in-Depth Headers** | Security Baseline | **LOW** | Checks for Content-Security-Policy, X-Frame-Options, and X-Content-Type-Options. |
+| **Broken Authentication** | OWASP API 1 | **CRITICAL** | Submits requests without credentials. Exposing data or returning HTTP 200 without authentication flags a critical failure. |
+| **SQL Injection (SQLi)** | OWASP API 8 | **HIGH** | Injects common SQL test payloads (`' OR '1'='1`) and checks for unhandled database errors or reflection. |
+| **Cross-Site Scripting (XSS)** | OWASP API 8 | **HIGH** | Injects script tags (`<script>alert('xss')</script>`) to evaluate whether input is sanitized or echoed unescaped. |
+| **Rate Limiting & Abuse** | OWASP API 4 | **MEDIUM** | Sends rapid bursts of requests to verify whether the server enforces throttling (HTTP 429 Too Many Requests). |
+| **Information Disclosure** | OWASP API 7 | **MEDIUM** | Sends malformed payloads to verify that the server does not leak internal stack traces or debug information. |
+| **Defense-in-Depth Headers** | Security Baseline | **LOW** | Checks for protective browser response headers (`Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`). |
 
 ---
 
 ## Security Scoring Model
 
+The security score is calculated using weighted deductions from an initial baseline of 100:
+
 $$\text{Security Score} = \max\left(0, 100 - (\text{CRITICAL}\times 30 + \text{HIGH}\times 20 + \text{MEDIUM}\times 10 + \text{LOW}\times 5)\right)$$
 
-- **Score >= 80**: **LOW RISK** (Green) — System meets security baseline
-- **Score 50 - 79**: **MEDIUM RISK** (Amber) — Vulnerabilities require remediation
-- **Score < 50**: **HIGH RISK** (Red) — Critical flaws detected
+### Risk Rating Scale
+- **80 – 100 (LOW RISK):** The endpoint meets essential security baselines.
+- **50 – 79 (MEDIUM RISK):** Moderate vulnerabilities or missing hardening measures detected.
+- **0 – 49 (HIGH / CRITICAL RISK):** Critical flaws detected (e.g., exposed authentication, SQL injection vulnerability). Immediate remediation recommended.
 
 ---
 
-## Automated Verification Tests
+## Verification & Testing
 
-Execute the automated test suite with:
+### Run Pytest Test Suite
+Execute the full automated test suite covering CRUD operations, scanner accuracy, and demo endpoints:
 ```bash
 pytest tests/ -v
 ```
 
----
-
-## Code Quality & Security Analysis (Ruff & Bandit)
-
-As specified in the project synopsis, code quality linting and static security analysis are performed using **Ruff** and **Bandit**:
-
+### Code Quality & Static Security Analysis
+Linting and static code security checks can be executed using Ruff and Bandit:
 ```bash
-# 1. Code Quality & Formatting Check (Ruff)
+# Code style and syntax check
 ruff check src/
 
-# 2. Static Application Security Testing (Bandit)
+# Static Application Security Testing (SAST)
 bandit -r src/ --skip B104
 ```
 
-> **Bandit SAST Insight:** Bandit actively detects the intentional string-concatenation SQL vulnerability in our demo vulnerable endpoint (`CWE-89: B608`), validating the vulnerability detection mechanism.
-
 ---
 
-## Academic Viva / Presentation Reference
+## Demo Endpoints
 
-**Q1: How does APIShield apply Secure SDLC concepts?**  
-> "During the testing phase of the SDLC, standard functional testing verifies only intended business logic. APIShield introduces automated security testing to verify access control, input handling, and resilience against common OWASP API threats."
-
-**Q2: What separates the Vulnerable and Secure sample APIs?**  
-> "The vulnerable endpoint allows unauthenticated access, lacks rate limiting, and omits HTTP security headers. The secure endpoint enforces Bearer token authentication, throttles rapid traffic bursts (HTTP 429), and sets browser defense-in-depth security headers."
-
-**Q3: How are reports persisted?**  
-> "Audit records are stored in a local SQLite database (`apishield.db`), recording timestamps, scores, risk ratings, and actionable developer remediation advice."
-# APIShield
+APIShield includes built-in endpoints for instant testing:
+- **Vulnerable Target:** `http://localhost:8000/demo/vulnerable/notes` (permits unauthenticated access, reflects raw input, lacks security headers; typical score ~40)
+- **Hardened Target:** `http://localhost:8000/demo/secure/notes` (requires Bearer token `secret-token-123`, enforces rate limiting, returns protective security headers; typical score 100)
