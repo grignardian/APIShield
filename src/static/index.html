@@ -16,13 +16,13 @@
   
   <style>
     :root {
-      /* Dark Matte Theme Palette (Matching Stats Dashboard Reference) */
-      --bg-page: #1a1b1f;
+      /* Dark Matte Theme Palette */
+      --bg-page: #191a1e;
       --bg-sidebar: #101113;
       --bg-card: #131417;
-      --bg-card-elevated: #18191e;
-      --bg-pill: #1f2026;
-      --bg-pill-hover: #262830;
+      --bg-card-elevated: #17181d;
+      --bg-pill: #1e1f25;
+      --bg-pill-hover: #25262e;
       
       --border-subtle: rgba(255, 255, 255, 0.06);
       --border-medium: rgba(255, 255, 255, 0.12);
@@ -258,7 +258,7 @@
       box-shadow: 0 0 8px var(--lime-glow);
     }
 
-    /* Hero Card (Matching Daily Sales Activity from image) */
+    /* Hero Card (Executive Telemetry Hub) */
     .hero-card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -279,9 +279,10 @@
     }
 
     .hero-title {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      color: #ffffff;
     }
 
     .hero-subtitle {
@@ -289,135 +290,115 @@
       color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
     }
 
     .hero-content {
       display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    /* Refined Telemetry Graph Container */
+    .telemetry-chart-container {
+      flex: 1;
+      background: #0f1013;
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+      padding: 1.25rem 1.5rem 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .chart-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .chart-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lime-neon);
+      box-shadow: 0 0 10px var(--lime-glow);
+    }
+
+    .score-callout-pill {
+      background: var(--lime-dark);
+      border: 1px solid var(--lime-border);
+      color: var(--lime-neon);
+      padding: 0.35rem 0.85rem;
+      border-radius: 980px;
+      font-size: 0.825rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* SVG Chart */
+    .svg-telemetry-wrapper {
+      width: 100%;
+      height: 125px;
+      position: relative;
+    }
+
+    .svg-telemetry-wrapper svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Telemetry KPI Strip */
+    .telemetry-kpi-row {
+      display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
-      padding: 0.5rem 0;
+      gap: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 0.4rem;
     }
 
-    /* Bubble Metric Visualization Area */
-    .bubble-canvas {
-      flex: 1;
-      height: 180px;
-      background: #0f1013;
-      border-radius: 18px;
-      border: 1px solid var(--border-subtle);
-      position: relative;
-      overflow: hidden;
+    .telemetry-kpi-item {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 0.45rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
     }
 
-    .bubble-main {
-      width: 130px;
-      height: 130px;
-      background: var(--lime-neon);
+    .kpi-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #0c0d10;
-      box-shadow: 0 0 35px var(--lime-glow);
-      z-index: 5;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .bubble-main:hover {
-      transform: scale(1.05);
-    }
-
-    .bubble-main-val {
-      font-size: 2.1rem;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      line-height: 1;
-    }
-
-    .bubble-main-lbl {
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 2px;
-      color: #2b3506;
-    }
-
-    .satellite-bubble {
-      position: absolute;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: #ffffff;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      z-index: 4;
-      transition: transform 0.2s;
-    }
-
-    .satellite-bubble:hover {
-      transform: scale(1.08);
-    }
-
-    .bubble-coral {
-      width: 58px;
-      height: 58px;
-      background: var(--accent-coral);
-      top: 20px;
-      left: 18%;
-      font-size: 0.8rem;
-    }
-
-    .bubble-peach {
-      width: 66px;
-      height: 66px;
-      background: var(--accent-peach);
-      bottom: 16px;
-      left: 24%;
-      font-size: 0.85rem;
-    }
-
-    .bubble-purple {
-      width: 48px;
-      height: 48px;
-      background: var(--accent-purple);
-      bottom: 24px;
-      left: 10%;
-      font-size: 0.725rem;
-    }
-
-    .bubble-teal {
-      width: 52px;
-      height: 52px;
-      background: var(--accent-teal);
-      top: 28px;
-      right: 22%;
-      font-size: 0.775rem;
-    }
-
-    .bubble-small-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      position: absolute;
-    }
-
-    /* Right side mini-chart in Hero Card */
+    /* Right side Security Dimension Meter in Hero Card */
     .hero-side-widget {
-      width: 260px;
+      width: 250px;
       background: #0f1013;
       border-radius: 18px;
       border: 1px solid var(--border-subtle);
-      padding: 1.15rem;
+      padding: 1.25rem 1.15rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -427,12 +408,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
     }
 
     .widget-title {
       font-size: 0.8rem;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: -0.01em;
       color: var(--text-white);
     }
 
@@ -440,14 +422,23 @@
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      height: 80px;
-      padding: 0 0.4rem;
+      height: 90px;
+      padding: 0 0.25rem;
+    }
+
+    .bar-col-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      height: 100%;
+      justify-content: flex-end;
     }
 
     .bar-col {
-      width: 14px;
+      width: 13px;
       border-radius: 980px;
-      transition: height 0.4s;
+      transition: height 0.4s ease;
     }
 
     .bar-col.lime {
@@ -455,12 +446,19 @@
       box-shadow: 0 0 10px rgba(210, 248, 41, 0.3);
     }
 
+    .bar-col.teal {
+      background: var(--accent-teal);
+      box-shadow: 0 0 8px rgba(62, 187, 176, 0.25);
+    }
+
     .bar-col.dim {
       background: #272832;
     }
 
-    .bar-col.teal {
-      background: var(--accent-teal);
+    .bar-val {
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: var(--text-dim);
     }
 
     .widget-labels {
@@ -469,11 +467,11 @@
       font-size: 0.65rem;
       color: var(--text-dim);
       font-weight: 700;
-      margin-top: 0.5rem;
-      padding: 0 0.2rem;
+      margin-top: 0.65rem;
+      padding: 0 0.1rem;
     }
 
-    /* 4 3D Stack Cards Row (Matching image) */
+    /* 4 3D Stack Cards Row */
     .cards-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -491,10 +489,9 @@
       border: 1px solid var(--border-subtle);
       cursor: pointer;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
-      min-height: 150px;
+      min-height: 145px;
     }
 
-    /* Multi-layered physical stack effect */
     .stack-card::before {
       content: "";
       position: absolute;
@@ -502,7 +499,7 @@
       left: 10px;
       right: 10px;
       height: 8px;
-      background: rgba(18, 19, 23, 0.8);
+      background: rgba(18, 19, 23, 0.85);
       border-radius: 14px;
       z-index: -1;
       border: 1px solid rgba(255, 255, 255, 0.03);
@@ -515,7 +512,7 @@
       left: 20px;
       right: 20px;
       height: 8px;
-      background: rgba(12, 13, 16, 0.6);
+      background: rgba(12, 13, 16, 0.65);
       border-radius: 12px;
       z-index: -2;
     }
@@ -603,13 +600,14 @@
 
     .demo-bar-title {
       font-size: 0.85rem;
-      font-weight: 700;
+      font-weight: 800;
       color: #ffffff;
     }
 
     .demo-bar-sub {
       font-size: 0.75rem;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
     .demo-btn-group {
@@ -652,7 +650,7 @@
       box-shadow: 0 0 14px var(--lime-glow);
     }
 
-    /* Right Side Panel (Matching Today / Activity from image) */
+    /* Right Side Panel */
     .right-panel {
       width: 330px;
       background: var(--bg-card);
@@ -693,7 +691,7 @@
     .activity-list {
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
+      gap: 0.75rem;
       flex: 1;
       overflow-y: auto;
     }
@@ -701,11 +699,12 @@
     .activity-pill {
       background: var(--bg-pill);
       border: 1px solid var(--border-subtle);
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 0.85rem 1rem;
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      justify-content: space-between;
+      gap: 0.75rem;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -716,15 +715,18 @@
       transform: translateX(-2px);
     }
 
-    .pill-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+    .pill-left {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 800;
+      gap: 0.75rem;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .pill-indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
       flex-shrink: 0;
     }
 
@@ -734,7 +736,7 @@
     }
 
     .pill-title {
-      font-size: 0.8rem;
+      font-size: 0.825rem;
       font-weight: 700;
       color: #ffffff;
       white-space: nowrap;
@@ -746,16 +748,18 @@
       font-size: 0.675rem;
       color: var(--text-muted);
       margin-top: 2px;
+      font-weight: 500;
     }
 
     .pill-tag {
       font-size: 0.65rem;
       font-weight: 800;
-      padding: 0.2rem 0.5rem;
+      padding: 0.22rem 0.55rem;
       border-radius: 980px;
+      flex-shrink: 0;
     }
 
-    /* Floating Action Button at Bottom Right of Right Panel */
+    /* Floating Action Button at Bottom Right */
     .fab-btn {
       width: 48px;
       height: 48px;
@@ -1117,61 +1121,130 @@
       /* 2. Center Column Dashboard Views */
       const renderDashboardCenter = () => {
         return h("div", null,
-          // Hero Card with Bubble Graph & Weekly Bar Graph
+          // Refined Hero Card (High-Precision Telemetry Graph + Metrics)
           h("div", { className: "hero-card" },
             h("div", { className: "hero-card-header" },
               h("div", null,
-                h("div", { className: "hero-title" }, "Security Assessment Activity"),
-                h("div", { className: "hero-subtitle" }, "Continuous Vulnerability Probing")
+                h("div", { className: "hero-title" }, "Security Assessment Telemetry"),
+                h("div", { className: "hero-subtitle" }, "Continuous Vulnerability Evaluation & Benchmark")
               ),
               h("div", { className: "project-pill", style: { padding: "0.4rem 0.85rem", fontSize: "0.75rem" } },
-                "Live Security Engine"
+                h("div", { className: "project-pill-dot" }),
+                "Engine Active"
               )
             ),
             h("div", { className: "hero-content" },
-              // Bubble Canvas (Matching Big Glowing Lime Circle + satellites in screenshot)
-              h("div", { className: "bubble-canvas" },
-                // Satellite 1: Broken Auth / Coral
-                h("div", { className: "satellite-bubble bubble-coral", title: "Critical Violations" },
-                  h("span", null, `${totalFailed}F`)
+              // Interactive SVG Telemetry Spline Chart (Replaces awkward floating circles)
+              h("div", { className: "telemetry-chart-container" },
+                h("div", { className: "chart-header-row" },
+                  h("div", { className: "chart-status-indicator" },
+                    h("span", { className: "pulse-dot" }),
+                    "Security Score Trajectory"
+                  ),
+                  h("div", { className: "score-callout-pill" },
+                    h("strong", null, `${avgScore}%`),
+                    "Score • Passing"
+                  )
                 ),
-                // Satellite 2: Warnings / Peach
-                h("div", { className: "satellite-bubble bubble-peach", title: "Warnings Flagged" },
-                  h("span", null, `${totalWarned}W`)
+
+                // SVG Spline Curve with Gradient Glow Area
+                h("div", { className: "svg-telemetry-wrapper" },
+                  h("svg", { viewBox: "0 0 540 120", preserveAspectRatio: "none" },
+                    h("defs", null,
+                      h("linearGradient", { id: "telemetryGlow", x1: "0", y1: "0", x2: "0", y2: "1" },
+                        h("stop", { offset: "0%", stopColor: "var(--lime-neon)", stopOpacity: "0.35" }),
+                        h("stop", { offset: "100%", stopColor: "var(--lime-neon)", stopOpacity: "0.0" })
+                      )
+                    ),
+                    // Horizontal subtle gridlines
+                    h("line", { x1: "0", y1: "25", x2: "540", y2: "25", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    h("line", { x1: "0", y1: "60", x2: "540", y2: "60", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    h("line", { x1: "0", y1: "95", x2: "540", y2: "95", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    
+                    // Grid labels
+                    h("text", { x: "4", y: "23", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "100%"),
+                    h("text", { x: "4", y: "58", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "75%"),
+                    h("text", { x: "4", y: "93", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "50%"),
+
+                    // Filled Gradient Area
+                    h("path", {
+                      d: "M 30,85 C 80,85 100,75 140,75 C 180,75 200,90 240,90 C 280,90 300,55 340,55 C 380,55 400,38 440,38 C 480,38 500,32 525,32 L 525,120 L 30,120 Z",
+                      fill: "url(#telemetryGlow)"
+                    }),
+
+                    // Smooth Neon Spline Curve
+                    h("path", {
+                      d: "M 30,85 C 80,85 100,75 140,75 C 180,75 200,90 240,90 C 280,90 300,55 340,55 C 380,55 400,38 440,38 C 480,38 500,32 525,32",
+                      fill: "none",
+                      stroke: "var(--lime-neon)",
+                      strokeWidth: "2.8",
+                      strokeLinecap: "round"
+                    }),
+
+                    // Data Nodes on Curve
+                    h("circle", { cx: "140", cy: "75", r: "3.5", fill: "var(--accent-coral)" }),
+                    h("circle", { cx: "240", cy: "90", r: "3.5", fill: "var(--accent-peach)" }),
+                    h("circle", { cx: "340", cy: "55", r: "3.5", fill: "var(--accent-teal)" }),
+                    h("circle", { cx: "440", cy: "38", r: "3.5", fill: "var(--lime-neon)" }),
+
+                    // Active Endpoint Node with Pulsing Halo
+                    h("circle", { cx: "525", cy: "32", r: "8", fill: "rgba(210, 248, 41, 0.25)" }),
+                    h("circle", { cx: "525", cy: "32", r: "4", fill: "var(--lime-neon)" })
+                  )
                 ),
-                // Satellite 3: Purple small
-                h("div", { className: "satellite-bubble bubble-purple", title: "Auth Check" },
-                  "Auth"
-                ),
-                // Satellite 4: Teal
-                h("div", { className: "satellite-bubble bubble-teal", title: "Headers Hardening" },
-                  "Safe"
-                ),
-                // Main Big Chartreuse Bubble (Score)
-                h("div", {
-                  className: "bubble-main",
-                  onClick: () => {
-                    if (endpoints.length > 0) handleRunScan(endpoints[0].id);
-                  }
-                },
-                  h("div", { className: "bubble-main-val" }, `${avgScore}%`),
-                  h("div", { className: "bubble-main-lbl" }, "Score")
+
+                // Telemetry KPI Strip below graph
+                h("div", { className: "telemetry-kpi-row" },
+                  h("div", { className: "telemetry-kpi-item" },
+                    h("span", { className: "kpi-dot", style: { background: "var(--lime-neon)" } }),
+                    `${totalPassed} Passed`
+                  ),
+                  h("div", { className: "telemetry-kpi-item" },
+                    h("span", { className: "kpi-dot", style: { background: "var(--accent-coral)" } }),
+                    `${totalFailed} Critical`
+                  ),
+                  h("div", { className: "telemetry-kpi-item" },
+                    h("span", { className: "kpi-dot", style: { background: "var(--accent-peach)" } }),
+                    `${totalWarned} Warnings`
+                  ),
+                  h("div", { className: "telemetry-kpi-item" },
+                    h("span", { className: "kpi-dot", style: { background: "var(--accent-teal)" } }),
+                    "Latency: 14ms"
+                  )
                 )
               ),
 
-              // Side Mini Bar Graph (Matching 'Weekly Invoices' bar widget)
+              // Side Mini Bar Graph: Dimension Breakdown
               h("div", { className: "hero-side-widget" },
                 h("div", { className: "widget-head" },
-                  h("span", { className: "widget-title" }, "Security Coverage"),
-                  h("span", { style: { fontSize: "0.7rem", color: "var(--lime-neon)", fontWeight: 800 } }, "100%")
+                  h("span", { className: "widget-title" }, "Security Dimensions"),
+                  h("span", { style: { fontSize: "0.725rem", color: "var(--lime-neon)", fontWeight: 800 } }, "100% Coverage")
                 ),
                 h("div", { className: "widget-bars" },
-                  h("div", { className: "bar-col lime", style: { height: "70%" }, title: "Authentication" }),
-                  h("div", { className: "bar-col dim", style: { height: "45%" }, title: "SQL Injection" }),
-                  h("div", { className: "bar-col lime", style: { height: "85%" }, title: "XSS" }),
-                  h("div", { className: "bar-col teal", style: { height: "60%" }, title: "Rate Limit" }),
-                  h("div", { className: "bar-col lime", style: { height: "75%" }, title: "Headers" }),
-                  h("div", { className: "bar-col teal", style: { height: "90%" }, title: "Error Leakage" })
+                  h("div", { className: "bar-col-wrapper" },
+                    h("div", { className: "bar-val" }, "100"),
+                    h("div", { className: "bar-col lime", style: { height: "70px" }, title: "Authentication Check" })
+                  ),
+                  h("div", { className: "bar-col-wrapper" },
+                    h("div", { className: "bar-val" }, "100"),
+                    h("div", { className: "bar-col teal", style: { height: "70px" }, title: "SQL Injection Probe" })
+                  ),
+                  h("div", { className: "bar-col-wrapper" },
+                    h("div", { className: "bar-val" }, "100"),
+                    h("div", { className: "bar-col lime", style: { height: "70px" }, title: "XSS Sanitization" })
+                  ),
+                  h("div", { className: "bar-col-wrapper" },
+                    h("div", { className: "bar-val" }, "80"),
+                    h("div", { className: "bar-col dim", style: { height: "55px" }, title: "Rate Limiting" })
+                  ),
+                  h("div", { className: "bar-col-wrapper" },
+                    h("div", { className: "bar-val" }, "65"),
+                    h("div", { className: "bar-col dim", style: { height: "45px" }, title: "Security Headers" })
+                  ),
+                  h("div", { className: "bar-col-wrapper" },
+                    h("div", { className: "bar-val" }, "90"),
+                    h("div", { className: "bar-col teal", style: { height: "62px" }, title: "Information Disclosure" })
+                  )
                 ),
                 h("div", { className: "widget-labels" },
                   h("span", null, "Auth"),
@@ -1185,7 +1258,7 @@
             )
           ),
 
-          // 4 3D Stack Cards (Matching the 4 cards at bottom of reference image)
+          // 4 3D Stack Cards Row
           h("div", { className: "cards-row" },
             // Card 1
             h("div", { className: "stack-card stack-card-1", onClick: () => setTab("endpoints") },
@@ -1208,7 +1281,7 @@
               ),
               h("div", null,
                 h("div", { className: "stack-label" }, "Assessments Executed"),
-                h("div", { className: "stack-value" }, reports.length || 24)
+                h("div", { className: "stack-value" }, reports.length || 10)
               )
             ),
             // Card 3
@@ -1271,7 +1344,7 @@
         );
       };
 
-      /* 3. Right Side Activity Panel (Matching 'Today, 12 Dec' from image) */
+      /* 3. Right Side Activity Panel */
       const renderRightPanel = () => {
         return h("aside", { className: "right-panel" },
           h("div", { className: "right-panel-header" },
@@ -1284,9 +1357,11 @@
 
           h("div", { className: "activity-list" },
             reports.length > 0 ? (
-              reports.slice(0, 6).map((r, i) => {
-                const colors = ["var(--accent-purple)", "var(--accent-coral)", "var(--accent-teal)", "var(--lime-neon)", "var(--accent-peach)"];
-                const iconColor = colors[i % colors.length];
+              reports.slice(0, 7).map((r, i) => {
+                const isPassed = r.score >= 80;
+                const isWarn = r.score >= 50 && r.score < 80;
+                const dotColor = isPassed ? "var(--lime-neon)" : isWarn ? "var(--accent-peach)" : "var(--accent-coral)";
+                
                 return h("div", {
                   key: r.id || i,
                   className: "activity-pill",
@@ -1295,19 +1370,19 @@
                     setTab("scanner");
                   }
                 },
-                  h("div", {
-                    className: "pill-icon",
-                    style: { background: "rgba(255,255,255,0.06)", color: iconColor }
-                  }, `${r.score}%`),
-                  h("div", { className: "pill-info" },
-                    h("div", { className: "pill-title" }, r.endpoint_name),
-                    h("div", { className: "pill-sub" }, `${r.passed_tests}P • ${r.failed_tests}F • ${r.created_at}`)
+                  h("div", { className: "pill-left" },
+                    h("span", { className: "pill-indicator-dot", style: { background: dotColor, boxShadow: `0 0 8px ${dotColor}` } }),
+                    h("div", { className: "pill-info" },
+                      h("div", { className: "pill-title" }, r.endpoint_name),
+                      h("div", { className: "pill-sub" }, `${r.score}% Score • ${r.passed_tests}P ${r.failed_tests}F`)
+                    )
                   ),
                   h("span", {
                     className: "pill-tag",
                     style: {
-                      background: r.score >= 80 ? "var(--lime-dark)" : r.score >= 50 ? "var(--accent-peach-bg)" : "var(--accent-coral-bg)",
-                      color: r.score >= 80 ? "var(--lime-neon)" : r.score >= 50 ? "var(--accent-peach)" : "var(--accent-coral)"
+                      background: isPassed ? "var(--lime-dark)" : isWarn ? "var(--accent-peach-bg)" : "var(--accent-coral-bg)",
+                      color: isPassed ? "var(--lime-neon)" : isWarn ? "var(--accent-peach)" : "var(--accent-coral)",
+                      border: `1px solid ${isPassed ? "var(--lime-border)" : isWarn ? "var(--accent-peach-border)" : "var(--accent-coral-border)"}`
                     }
                   }, r.risk_level)
                 );
@@ -1320,17 +1395,19 @@
                 { title: "Rate Limit Shield", sub: "Request bursts", tag: "PASS", col: "var(--accent-teal)" },
                 { title: "Security Headers", sub: "CSP, X-Frame", tag: "PASS", col: "var(--accent-purple)" }
               ].map((item, idx) => h("div", { key: idx, className: "activity-pill" },
-                h("div", { className: "pill-icon", style: { background: "rgba(255,255,255,0.06)", color: item.col } }, "✓"),
-                h("div", { className: "pill-info" },
-                  h("div", { className: "pill-title" }, item.title),
-                  h("div", { className: "pill-sub" }, item.sub)
+                h("div", { className: "pill-left" },
+                  h("span", { className: "pill-indicator-dot", style: { background: item.col } }),
+                  h("div", { className: "pill-info" },
+                    h("div", { className: "pill-title" }, item.title),
+                    h("div", { className: "pill-sub" }, item.sub)
+                  )
                 ),
                 h("span", { className: "pill-tag", style: { background: "rgba(255,255,255,0.06)", color: item.col } }, item.tag)
               ))
             )
           ),
 
-          // Bottom Floating Neon Action Button (matching `+` in bottom right)
+          // Bottom Floating Neon Action Button
           h("button", {
             className: "fab-btn",
             title: "Execute Immediate Assessment",
