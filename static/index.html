@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIShield — API Security Testing Platform</title>
+  
+  <!-- Professional Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Offline local React scripts -->
+  <script src="/static/js/react.js"></script>
+  <script src="/static/js/react-dom.js"></script>
+  
+  <style>
+    :root {
+      /* Lime Green & Black Palette */
+      --bg-canvas: #09090b;
+      --bg-surface: #121215;
+      --bg-surface-elevated: #18181c;
+      --border-subtle: #27272a;
+      --border-muted: #3f3f46;
+      
+      --lime-primary: #84cc16;
+      --lime-hover: #a3e635;
+      --lime-text: #bef264;
+      --lime-dark: #1e2e0a;
+      --lime-border: #3f6212;
+      --lime-glow: rgba(132, 204, 22, 0.2);
+
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+
+      --danger-text: #f87171;
+      --danger-bg: #2b1114;
+      --danger-border: #7f1d1d;
+
+      --warn-text: #fbbf24;
+      --warn-bg: #291a07;
+      --warn-border: #78350f;
+
+      --pass-text: #bef264;
+      --pass-bg: #142308;
+      --pass-border: #365314;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    header {
+      background-color: #000000;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-mark {
+      width: 14px;
+      height: 14px;
+      background-color: var(--lime-primary);
+      box-shadow: 0 0 10px var(--lime-primary);
+      border-radius: 2px;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .brand-title span {
+      color: var(--lime-primary);
+    }
+
+    .brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background-color: var(--lime-dark);
+      color: var(--lime-text);
+      border: 1px solid var(--lime-border);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    nav { display: flex; gap: 0.35rem; }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.5rem 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.825rem;
+      letter-spacing: -0.01em;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background-color: var(--bg-surface-elevated);
+      border-color: var(--border-subtle);
+    }
+
+    .nav-btn.active {
+      color: #000000;
+      background-color: var(--lime-primary);
+      border-color: var(--lime-primary);
+      font-weight: 600;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 1.25rem;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stat-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-val {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-top: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-val.lime {
+      color: var(--lime-primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.55rem 1.1rem;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      border: 1px solid transparent;
+      outline: none;
+    }
+
+    .btn-primary {
+      background-color: var(--lime-primary);
+      color: #000000;
+      border-color: var(--lime-primary);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--lime-hover);
+      box-shadow: 0 0 12px var(--lime-glow);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-muted);
+      background-color: #222228;
+    }
+
+    .btn-demo-vuln {
+      background-color: #170d0f;
+      color: #fca5a5;
+      border: 1px solid #7f1d1d;
+    }
+
+    .btn-demo-vuln:hover:not(:disabled) {
+      background-color: #2b1114;
+      border-color: #dc2626;
+      color: #ffffff;
+    }
+
+    .btn-demo-sec {
+      background-color: #0c1a06;
+      color: #bef264;
+      border: 1px solid #365314;
+    }
+
+    .btn-demo-sec:hover:not(:disabled) {
+      background-color: #162f0a;
+      border-color: var(--lime-primary);
+      color: #ffffff;
+    }
+
+    .btn-danger {
+      background-color: #1f1214;
+      color: var(--danger-text);
+      border-color: var(--danger-border);
+    }
+
+    .btn-danger:hover {
+      background-color: #3b1419;
+      color: #ffffff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #1c1c21;
+      font-size: 0.875rem;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-PASS {
+      background: var(--pass-bg);
+      color: var(--pass-text);
+      border: 1px solid var(--pass-border);
+    }
+
+    .badge-FAIL {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid var(--danger-border);
+    }
+
+    .badge-WARN {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+      border: 1px solid var(--warn-border);
+    }
+
+    .badge-CRITICAL {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #991b1b;
+    }
+
+    .badge-HIGH {
+      background: #7c2d12;
+      color: #fed7aa;
+      border: 1px solid #9a3412;
+    }
+
+    .badge-MEDIUM {
+      background: #713f12;
+      color: #fef08a;
+      border: 1px solid #854d0e;
+    }
+
+    .badge-LOW {
+      background: #1e2e0a;
+      color: #bef264;
+      border: 1px solid #365314;
+    }
+
+    .form-group { margin-bottom: 1.15rem; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      background: #000000;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--lime-primary);
+      box-shadow: 0 0 0 1px var(--lime-primary);
+    }
+
+    .score-banner {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      background: #000000;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.85rem;
+      font-weight: 800;
+      border: 3px solid;
+      background: #09090b;
+      flex-shrink: 0;
+    }
+
+    .finding-card {
+      background: #0b0b0e;
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid;
+      border-radius: 6px;
+      padding: 1.1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .finding-card.FAIL { border-left-color: var(--danger-text); }
+    .finding-card.PASS { border-left-color: var(--lime-primary); }
+    .finding-card.WARN { border-left-color: var(--warn-text); }
+
+    .finding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .finding-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #ffffff;
+    }
+
+    .finding-detail {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+      line-height: 1.5;
+    }
+
+    .finding-remedy {
+      font-size: 0.8rem;
+      background: rgba(132, 204, 22, 0.05);
+      border: 1px solid var(--lime-border);
+      color: var(--lime-text);
+      padding: 0.65rem 0.85rem;
+      border-radius: 4px;
+      line-height: 1.45;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.775rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border-subtle);
+      background-color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const { useState, useEffect, createElement: h } = React;
+    const API_BASE = "http://localhost:8000";
+
+    function App() {
+      const [tab, setTab] = useState("dashboard");
+      const [endpoints, setEndpoints] = useState([]);
+      const [reports, setReports] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [scanTargetId, setScanTargetId] = useState("");
+      const [activeReport, setActiveReport] = useState(null);
+      
+      const [formData, setFormData] = useState({
+        name: "",
+        url: "http://127.0.0.1:8000/demo/vulnerable/notes",
+        method: "GET",
+        auth_type: "none",
+        auth_value: ""
+      });
+
+      const fetchData = async () => {
+        try {
+          const epRes = await fetch(`${API_BASE}/api/endpoints`);
+          const epData = await epRes.json();
+          setEndpoints(epData);
+          if (epData.length > 0 && !scanTargetId) {
+            setScanTargetId(epData[0].id);
+          }
+          const repRes = await fetch(`${API_BASE}/api/reports`);
+          const repData = await repRes.json();
+          setReports(repData);
+          if (repData.length > 0 && !activeReport) {
+            setActiveReport(repData[0]);
+          }
+        } catch (e) {
+          console.error("API connection error:", e);
+        }
+      };
+
+      useEffect(() => {
+        fetchData();
+      }, []);
+
+      const handleRunScan = async (id) => {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_BASE}/api/scan/${id}`, { method: "POST" });
+          const data = await res.json();
+          setActiveReport({
+            endpoint_name: data.endpoint_name,
+            endpoint_url: data.endpoint_url,
+            score: data.summary.score,
+            risk_level: data.summary.risk_level,
+            passed_tests: data.summary.passed_tests,
+            failed_tests: data.summary.failed_tests,
+            warn_tests: data.summary.warn_tests,
+            total_tests: data.summary.total_tests,
+            findings: data.findings,
+            created_at: new Date().toLocaleString()
+          });
+          setTab("scanner");
+          await fetchData();
+        } catch (e) {
+          alert("Scan execution failure: " + e);
+        }
+        setLoading(false);
+      };
+
+      const handleAddEndpoint = async (e) => {
+        e.preventDefault();
+        try {
+          const res = await fetch(`${API_BASE}/api/endpoints`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+          });
+          if (res.ok) {
+            setFormData({ name: "", url: "", method: "GET", auth_type: "none", auth_value: "" });
+            await fetchData();
+          }
+        } catch (e) {
+          alert("Endpoint registration failure: " + e);
+        }
+      };
+
+      const handleDeleteEndpoint = async (id) => {
+        if (!confirm("Confirm endpoint removal?")) return;
+        await fetch(`${API_BASE}/api/endpoints/${id}`, { method: "DELETE" });
+        await fetchData();
+      };
+
+      const renderHeader = () => {
+        return h("header", null,
+          h("div", { className: "brand-container" },
+            h("div", { className: "brand-mark" }),
+            h("div", { className: "brand-title" },
+              "API",
+              h("span", null, "Shield")
+            ),
+            h("span", { className: "brand-tag" }, "GROUP 6 • SSE")
+          ),
+          h("nav", null,
+            h("button", {
+              className: `nav-btn ${tab === 'dashboard' ? 'active' : ''}`,
+              onClick: () => setTab("dashboard")
+            }, "Dashboard"),
+            h("button", {
+              className: `nav-btn ${tab === 'endpoints' ? 'active' : ''}`,
+              onClick: () => setTab("endpoints")
+            }, "Endpoints"),
+            h("button", {
+              className: `nav-btn ${tab === 'scanner' ? 'active' : ''}`,
+              onClick: () => setTab("scanner")
+            }, "Security Scanner"),
+            h("button", {
+              className: `nav-btn ${tab === 'viva' ? 'active' : ''}`,
+              onClick: () => setTab("viva")
+            }, "Concepts Guide")
+          )
+        );
+      };
+
+      const renderDashboard = () => {
+        const avgScore = reports.length > 0 
+          ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) 
+          : 0;
+
+        return h("div", null,
+          h("div", { className: "card", style: { border: "1px solid var(--lime-border)", background: "#0e1509" } },
+            h("div", { className: "card-title", style: { color: "var(--lime-text)" } }, "Quick Demonstration Targets"),
+            h("p", { style: { color: "var(--text-muted)", marginBottom: "1.25rem", fontSize: "0.875rem" } },
+              "Execute controlled security scans against pre-configured vulnerable and hardened sample API targets:"
+            ),
+            h("div", { style: { display: "flex", gap: "0.85rem", flexWrap: "wrap" } },
+              h("button", {
+                className: "btn btn-demo-vuln",
+                disabled: loading,
+                onClick: () => {
+                  const vuln = endpoints.find(e => e.name.includes("Vulnerable"));
+                  if (vuln) handleRunScan(vuln.id);
+                  else alert("Vulnerable endpoint not located.");
+                }
+              }, loading ? "Executing Assessment..." : "Scan Insecure API (Expected Score: ~40)"),
+              h("button", {
+                className: "btn btn-demo-sec",
+                disabled: loading,
+                onClick: () => {
+                  const sec = endpoints.find(e => e.name.includes("Secure"));
+                  if (sec) handleRunScan(sec.id);
+                  else alert("Secure endpoint not located.");
+                }
+              }, loading ? "Executing Assessment..." : "Scan Hardened API (Expected Score: ~100)")
+            )
+          ),
+          
+          h("div", { className: "grid-3" },
+            h("div", { className: "stat-card" },
+              h("div", { className: "stat-lbl" }, "Configured Endpoints"),
+              h("div", { className: "stat-val" }, endpoints.length)
+            ),
+            h("div", { className: "stat-card" },
+              h("div", { className: "stat-lbl" }, "Total Scans Completed"),
+              h("div", { className: "stat-val" }, reports.length)
+            ),
+            h("div", { className: "stat-card" },
+              h("div", { className: "stat-lbl" }, "Average Security Score"),
+              h("div", {
+                className: `stat-val ${avgScore >= 80 ? 'lime' : ''}`,
+                style: { color: avgScore >= 80 ? '#84cc16' : avgScore >= 50 ? '#f59e0b' : '#ef4444' }
+              }, `${avgScore}%`)
+            )
+          ),
+
+          h("div", { className: "card" },
+            h("div", { className: "card-title" }, "Assessment Audit Log"),
+            reports.length === 0 
+              ? h("p", { style: { color: "var(--text-dim)", padding: "1rem 0", fontSize: "0.85rem" } }, "No scans executed yet. Use the demonstration targets above or configure an endpoint.")
+              : h("table", null,
+                  h("thead", null,
+                    h("tr", null,
+                      h("th", null, "Target Endpoint"),
+                      h("th", null, "Score"),
+                      h("th", null, "Risk Level"),
+                      h("th", null, "Pass / Fail / Warn"),
+                      h("th", null, "Timestamp"),
+                      h("th", null, "Action")
+                    )
+                  ),
+                  h("tbody", null,
+                    reports.map(r => h("tr", { key: r.id },
+                      h("td", null, h("span", { style: { fontWeight: 600, color: "#ffffff" } }, r.endpoint_name)),
+                      h("td", null,
+                        h("span", {
+                          style: {
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontWeight: 700,
+                            color: r.score >= 80 ? "var(--lime-primary)" : r.score >= 50 ? "var(--warn-text)" : "var(--danger-text)"
+                          }
+                        }, `${r.score} / 100`)
+                      ),
+                      h("td", null,
+                        h("span", {
+                          className: `badge badge-${r.risk_level === 'LOW' ? 'LOW' : r.risk_level === 'MEDIUM' ? 'MEDIUM' : 'CRITICAL'}`
+                        }, r.risk_level)
+                      ),
+                      h("td", null,
+                        h("span", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--lime-text)" } }, `${r.passed_tests}P`),
+                        "  ",
+                        h("span", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--danger-text)" } }, `${r.failed_tests}F`),
+                        "  ",
+                        h("span", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--warn-text)" } }, `${r.warn_tests}W`)
+                      ),
+                      h("td", { style: { color: "var(--text-dim)", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem" } }, r.created_at),
+                      h("td", null,
+                        h("button", {
+                          className: "btn btn-secondary",
+                          style: { padding: "0.3rem 0.65rem", fontSize: "0.75rem" },
+                          onClick: () => {
+                            setActiveReport(r);
+                            setTab("scanner");
+                          }
+                        }, "View Report")
+                      )
+                    ))
+                  )
+                )
+          )
+        );
+      };
+
+      const renderEndpoints = () => {
+        return h("div", null,
+          h("div", { className: "card" },
+            h("div", { className: "card-title" }, "Register Target Endpoint"),
+            h("form", { onSubmit: handleAddEndpoint },
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" } },
+                h("div", { className: "form-group" },
+                  h("label", null, "Target Name:"),
+                  h("input", {
+                    required: true,
+                    placeholder: "e.g. Authentication Service",
+                    value: formData.name,
+                    onChange: (e) => setFormData({ ...formData, name: e.target.value })
+                  })
+                ),
+                h("div", { className: "form-group" },
+                  h("label", null, "API URL:"),
+                  h("input", {
+                    required: true,
+                    placeholder: "http://localhost:8000/api/users",
+                    value: formData.url,
+                    onChange: (e) => setFormData({ ...formData, url: e.target.value })
+                  })
+                )
+              ),
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" } },
+                h("div", { className: "form-group" },
+                  h("label", null, "HTTP Method:"),
+                  h("select", {
+                    value: formData.method,
+                    onChange: (e) => setFormData({ ...formData, method: e.target.value })
+                  },
+                    h("option", { value: "GET" }, "GET"),
+                    h("option", { value: "POST" }, "POST"),
+                    h("option", { value: "PUT" }, "PUT"),
+                    h("option", { value: "DELETE" }, "DELETE")
+                  )
+                ),
+                h("div", { className: "form-group" },
+                  h("label", null, "Authentication Scheme:"),
+                  h("select", {
+                    value: formData.auth_type,
+                    onChange: (e) => setFormData({ ...formData, auth_type: e.target.value })
+                  },
+                    h("option", { value: "none" }, "None (Public API)"),
+                    h("option", { value: "bearer" }, "Bearer Token"),
+                    h("option", { value: "basic" }, "Basic Authentication")
+                  )
+                ),
+                h("div", { className: "form-group" },
+                  h("label", null, "Credential Token (Optional):"),
+                  h("input", {
+                    placeholder: "secret-token-123",
+                    value: formData.auth_value,
+                    onChange: (e) => setFormData({ ...formData, auth_value: e.target.value })
+                  })
+                )
+              ),
+              h("button", { type: "submit", className: "btn btn-primary" }, "Register Target")
+            )
+          ),
+
+          h("div", { className: "card" },
+            h("div", { className: "card-title" }, "Registered Target Inventory"),
+            h("table", null,
+              h("thead", null,
+                h("tr", null,
+                  h("th", null, "Name"),
+                  h("th", null, "Method"),
+                  h("th", null, "URL"),
+                  h("th", null, "Auth Type"),
+                  h("th", null, "Operations")
+                )
+              ),
+              h("tbody", null,
+                endpoints.map(ep => h("tr", { key: ep.id },
+                  h("td", null, h("span", { style: { fontWeight: 600, color: "#ffffff" } }, ep.name)),
+                  h("td", null, h("span", { className: "badge", style: { background: "#1c1c21", color: "#a1a1aa", border: "1px solid #27272a" } }, ep.method)),
+                  h("td", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--lime-text)", fontSize: "0.8rem" } }, ep.url),
+                  h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)" } }, ep.auth_type),
+                  h("td", null,
+                    h("button", {
+                      className: "btn btn-primary",
+                      style: { padding: "0.25rem 0.65rem", marginRight: "0.5rem", fontSize: "0.75rem" },
+                      onClick: () => handleRunScan(ep.id)
+                    }, "Scan"),
+                    h("button", {
+                      className: "btn btn-danger",
+                      style: { padding: "0.25rem 0.65rem", fontSize: "0.75rem" },
+                      onClick: () => handleDeleteEndpoint(ep.id)
+                    }, "Remove")
+                  )
+                ))
+              )
+            )
+          )
+        );
+      };
+
+      const renderScanner = () => {
+        return h("div", null,
+          h("div", { className: "card" },
+            h("div", { className: "card-title" }, "Automated Security Assessment Engine"),
+            h("div", { style: { display: "flex", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap" } },
+              h("div", { style: { flex: 1, minWidth: "260px" } },
+                h("label", null, "Select Target for Vulnerability Scan:"),
+                h("select", {
+                  value: scanTargetId,
+                  onChange: (e) => setScanTargetId(e.target.value)
+                },
+                  endpoints.map(ep => h("option", { key: ep.id, value: ep.id }, `${ep.name} [${ep.method} ${ep.url}]`))
+                )
+              ),
+              h("button", {
+                className: "btn btn-primary",
+                style: { padding: "0.7rem 1.6rem" },
+                disabled: loading || !scanTargetId,
+                onClick: () => handleRunScan(scanTargetId)
+              }, loading ? "Executing Security Engine..." : "Execute Security Assessment")
+            )
+          ),
+
+          activeReport && h("div", null,
+            h("div", { className: "score-banner" },
+              h("div", {
+                className: "score-circle",
+                style: {
+                  borderColor: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
+                  color: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
+                  boxShadow: activeReport.score >= 80 ? "0 0 15px rgba(132, 204, 22, 0.2)" : "none"
+                }
+              },
+                activeReport.score,
+                h("span", { style: { fontSize: "0.6rem", color: "var(--text-dim)", fontFamily: "'Inter', sans-serif" } }, "SCORE")
+              ),
+              h("div", { style: { flex: 1 } },
+                h("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.35rem" } },
+                  h("h2", { style: { fontSize: "1.25rem", fontWeight: 700, letterSpacing: "-0.02em" } }, activeReport.endpoint_name),
+                  h("span", {
+                    className: `badge badge-${activeReport.risk_level === 'LOW' ? 'LOW' : activeReport.risk_level === 'MEDIUM' ? 'MEDIUM' : 'CRITICAL'}`
+                  }, `${activeReport.risk_level} RISK`)
+                ),
+                h("div", { style: { color: "var(--lime-text)", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.825rem", marginBottom: "0.65rem" } },
+                  activeReport.endpoint_url
+                ),
+                h("div", { style: { display: "flex", gap: "1.25rem", fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace" } },
+                  h("span", { style: { color: "var(--lime-text)" } }, `Passed: ${activeReport.passed_tests}`),
+                  h("span", { style: { color: "var(--danger-text)" } }, `Failed: ${activeReport.failed_tests}`),
+                  h("span", { style: { color: "var(--warn-text)" } }, `Warnings: ${activeReport.warn_tests}`)
+                )
+              )
+            ),
+
+            h("div", { className: "card" },
+              h("div", { className: "card-title" }, "Detailed Findings & Remediation Instructions"),
+              (activeReport.findings || []).map((f, idx) => h("div", {
+                key: idx,
+                className: `finding-card ${f.status}`
+              },
+                h("div", { className: "finding-header" },
+                  h("div", { className: "finding-title" }, f.test_name),
+                  h("div", { style: { display: "flex", gap: "0.4rem" } },
+                    h("span", { className: `badge badge-${f.status}` }, f.status),
+                    h("span", { className: `badge badge-${f.severity}` }, f.severity)
+                  )
+                ),
+                h("div", { className: "finding-detail" }, f.detail),
+                h("div", { className: "finding-remedy" },
+                  h("strong", { style: { color: "#ffffff" } }, "Remediation Recommendation: "),
+                  f.remediation
+                )
+              ))
+            )
+          )
+        );
+      };
+
+      const renderViva = () => {
+        return h("div", null,
+          h("div", { className: "card" },
+            h("div", { className: "card-title" }, "Secure Software Engineering (SSE) Core Principles"),
+            h("div", { style: { lineHeight: 1.6, fontSize: "0.9rem", color: "var(--text-muted)" } },
+              h("p", { style: { marginBottom: "1rem" } },
+                "This platform integrates systematic verification across the ",
+                h("strong", { style: { color: "#ffffff" } }, "Secure Software Development Life Cycle (Secure SDLC)"),
+                " targeting the OWASP API Top 10 vulnerabilities:"
+              ),
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" } },
+                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Authentication & Access Control"),
+                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                    "Prevents Broken Object Level Authorization & Broken Authentication by enforcing valid Bearer tokens and denying unauthenticated access."
+                  )
+                ),
+                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Input Sanitization & Output Encoding"),
+                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                    "Neutralizes SQL Injection and Cross-Site Scripting (XSS) via parameter binding and HTML entity escaping."
+                  )
+                ),
+                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Rate Limiting & Anti-Abuse"),
+                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                    "Mitigates denial-of-service and automated brute-force attacks by returning HTTP 429 upon request burst thresholds."
+                  )
+                ),
+                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Defense in Depth & Header Hardening"),
+                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                    "Deploys protective browser headers (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options) to minimize attack surface."
+                  )
+                )
+              )
+            )
+          ),
+          h("div", { className: "card" },
+            h("div", { className: "card-title" }, "Academic Project Credentials"),
+            h("table", null,
+              h("tbody", null,
+                h("tr", null, h("td", { style: { color: "var(--text-dim)", width: "220px" } }, "Course"), h("td", { style: { color: "#ffffff", fontWeight: 500 } }, "Secure Software Engineering (26B11CS219)")),
+                h("tr", null, h("td", { style: { color: "var(--text-dim)" } }, "Program"), h("td", { style: { color: "#ffffff" } }, "B.Tech in Computer Science and Engineering (Cybersecurity), Semester 3")),
+                h("tr", null, h("td", { style: { color: "var(--text-dim)" } }, "Institution"), h("td", { style: { color: "#ffffff" } }, "Jaypee Institute of Information Technology, Noida")),
+                h("tr", null, h("td", { style: { color: "var(--text-dim)" } }, "Group Members"), h("td", { style: { color: "#ffffff" } }, "Shambhavi Singh (049), Labhansh Vashisht (050), Mohd. Nauman Ali (060), Kartik Virmani (039)"))
+              )
+            )
+          )
+        );
+      };
+
+      return h("div", null,
+        renderHeader(),
+        h("main", null,
+          tab === "dashboard" && renderDashboard(),
+          tab === "endpoints" && renderEndpoints(),
+          tab === "scanner" && renderScanner(),
+          tab === "viva" && renderViva()
+        ),
+        h("footer", null,
+          "APIShield • Secure Software Engineering • Group 6"
+        )
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(h(App));
+  </script>
+</body>
+</html>
