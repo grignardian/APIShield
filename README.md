@@ -84,6 +84,22 @@ pytest test_apishield.py -v
 
 ---
 
+## Code Quality & Security Analysis (Ruff & Bandit)
+
+As specified in the project synopsis, code quality linting and static security analysis are performed using **Ruff** and **Bandit**:
+
+```bash
+# 1. Code Quality & Formatting Check (Ruff)
+ruff check app.py
+
+# 2. Static Application Security Testing (Bandit)
+bandit -r app.py --skip B104
+```
+
+> **Bandit SAST Insight:** Bandit actively detects the intentional string-concatenation SQL vulnerability in our demo vulnerable endpoint (`CWE-89: B608`), validating the vulnerability detection mechanism.
+
+---
+
 ## Academic Viva / Presentation Reference
 
 **Q1: How does APIShield apply Secure SDLC concepts?**  
