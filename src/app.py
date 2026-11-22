@@ -16,6 +16,8 @@ Key Concepts Implemented:
 """
 
 import html
+import json
+import logging
 import os
 import sqlite3
 import time
@@ -28,6 +30,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.testclient import TestClient
+
+logger = logging.getLogger("apishield")
 
 # ---------------------------------------------------------------------------
 # 1. DATABASE SETUP (Using standard Python sqlite3 — very simple and reliable)
@@ -136,8 +140,8 @@ def vulnerable_get_notes(q: str | None = None):
     """
     if q:
         # Simulate SQL query reflection without sanitization
-        # nosec B608: Intentionally unescaped query string for vulnerability detection demonstration
-        query_str = f"SELECT * FROM notes WHERE content LIKE '%{q}%'"
+        # Intentionally unescaped query string for vulnerability detection demonstration
+        query_str = f"SELECT * FROM notes WHERE content LIKE '%{q}%'"  # nosec B608
         return {
             "query_executed": query_str,
             "notes": DEMO_NOTES,
@@ -149,9 +153,16 @@ def vulnerable_get_notes(q: str | None = None):
 async def vulnerable_add_note(request: Request):
     """
     VULNERABILITY 4: XSS Vulnerability (No input validation, accepts raw <script>).
-    VULNERABILITY 5: Error Disclosure (If bad data is sent, raises raw exception).
+    VULNERABILITY 5: Error Disclosure (If bad data is sent, raises raw exception with traceback).
     """
-    body = await request.json()
+    try:
+        body = await request.json()
+    except (ValueError, json.JSONDecodeError):
+        return Response(
+            content="Internal Server Error: Traceback (most recent call last):\n  File 'app.py', line 157, in vulnerable_add_note\nJSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+            status_code=500,
+            media_type="text/plain",
+        )
     content = body.get("content", "")
     # Vulnerable: Accepts anything without validation, returns raw HTML/JS payload
     new_note = {"id": len(DEMO_NOTES) + 1, "title": body.get("title", "Untitled"), "content": content}
@@ -216,7 +227,7 @@ def get_scanner_client(target_url: str):
     For external URLs, standard network httpx is used.
     """
     if "127.0.0.1:8000" in target_url or "localhost:8000" in target_url:
-        return TestClient(app, base_url="http://127.0.0.1:8000")
+        return TestClient(app, base_url="http://127.0.0.1:8000", raise_server_exceptions=False)
     return httpx.Client(timeout=4.0)
 
 def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: str) -> list[dict]:
@@ -264,7 +275,7 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
                     "detail": f"Endpoint returned unexpected status code {resp.status_code} without authentication.",
                     "remediation": "Verify endpoint access control policies."
                 })
-        except Exception as e:
+        except (httpx.HTTPError, OSError) as e:
             findings.append({
                 "test_name": "Broken Authentication",
                 "status": "WARN",
@@ -306,8 +317,8 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
                     "detail": "No SQL syntax errors or query leakage detected for payload: ' OR '1'='1",
                     "remediation": "Keep using parameterized inputs."
                 })
-        except Exception:
-            pass
+        except (httpx.HTTPError, OSError) as err:
+            logger.debug("SQL injection probe error: %s", err)
 
         # TEST 3: Cross-Site Scripting (XSS) Check (HIGH)
         try:
@@ -331,8 +342,8 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
                     "detail": "Script tags were properly sanitized or stripped.",
                     "remediation": "Maintain contextual output encoding."
                 })
-        except Exception:
-            pass
+        except (httpx.HTTPError, OSError) as err:
+            logger.debug("XSS probe error: %s", err)
 
         # TEST 4: Rate Limiting & Abuse Check (MEDIUM)
         try:
@@ -359,8 +370,8 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
                     "detail": "No rate limiting detected. Server processed 8 rapid requests without any throttling.",
                     "remediation": "Implement token bucket or sliding-window rate limiting per IP or API client."
                 })
-        except Exception:
-            pass
+        except (httpx.HTTPError, OSError) as err:
+            logger.debug("Rate limit probe error: %s", err)
 
         # TEST 5: Security Response Headers (LOW)
         try:
@@ -389,8 +400,8 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
                     "detail": "All critical security headers are present in the server response.",
                     "remediation": "Headers configured according to OWASP guidelines."
                 })
-        except Exception:
-            pass
+        except (httpx.HTTPError, OSError) as err:
+            logger.debug("Security headers probe error: %s", err)
 
         # TEST 6: Error & Stack Trace Disclosure (MEDIUM)
         try:
@@ -417,8 +428,8 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
                     "detail": "No sensitive server internals or stack traces were exposed during error states.",
                     "remediation": "Continue using centralized exception handling."
                 })
-        except Exception:
-            pass
+        except (httpx.HTTPError, OSError) as err:
+            logger.debug("Information disclosure probe error: %s", err)
 
     return findings
 

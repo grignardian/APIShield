@@ -4,6 +4,12 @@ Demonstrates:
 - Unit & integration testing of security functions
 - Validation of vulnerability detection against the demo APIs
 """
+import os
+import sys
+
+# Add src/ to path so tests can run from repo root or inside tests/
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+
 import pytest
 from fastapi.testclient import TestClient
 from app import app, get_db

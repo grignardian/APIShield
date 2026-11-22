@@ -13,20 +13,24 @@
 
 ---
 
-## Architecture Overview
-
-APIShield is consolidated into a clean, unified architecture that runs from a single process:
+## Repository Structure
 
 ```
-apishield/
-├── app.py              # FastAPI application, SQLite database, security engine, and demo APIs
-├── static/
-│   ├── index.html      # Professional React dashboard (Inter font, lime & black theme)
-│   └── js/             # Local offline React libraries
-├── test_apishield.py   # Automated pytest test cases
-├── requirements.txt    # Minimal dependencies (FastAPI, uvicorn, httpx, pytest)
-├── run.sh              # Single-command launcher
-└── README.md           # Documentation & Viva Guide
+├── documentation/          # Software Requirements (SRS), UML diagrams, and Synopsis
+│   ├── SRS.md
+│   ├── UML_DIAGRAMS.md
+│   ├── architecture.md
+│   └── SSEMiniProjectSynopsis_Group6.pdf
+├── src/                    # FastAPI backend, SQLite database, and React frontend
+│   ├── app.py
+│   └── static/
+│       ├── index.html
+│       └── js/
+├── tests/                  # Automated pytest security test suite
+│   └── test_apishield.py
+├── .gitignore              # Git ignore rules
+├── README.md               # Project documentation
+└── requirements.txt        # Minimal Python dependencies
 ```
 
 All services run on **port 8000**:
@@ -39,14 +43,17 @@ All services run on **port 8000**:
 
 ## Instructions to Run
 
-### 1. Start the Server
+### 1. Install Dependencies
 ```bash
-cd apishield
-./run.sh
-# or: python app.py
+pip install -r requirements.txt
 ```
 
-### 2. Access the Dashboard
+### 2. Start the Server
+```bash
+python src/app.py
+```
+
+### 3. Access the Dashboard
 Open your browser at:
 **http://localhost:8000**
 
@@ -79,7 +86,7 @@ $$\text{Security Score} = \max\left(0, 100 - (\text{CRITICAL}\times 30 + \text{H
 
 Execute the automated test suite with:
 ```bash
-pytest test_apishield.py -v
+pytest tests/ -v
 ```
 
 ---
@@ -90,10 +97,10 @@ As specified in the project synopsis, code quality linting and static security a
 
 ```bash
 # 1. Code Quality & Formatting Check (Ruff)
-ruff check app.py
+ruff check src/
 
 # 2. Static Application Security Testing (Bandit)
-bandit -r app.py --skip B104
+bandit -r src/ --skip B104
 ```
 
 > **Bandit SAST Insight:** Bandit actively detects the intentional string-concatenation SQL vulnerability in our demo vulnerable endpoint (`CWE-89: B608`), validating the vulnerability detection mechanism.
