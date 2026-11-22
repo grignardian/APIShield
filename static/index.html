@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APIShield — API Security Testing Platform</title>
   
-  <!-- Professional Inter & JetBrains Mono Fonts -->
+  <!-- Inter Font (Full Optical Size & Weight Range) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   
   <!-- Offline local React scripts -->
   <script src="/static/js/react.js"></script>
@@ -16,276 +16,306 @@
   
   <style>
     :root {
-      /* Lime Green & Black Palette */
-      --bg-canvas: #09090b;
-      --bg-surface: #121215;
-      --bg-surface-elevated: #18181c;
-      --border-subtle: #27272a;
-      --border-muted: #3f3f46;
+      /* Apple-style Pitch Black & Lime Green Palette */
+      --bg-canvas: #000000;
+      --bg-surface: #0e0e11;
+      --bg-surface-elevated: #15151a;
+      --bg-surface-card: #121216;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --border-active: rgba(255, 255, 255, 0.25);
       
       --lime-primary: #84cc16;
-      --lime-hover: #a3e635;
+      --lime-bright: #a3e635;
       --lime-text: #bef264;
-      --lime-dark: #1e2e0a;
-      --lime-border: #3f6212;
-      --lime-glow: rgba(132, 204, 22, 0.2);
+      --lime-dark: rgba(132, 204, 22, 0.12);
+      --lime-border: rgba(132, 204, 22, 0.3);
+      --lime-glow: rgba(132, 204, 22, 0.25);
 
-      --text-main: #f4f4f5;
+      --text-main: #ffffff;
       --text-muted: #a1a1aa;
       --text-dim: #71717a;
 
       --danger-text: #f87171;
-      --danger-bg: #2b1114;
-      --danger-border: #7f1d1d;
+      --danger-bg: rgba(239, 68, 68, 0.1);
+      --danger-border: rgba(239, 68, 68, 0.3);
 
       --warn-text: #fbbf24;
-      --warn-bg: #291a07;
-      --warn-border: #78350f;
+      --warn-bg: rgba(245, 158, 11, 0.1);
+      --warn-border: rgba(245, 158, 11, 0.3);
 
       --pass-text: #bef264;
-      --pass-bg: #142308;
-      --pass-border: #365314;
+      --pass-bg: rgba(132, 204, 22, 0.1);
+      --pass-border: rgba(132, 204, 22, 0.3);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
+    }
     
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-canvas);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
     }
 
+    /* Apple-style Frosted Glass Navigation Bar */
     header {
-      background-color: #000000;
+      background-color: rgba(10, 10, 14, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0.85rem 2rem;
+      padding: 0.9rem 2.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
     }
 
     .brand-container {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .brand-mark {
       width: 14px;
       height: 14px;
       background-color: var(--lime-primary);
-      box-shadow: 0 0 10px var(--lime-primary);
-      border-radius: 2px;
+      box-shadow: 0 0 14px var(--lime-primary);
+      border-radius: 4px;
     }
 
     .brand-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
       color: #ffffff;
       text-transform: uppercase;
     }
 
     .brand-title span {
       color: var(--lime-primary);
+      font-weight: 800;
     }
 
     .brand-tag {
-      font-family: 'JetBrains Mono', monospace;
       font-size: 0.7rem;
       background-color: var(--lime-dark);
       color: var(--lime-text);
       border: 1px solid var(--lime-border);
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 980px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
     }
 
-    nav { display: flex; gap: 0.35rem; }
+    /* Apple Pill Segmented Navigation */
+    nav {
+      display: flex;
+      gap: 0.35rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.3rem;
+      border-radius: 980px;
+      border: 1px solid var(--border-subtle);
+    }
 
     .nav-btn {
       background: transparent;
-      border: 1px solid transparent;
+      border: none;
       color: var(--text-muted);
-      padding: 0.5rem 0.95rem;
-      border-radius: 6px;
+      padding: 0.45rem 1.05rem;
+      border-radius: 980px;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
+      font-weight: 600;
       font-size: 0.825rem;
-      letter-spacing: -0.01em;
-      transition: all 0.15s ease-in-out;
+      letter-spacing: -0.015em;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .nav-btn:hover {
-      color: var(--text-main);
-      background-color: var(--bg-surface-elevated);
-      border-color: var(--border-subtle);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .nav-btn.active {
       color: #000000;
       background-color: var(--lime-primary);
-      border-color: var(--lime-primary);
-      font-weight: 600;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(132, 204, 22, 0.35);
     }
 
     main {
       flex: 1;
-      padding: 2rem;
+      padding: 2.25rem;
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
     }
 
+    /* Apple Dark Elevated Cards */
     .card {
-      background-color: var(--bg-surface);
+      background: linear-gradient(180deg, #131317 0%, #0e0e12 100%);
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     }
 
     .card-title {
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: 0.825rem;
+      font-weight: 800;
       letter-spacing: -0.01em;
-      color: #ffffff;
-      margin-bottom: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       text-transform: uppercase;
-      font-size: 0.8rem;
-      color: var(--text-muted);
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.25rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
     }
 
     .stat-card {
-      background: var(--bg-surface);
+      background: linear-gradient(180deg, #141418 0%, #0e0e12 100%);
       border: 1px solid var(--border-subtle);
-      padding: 1.25rem;
-      border-radius: 8px;
+      padding: 1.5rem;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
     }
 
     .stat-lbl {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--text-dim);
+      font-size: 0.775rem;
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.02em;
+      font-weight: 700;
     }
 
     .stat-val {
-      font-size: 2.2rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
       color: #ffffff;
-      margin-top: 0.35rem;
-      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.4rem;
+      line-height: 1;
     }
 
     .stat-val.lime {
       color: var(--lime-primary);
     }
 
+    /* Apple-style Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.55rem 1.1rem;
-      border-radius: 6px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       cursor: pointer;
-      transition: all 0.15s ease-in-out;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       border: 1px solid transparent;
       outline: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
     }
 
     .btn-primary {
       background-color: var(--lime-primary);
       color: #000000;
       border-color: var(--lime-primary);
+      box-shadow: 0 2px 12px rgba(132, 204, 22, 0.25);
     }
 
     .btn-primary:hover:not(:disabled) {
-      background-color: var(--lime-hover);
-      box-shadow: 0 0 12px var(--lime-glow);
+      background-color: var(--lime-bright);
+      box-shadow: 0 4px 18px rgba(132, 204, 22, 0.4);
     }
 
     .btn-primary:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
     .btn-secondary {
-      background-color: var(--bg-surface-elevated);
-      color: var(--text-main);
+      background-color: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
       border-color: var(--border-subtle);
     }
 
     .btn-secondary:hover {
-      border-color: var(--border-muted);
-      background-color: #222228;
+      background-color: rgba(255, 255, 255, 0.12);
+      border-color: var(--border-hover);
     }
 
     .btn-demo-vuln {
-      background-color: #170d0f;
+      background-color: rgba(239, 68, 68, 0.1);
       color: #fca5a5;
-      border: 1px solid #7f1d1d;
+      border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
     .btn-demo-vuln:hover:not(:disabled) {
-      background-color: #2b1114;
-      border-color: #dc2626;
+      background-color: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
       color: #ffffff;
     }
 
     .btn-demo-sec {
-      background-color: #0c1a06;
+      background-color: rgba(132, 204, 22, 0.1);
       color: #bef264;
-      border: 1px solid #365314;
+      border: 1px solid rgba(132, 204, 22, 0.3);
     }
 
     .btn-demo-sec:hover:not(:disabled) {
-      background-color: #162f0a;
+      background-color: rgba(132, 204, 22, 0.2);
       border-color: var(--lime-primary);
       color: #ffffff;
     }
 
     .btn-danger {
-      background-color: #1f1214;
+      background-color: rgba(239, 68, 68, 0.1);
       color: var(--danger-text);
       border-color: var(--danger-border);
     }
 
     .btn-danger:hover {
-      background-color: #3b1419;
+      background-color: rgba(239, 68, 68, 0.25);
       color: #ffffff;
     }
 
+    /* Apple-style Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -293,31 +323,34 @@
     }
 
     th {
-      padding: 0.75rem 1rem;
+      padding: 0.85rem 1.15rem;
       border-bottom: 1px solid var(--border-subtle);
       color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.725rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
+      font-weight: 800;
     }
 
     td {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid #1c1c21;
-      font-size: 0.875rem;
+      padding: 1rem 1.15rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
     }
 
     tr:last-child td { border-bottom: none; }
 
+    /* Apple-style Pill Badges */
     .badge {
-      display: inline-block;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: 980px;
+      font-size: 0.725rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
     }
 
@@ -340,91 +373,100 @@
     }
 
     .badge-CRITICAL {
-      background: #7f1d1d;
-      color: #fecaca;
-      border: 1px solid #991b1b;
+      background: rgba(220, 38, 38, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(220, 38, 38, 0.5);
     }
 
     .badge-HIGH {
-      background: #7c2d12;
-      color: #fed7aa;
-      border: 1px solid #9a3412;
+      background: rgba(234, 88, 12, 0.2);
+      color: #fdba74;
+      border: 1px solid rgba(234, 88, 12, 0.5);
     }
 
     .badge-MEDIUM {
-      background: #713f12;
-      color: #fef08a;
-      border: 1px solid #854d0e;
+      background: rgba(217, 119, 6, 0.2);
+      color: #fde047;
+      border: 1px solid rgba(217, 119, 6, 0.5);
     }
 
     .badge-LOW {
-      background: #1e2e0a;
+      background: rgba(132, 204, 22, 0.15);
       color: #bef264;
-      border: 1px solid #365314;
+      border: 1px solid var(--lime-border);
     }
 
-    .form-group { margin-bottom: 1.15rem; }
+    /* Apple-style Forms */
+    .form-group { margin-bottom: 1.25rem; }
 
     label {
       display: block;
       font-size: 0.8rem;
-      font-weight: 500;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       color: var(--text-muted);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.45rem;
     }
 
     input, select {
       width: 100%;
-      padding: 0.65rem 0.85rem;
-      background: #000000;
+      padding: 0.75rem 1rem;
+      background: #070709;
       border: 1px solid var(--border-subtle);
-      border-radius: 6px;
+      border-radius: 10px;
       color: #ffffff;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.875rem;
-      transition: border-color 0.15s;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      transition: all 0.2s;
     }
 
     input:focus, select:focus {
       outline: none;
       border-color: var(--lime-primary);
-      box-shadow: 0 0 0 1px var(--lime-primary);
+      box-shadow: 0 0 0 3px var(--lime-dark);
+      background: #0a0a0e;
     }
 
+    /* Apple Score Gauge Banner */
     .score-banner {
       display: flex;
       align-items: center;
-      gap: 2rem;
-      background: #000000;
+      gap: 2.25rem;
+      background: linear-gradient(180deg, #131318 0%, #0c0c0f 100%);
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 1.75rem;
-      margin-bottom: 1.5rem;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
     }
 
     .score-circle {
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.85rem;
-      font-weight: 800;
-      border: 3px solid;
-      background: #09090b;
+      font-size: 2.4rem;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      border: 4px solid;
+      background: #060608;
       flex-shrink: 0;
+      line-height: 1;
     }
 
+    /* Apple Health style Finding Cards */
     .finding-card {
-      background: #0b0b0e;
+      background: linear-gradient(180deg, #111115 0%, #0c0c0f 100%);
       border: 1px solid var(--border-subtle);
-      border-left: 3px solid;
-      border-radius: 6px;
-      padding: 1.1rem;
-      margin-bottom: 0.85rem;
+      border-left: 4px solid;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
 
     .finding-card.FAIL { border-left-color: var(--danger-text); }
@@ -435,37 +477,41 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
 
     .finding-title {
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
       color: #ffffff;
     }
 
     .finding-detail {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--text-muted);
-      margin-bottom: 0.65rem;
-      line-height: 1.5;
+      margin-bottom: 0.75rem;
+      line-height: 1.55;
+      font-weight: 400;
     }
 
     .finding-remedy {
-      font-size: 0.8rem;
-      background: rgba(132, 204, 22, 0.05);
+      font-size: 0.825rem;
+      background: rgba(132, 204, 22, 0.06);
       border: 1px solid var(--lime-border);
       color: var(--lime-text);
-      padding: 0.65rem 0.85rem;
-      border-radius: 4px;
-      line-height: 1.45;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      line-height: 1.5;
+      font-weight: 500;
     }
 
     footer {
       text-align: center;
-      padding: 1.5rem;
-      font-size: 0.775rem;
-      font-family: 'JetBrains Mono', monospace;
+      padding: 1.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
       color: var(--text-dim);
       border-top: 1px solid var(--border-subtle);
       background-color: #000000;
@@ -603,10 +649,10 @@
           : 0;
 
         return h("div", null,
-          h("div", { className: "card", style: { border: "1px solid var(--lime-border)", background: "#0e1509" } },
-            h("div", { className: "card-title", style: { color: "var(--lime-text)" } }, "Quick Demonstration Targets"),
-            h("p", { style: { color: "var(--text-muted)", marginBottom: "1.25rem", fontSize: "0.875rem" } },
-              "Execute controlled security scans against pre-configured vulnerable and hardened sample API targets:"
+          h("div", { className: "card", style: { border: "1px solid var(--lime-border)", background: "linear-gradient(180deg, #121c0b 0%, #0b1107 100%)" } },
+            h("div", { className: "card-title", style: { color: "var(--lime-text)", fontWeight: 800 } }, "Quick Demonstration Targets"),
+            h("p", { style: { color: "var(--text-muted)", marginBottom: "1.25rem", fontSize: "0.9rem", fontWeight: 500, letterSpacing: "-0.01em" } },
+              "Execute automated security evaluations against built-in vulnerable and hardened targets:"
             ),
             h("div", { style: { display: "flex", gap: "0.85rem", flexWrap: "wrap" } },
               h("button", {
@@ -617,7 +663,7 @@
                   if (vuln) handleRunScan(vuln.id);
                   else alert("Vulnerable endpoint not located.");
                 }
-              }, loading ? "Executing Assessment..." : "Scan Insecure API (Expected Score: ~40)"),
+              }, loading ? "Executing Assessment..." : "Scan Insecure API (Score: ~40)"),
               h("button", {
                 className: "btn btn-demo-sec",
                 disabled: loading,
@@ -626,7 +672,7 @@
                   if (sec) handleRunScan(sec.id);
                   else alert("Secure endpoint not located.");
                 }
-              }, loading ? "Executing Assessment..." : "Scan Hardened API (Expected Score: ~100)")
+              }, loading ? "Executing Assessment..." : "Scan Hardened API (Score: ~100)")
             )
           ),
           
@@ -651,26 +697,26 @@
           h("div", { className: "card" },
             h("div", { className: "card-title" }, "Assessment Audit Log"),
             reports.length === 0 
-              ? h("p", { style: { color: "var(--text-dim)", padding: "1rem 0", fontSize: "0.85rem" } }, "No scans executed yet. Use the demonstration targets above or configure an endpoint.")
+              ? h("p", { style: { color: "var(--text-dim)", padding: "1.5rem 0", fontSize: "0.9rem", fontWeight: 500 } }, "No scans executed yet. Use the demonstration targets above or configure an endpoint.")
               : h("table", null,
                   h("thead", null,
                     h("tr", null,
                       h("th", null, "Target Endpoint"),
                       h("th", null, "Score"),
                       h("th", null, "Risk Level"),
-                      h("th", null, "Pass / Fail / Warn"),
+                      h("th", null, "Passed / Failed / Warned"),
                       h("th", null, "Timestamp"),
                       h("th", null, "Action")
                     )
                   ),
                   h("tbody", null,
                     reports.map(r => h("tr", { key: r.id },
-                      h("td", null, h("span", { style: { fontWeight: 600, color: "#ffffff" } }, r.endpoint_name)),
+                      h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" } }, r.endpoint_name)),
                       h("td", null,
                         h("span", {
                           style: {
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontWeight: 700,
+                            fontWeight: 800,
+                            letterSpacing: "-0.02em",
                             color: r.score >= 80 ? "var(--lime-primary)" : r.score >= 50 ? "var(--warn-text)" : "var(--danger-text)"
                           }
                         }, `${r.score} / 100`)
@@ -681,17 +727,17 @@
                         }, r.risk_level)
                       ),
                       h("td", null,
-                        h("span", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--lime-text)" } }, `${r.passed_tests}P`),
+                        h("span", { style: { fontWeight: 700, color: "var(--lime-text)" } }, `${r.passed_tests}P`),
                         "  ",
-                        h("span", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--danger-text)" } }, `${r.failed_tests}F`),
+                        h("span", { style: { fontWeight: 700, color: "var(--danger-text)" } }, `${r.failed_tests}F`),
                         "  ",
-                        h("span", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--warn-text)" } }, `${r.warn_tests}W`)
+                        h("span", { style: { fontWeight: 700, color: "var(--warn-text)" } }, `${r.warn_tests}W`)
                       ),
-                      h("td", { style: { color: "var(--text-dim)", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem" } }, r.created_at),
+                      h("td", { style: { color: "var(--text-dim)", fontWeight: 500, fontSize: "0.8rem" } }, r.created_at),
                       h("td", null,
                         h("button", {
                           className: "btn btn-secondary",
-                          style: { padding: "0.3rem 0.65rem", fontSize: "0.75rem" },
+                          style: { padding: "0.35rem 0.8rem", fontSize: "0.775rem", borderRadius: "8px" },
                           onClick: () => {
                             setActiveReport(r);
                             setTab("scanner");
@@ -710,7 +756,7 @@
           h("div", { className: "card" },
             h("div", { className: "card-title" }, "Register Target Endpoint"),
             h("form", { onSubmit: handleAddEndpoint },
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" } },
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" } },
                 h("div", { className: "form-group" },
                   h("label", null, "Target Name:"),
                   h("input", {
@@ -730,7 +776,7 @@
                   })
                 )
               ),
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" } },
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.25rem" } },
                 h("div", { className: "form-group" },
                   h("label", null, "HTTP Method:"),
                   h("select", {
@@ -781,19 +827,19 @@
               ),
               h("tbody", null,
                 endpoints.map(ep => h("tr", { key: ep.id },
-                  h("td", null, h("span", { style: { fontWeight: 600, color: "#ffffff" } }, ep.name)),
-                  h("td", null, h("span", { className: "badge", style: { background: "#1c1c21", color: "#a1a1aa", border: "1px solid #27272a" } }, ep.method)),
-                  h("td", { style: { fontFamily: "'JetBrains Mono', monospace", color: "var(--lime-text)", fontSize: "0.8rem" } }, ep.url),
-                  h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)" } }, ep.auth_type),
+                  h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" } }, ep.name)),
+                  h("td", null, h("span", { className: "badge", style: { background: "rgba(255,255,255,0.06)", color: "#ffffff", border: "1px solid rgba(255,255,255,0.12)" } }, ep.method)),
+                  h("td", { style: { fontWeight: 600, color: "var(--lime-text)", fontSize: "0.85rem", letterSpacing: "-0.02em" } }, ep.url),
+                  h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)", fontWeight: 500 } }, ep.auth_type),
                   h("td", null,
                     h("button", {
                       className: "btn btn-primary",
-                      style: { padding: "0.25rem 0.65rem", marginRight: "0.5rem", fontSize: "0.75rem" },
+                      style: { padding: "0.3rem 0.75rem", marginRight: "0.5rem", fontSize: "0.775rem", borderRadius: "8px" },
                       onClick: () => handleRunScan(ep.id)
                     }, "Scan"),
                     h("button", {
                       className: "btn btn-danger",
-                      style: { padding: "0.25rem 0.65rem", fontSize: "0.75rem" },
+                      style: { padding: "0.3rem 0.75rem", fontSize: "0.775rem", borderRadius: "8px" },
                       onClick: () => handleDeleteEndpoint(ep.id)
                     }, "Remove")
                   )
@@ -820,7 +866,7 @@
               ),
               h("button", {
                 className: "btn btn-primary",
-                style: { padding: "0.7rem 1.6rem" },
+                style: { padding: "0.8rem 1.85rem", fontSize: "0.925rem" },
                 disabled: loading || !scanTargetId,
                 onClick: () => handleRunScan(scanTargetId)
               }, loading ? "Executing Security Engine..." : "Execute Security Assessment")
@@ -834,23 +880,23 @@
                 style: {
                   borderColor: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
                   color: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
-                  boxShadow: activeReport.score >= 80 ? "0 0 15px rgba(132, 204, 22, 0.2)" : "none"
+                  boxShadow: activeReport.score >= 80 ? "0 0 24px rgba(132, 204, 22, 0.3)" : "none"
                 }
               },
                 activeReport.score,
-                h("span", { style: { fontSize: "0.6rem", color: "var(--text-dim)", fontFamily: "'Inter', sans-serif" } }, "SCORE")
+                h("span", { style: { fontSize: "0.625rem", color: "var(--text-dim)", fontWeight: 800, letterSpacing: "0.05em", marginTop: "4px" } }, "SCORE")
               ),
               h("div", { style: { flex: 1 } },
-                h("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.35rem" } },
-                  h("h2", { style: { fontSize: "1.25rem", fontWeight: 700, letterSpacing: "-0.02em" } }, activeReport.endpoint_name),
+                h("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.4rem" } },
+                  h("h2", { style: { fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-0.03em" } }, activeReport.endpoint_name),
                   h("span", {
                     className: `badge badge-${activeReport.risk_level === 'LOW' ? 'LOW' : activeReport.risk_level === 'MEDIUM' ? 'MEDIUM' : 'CRITICAL'}`
                   }, `${activeReport.risk_level} RISK`)
                 ),
-                h("div", { style: { color: "var(--lime-text)", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.825rem", marginBottom: "0.65rem" } },
+                h("div", { style: { color: "var(--lime-text)", fontWeight: 600, fontSize: "0.875rem", letterSpacing: "-0.02em", marginBottom: "0.75rem" } },
                   activeReport.endpoint_url
                 ),
-                h("div", { style: { display: "flex", gap: "1.25rem", fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace" } },
+                h("div", { style: { display: "flex", gap: "1.5rem", fontSize: "0.825rem", fontWeight: 700 } },
                   h("span", { style: { color: "var(--lime-text)" } }, `Passed: ${activeReport.passed_tests}`),
                   h("span", { style: { color: "var(--danger-text)" } }, `Failed: ${activeReport.failed_tests}`),
                   h("span", { style: { color: "var(--warn-text)" } }, `Warnings: ${activeReport.warn_tests}`)
@@ -866,14 +912,14 @@
               },
                 h("div", { className: "finding-header" },
                   h("div", { className: "finding-title" }, f.test_name),
-                  h("div", { style: { display: "flex", gap: "0.4rem" } },
+                  h("div", { style: { display: "flex", gap: "0.45rem" } },
                     h("span", { className: `badge badge-${f.status}` }, f.status),
                     h("span", { className: `badge badge-${f.severity}` }, f.severity)
                   )
                 ),
                 h("div", { className: "finding-detail" }, f.detail),
                 h("div", { className: "finding-remedy" },
-                  h("strong", { style: { color: "#ffffff" } }, "Remediation Recommendation: "),
+                  h("strong", { style: { color: "#ffffff", fontWeight: 700 } }, "Remediation Recommendation: "),
                   f.remediation
                 )
               ))
@@ -886,34 +932,34 @@
         return h("div", null,
           h("div", { className: "card" },
             h("div", { className: "card-title" }, "Secure Software Engineering (SSE) Core Principles"),
-            h("div", { style: { lineHeight: 1.6, fontSize: "0.9rem", color: "var(--text-muted)" } },
-              h("p", { style: { marginBottom: "1rem" } },
+            h("div", { style: { lineHeight: 1.6, fontSize: "0.925rem", color: "var(--text-muted)", fontWeight: 400 } },
+              h("p", { style: { marginBottom: "1.25rem" } },
                 "This platform integrates systematic verification across the ",
-                h("strong", { style: { color: "#ffffff" } }, "Secure Software Development Life Cycle (Secure SDLC)"),
+                h("strong", { style: { color: "#ffffff", fontWeight: 700 } }, "Secure Software Development Life Cycle (Secure SDLC)"),
                 " targeting the OWASP API Top 10 vulnerabilities:"
               ),
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" } },
-                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Authentication & Access Control"),
-                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginTop: "1rem" } },
+                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Authentication & Access Control"),
+                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Prevents Broken Object Level Authorization & Broken Authentication by enforcing valid Bearer tokens and denying unauthenticated access."
                   )
                 ),
-                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Input Sanitization & Output Encoding"),
-                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Input Sanitization & Output Encoding"),
+                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Neutralizes SQL Injection and Cross-Site Scripting (XSS) via parameter binding and HTML entity escaping."
                   )
                 ),
-                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Rate Limiting & Anti-Abuse"),
-                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Rate Limiting & Anti-Abuse"),
+                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Mitigates denial-of-service and automated brute-force attacks by returning HTTP 429 upon request burst thresholds."
                   )
                 ),
-                h("div", { style: { background: "#0b0b0e", border: "1px solid var(--border-subtle)", padding: "1rem", borderRadius: "6px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 600, marginBottom: "0.35rem", fontSize: "0.85rem" } }, "Defense in Depth & Header Hardening"),
-                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)" } },
+                h("div", { style: { background: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
+                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Defense in Depth & Header Hardening"),
+                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
                     "Deploys protective browser headers (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options) to minimize attack surface."
                   )
                 )
@@ -924,10 +970,10 @@
             h("div", { className: "card-title" }, "Academic Project Credentials"),
             h("table", null,
               h("tbody", null,
-                h("tr", null, h("td", { style: { color: "var(--text-dim)", width: "220px" } }, "Course"), h("td", { style: { color: "#ffffff", fontWeight: 500 } }, "Secure Software Engineering (26B11CS219)")),
-                h("tr", null, h("td", { style: { color: "var(--text-dim)" } }, "Program"), h("td", { style: { color: "#ffffff" } }, "B.Tech in Computer Science and Engineering (Cybersecurity), Semester 3")),
-                h("tr", null, h("td", { style: { color: "var(--text-dim)" } }, "Institution"), h("td", { style: { color: "#ffffff" } }, "Jaypee Institute of Information Technology, Noida")),
-                h("tr", null, h("td", { style: { color: "var(--text-dim)" } }, "Group Members"), h("td", { style: { color: "#ffffff" } }, "Shambhavi Singh (049), Labhansh Vashisht (050), Mohd. Nauman Ali (060), Kartik Virmani (039)"))
+                h("tr", null, h("td", { style: { color: "var(--text-dim)", width: "220px", fontWeight: 700 } }, "Course"), h("td", { style: { color: "#ffffff", fontWeight: 600 } }, "Secure Software Engineering (26B11CS219)")),
+                h("tr", null, h("td", { style: { color: "var(--text-dim)", fontWeight: 700 } }, "Program"), h("td", { style: { color: "#ffffff", fontWeight: 500 } }, "B.Tech in Computer Science and Engineering (Cybersecurity), Semester 3")),
+                h("tr", null, h("td", { style: { color: "var(--text-dim)", fontWeight: 700 } }, "Institution"), h("td", { style: { color: "#ffffff", fontWeight: 500 } }, "Jaypee Institute of Information Technology, Noida")),
+                h("tr", null, h("td", { style: { color: "var(--text-dim)", fontWeight: 700 } }, "Group Members"), h("td", { style: { color: "#ffffff", fontWeight: 600 } }, "Shambhavi Singh (049), Labhansh Vashisht (050), Mohd. Nauman Ali (060), Kartik Virmani (039)"))
               )
             )
           )
