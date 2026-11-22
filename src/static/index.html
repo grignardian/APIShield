@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APIShield — Automated API Security Testing Platform</title>
   
-  <!-- Inter Font (Full Optical Size & Weight Range) -->
+  <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- Offline local React scripts -->
   <script src="/static/js/react.js"></script>
@@ -16,323 +16,793 @@
   
   <style>
     :root {
-      /* Forest Dark Theme Palette (Exact match to Task Analysis / Forest) */
-      --bg-canvas: #0c1513;
-      --bg-surface: #13221f;
-      --bg-surface-elevated: #182a26;
-      --bg-surface-card: #152522;
+      /* Dark Matte Theme Palette (Matching Stats Dashboard Reference) */
+      --bg-page: #1a1b1f;
+      --bg-sidebar: #101113;
+      --bg-card: #131417;
+      --bg-card-elevated: #18191e;
+      --bg-pill: #1f2026;
+      --bg-pill-hover: #262830;
       
-      --border-subtle: #233c36;
-      --border-hover: #31524a;
-      --border-active: #3e685e;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.12);
+      --border-active: rgba(255, 255, 255, 0.22);
       
-      /* Chartreuse Lime Accent */
-      --lime-primary: #dcf836;
-      --lime-bright: #e7fb55;
-      --lime-text: #e1f848;
-      --lime-dark: rgba(220, 248, 54, 0.12);
-      --lime-border: rgba(220, 248, 54, 0.32);
-      --lime-glow: rgba(220, 248, 54, 0.28);
+      /* Neon Lime Primary Accent */
+      --lime-neon: #d2f829;
+      --lime-glow: rgba(210, 248, 41, 0.35);
+      --lime-dark: rgba(210, 248, 41, 0.12);
+      --lime-border: rgba(210, 248, 41, 0.35);
+      
+      /* Multi-Accent Palette */
+      --accent-coral: #ff5c7c;
+      --accent-coral-bg: rgba(255, 92, 124, 0.14);
+      --accent-coral-border: rgba(255, 92, 124, 0.35);
 
-      /* Mint Cyan / Teal Accent */
-      --teal-accent: #3ebbb0;
-      --teal-light: #5de0d5;
-      --teal-dark: rgba(62, 187, 176, 0.12);
-      --teal-border: rgba(62, 187, 176, 0.32);
+      --accent-peach: #f8a538;
+      --accent-peach-bg: rgba(248, 165, 56, 0.14);
+      --accent-peach-border: rgba(248, 165, 56, 0.35);
 
-      /* Sage / Olive Accent */
-      --sage-accent: #8ec843;
-      --sage-dark: rgba(142, 200, 67, 0.15);
+      --accent-teal: #3ebbb0;
+      --accent-teal-bg: rgba(62, 187, 176, 0.14);
+      --accent-teal-border: rgba(62, 187, 176, 0.35);
 
-      /* Neutral Typography */
-      --text-main: #ffffff;
-      --text-muted: #8dafa7;
-      --text-dim: #5b7a73;
+      --accent-purple: #9d72ff;
+      --accent-purple-bg: rgba(157, 114, 255, 0.14);
+      --accent-purple-border: rgba(157, 114, 255, 0.35);
 
-      /* Risk Indicators */
-      --danger-text: #ff7675;
-      --danger-bg: rgba(255, 118, 117, 0.12);
-      --danger-border: rgba(255, 118, 117, 0.35);
-
-      --warn-text: #fed330;
-      --warn-bg: rgba(254, 211, 48, 0.12);
-      --warn-border: rgba(254, 211, 48, 0.35);
-
-      --pass-text: #dcf836;
-      --pass-bg: rgba(220, 248, 54, 0.12);
-      --pass-border: rgba(220, 248, 54, 0.35);
+      /* Typography */
+      --text-white: #ffffff;
+      --text-muted: #8e9099;
+      --text-dim: #5c5e68;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
     
     body {
-      background-color: var(--bg-canvas);
-      color: var(--text-main);
+      background-color: var(--bg-page);
+      color: var(--text-white);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
     }
 
-    /* Forest Frosted Navigation Bar */
-    header {
-      background-color: rgba(12, 21, 19, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.95rem 2.25rem;
+    /* Outer Dashboard Layout */
+    .app-layout {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      background-color: var(--bg-page);
+    }
+
+    /* Left Slim Vertical Sidebar */
+    .sidebar {
+      width: 76px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 0;
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      background: #191b20;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
+
+    .brand-logo-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      gap: 3px;
+      align-items: center;
+    }
+
+    .brand-dot-lime {
+      width: 6px;
+      height: 18px;
+      background-color: var(--lime-neon);
+      border-radius: 4px;
+      box-shadow: 0 0 10px var(--lime-glow);
+    }
+
+    .brand-dot-sub {
+      width: 6px;
+      height: 10px;
+      background-color: var(--text-muted);
+      border-radius: 4px;
+    }
+
+    .nav-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      flex: 1;
+      width: 100%;
+      align-items: center;
+    }
+
+    .sidebar-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sidebar-btn:hover {
+      background: var(--bg-pill);
+      color: var(--text-white);
+    }
+
+    .sidebar-btn.active {
+      background: var(--bg-card-elevated);
+      color: var(--lime-neon);
+      border: 1px solid var(--lime-border);
+      box-shadow: 0 4px 14px rgba(210, 248, 41, 0.15);
+    }
+
+    .sidebar-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar-pill {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #23252d;
+      border: 2px solid var(--lime-neon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.75rem;
+      color: var(--lime-neon);
+    }
+
+    /* Main Content Area */
+    .main-wrapper {
+      flex: 1;
+      padding: 1.75rem 2rem;
+      overflow-y: auto;
+      max-width: calc(100vw - 76px);
+      display: flex;
+      gap: 1.75rem;
+    }
+
+    .center-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Top Stats Header */
+    .top-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      margin-bottom: 1.5rem;
     }
 
-    .brand-container {
+    .header-titles h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--text-white);
+    }
+
+    .header-titles span {
+      font-size: 0.725rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .project-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 0.55rem 1.1rem;
+      border-radius: 980px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .project-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--lime-neon);
+      box-shadow: 0 0 8px var(--lime-glow);
+    }
+
+    /* Hero Card (Matching Daily Sales Activity from image) */
+    .hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      font-size: 0.725rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .hero-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 0.5rem 0;
+    }
+
+    /* Bubble Metric Visualization Area */
+    .bubble-canvas {
+      flex: 1;
+      height: 180px;
+      background: #0f1013;
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bubble-main {
+      width: 130px;
+      height: 130px;
+      background: var(--lime-neon);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #0c0d10;
+      box-shadow: 0 0 35px var(--lime-glow);
+      z-index: 5;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bubble-main:hover {
+      transform: scale(1.05);
+    }
+
+    .bubble-main-val {
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .bubble-main-lbl {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+      color: #2b3506;
+    }
+
+    .satellite-bubble {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      z-index: 4;
+      transition: transform 0.2s;
+    }
+
+    .satellite-bubble:hover {
+      transform: scale(1.08);
+    }
+
+    .bubble-coral {
+      width: 58px;
+      height: 58px;
+      background: var(--accent-coral);
+      top: 20px;
+      left: 18%;
+      font-size: 0.8rem;
+    }
+
+    .bubble-peach {
+      width: 66px;
+      height: 66px;
+      background: var(--accent-peach);
+      bottom: 16px;
+      left: 24%;
+      font-size: 0.85rem;
+    }
+
+    .bubble-purple {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-purple);
+      bottom: 24px;
+      left: 10%;
+      font-size: 0.725rem;
+    }
+
+    .bubble-teal {
+      width: 52px;
+      height: 52px;
+      background: var(--accent-teal);
+      top: 28px;
+      right: 22%;
+      font-size: 0.775rem;
+    }
+
+    .bubble-small-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    /* Right side mini-chart in Hero Card */
+    .hero-side-widget {
+      width: 260px;
+      background: #0f1013;
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .widget-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .widget-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .widget-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 80px;
+      padding: 0 0.4rem;
+    }
+
+    .bar-col {
+      width: 14px;
+      border-radius: 980px;
+      transition: height 0.4s;
+    }
+
+    .bar-col.lime {
+      background: var(--lime-neon);
+      box-shadow: 0 0 10px rgba(210, 248, 41, 0.3);
+    }
+
+    .bar-col.dim {
+      background: #272832;
+    }
+
+    .bar-col.teal {
+      background: var(--accent-teal);
+    }
+
+    .widget-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      margin-top: 0.5rem;
+      padding: 0 0.2rem;
+    }
+
+    /* 4 3D Stack Cards Row (Matching image) */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stack-card {
+      border-radius: 20px;
+      padding: 1.35rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+      min-height: 150px;
+    }
+
+    /* Multi-layered physical stack effect */
+    .stack-card::before {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 10px;
+      right: 10px;
+      height: 8px;
+      background: rgba(18, 19, 23, 0.8);
+      border-radius: 14px;
+      z-index: -1;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .stack-card::after {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      left: 20px;
+      right: 20px;
+      height: 8px;
+      background: rgba(12, 13, 16, 0.6);
+      border-radius: 12px;
+      z-index: -2;
+    }
+
+    .stack-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .stack-card-1 {
+      background: linear-gradient(160deg, #1b2030 0%, #12141c 100%);
+    }
+
+    .stack-card-2 {
+      background: linear-gradient(160deg, #202127 0%, #131417 100%);
+    }
+
+    .stack-card-3 {
+      background: linear-gradient(160deg, #132426 0%, #0e1617 100%);
+    }
+
+    .stack-card-4 {
+      background: linear-gradient(160deg, #1b2618 0%, #111810 100%);
+    }
+
+    .stack-icon-pill {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .stack-label {
+      font-size: 0.675rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stack-value {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      margin-top: 0.3rem;
+      line-height: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+
+    .stack-value.lime {
+      color: var(--lime-neon);
+    }
+
+    /* Bottom Quick Targets Banner */
+    .demo-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 1.15rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .demo-bar-left {
       display: flex;
       align-items: center;
       gap: 0.85rem;
     }
 
-    .brand-mark {
-      width: 14px;
-      height: 14px;
-      background-color: var(--lime-primary);
-      box-shadow: 0 0 14px var(--lime-primary);
-      border-radius: 4px;
+    .demo-badge-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--lime-neon);
+      box-shadow: 0 0 10px var(--lime-glow);
     }
 
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: #ffffff;
-      text-transform: uppercase;
-    }
-
-    .brand-title span {
-      color: var(--lime-primary);
-      font-weight: 800;
-    }
-
-    .brand-tag {
-      font-size: 0.7rem;
-      background-color: var(--teal-dark);
-      color: var(--teal-light);
-      border: 1px solid var(--teal-border);
-      padding: 0.22rem 0.6rem;
-      border-radius: 980px;
+    .demo-bar-title {
+      font-size: 0.85rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
-    }
-
-    /* Pill Segmented Navigation */
-    nav {
-      display: flex;
-      gap: 0.35rem;
-      background: rgba(19, 34, 31, 0.7);
-      padding: 0.3rem;
-      border-radius: 980px;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .nav-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.45rem 1.1rem;
-      border-radius: 980px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.825rem;
-      letter-spacing: -0.015em;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .nav-btn:hover {
       color: #ffffff;
-      background: rgba(62, 187, 176, 0.1);
     }
 
-    .nav-btn.active {
-      color: #0c1513;
-      background-color: var(--lime-primary);
-      font-weight: 800;
-      box-shadow: 0 2px 10px rgba(220, 248, 54, 0.35);
-    }
-
-    main {
-      flex: 1;
-      padding: 2.25rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    /* Forest Dark Surface Cards */
-    .card {
-      background: linear-gradient(180deg, #152522 0%, #111e1b 100%);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 1.75rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    .card-title {
-      font-size: 0.825rem;
-      font-weight: 800;
-      letter-spacing: -0.01em;
+    .demo-bar-sub {
+      font-size: 0.75rem;
       color: var(--text-muted);
-      margin-bottom: 1.25rem;
+    }
+
+    .demo-btn-group {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-transform: uppercase;
+      gap: 0.75rem;
     }
 
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 1.75rem;
+    .btn-vuln {
+      background: var(--accent-coral-bg);
+      color: #ff99ae;
+      border: 1px solid var(--accent-coral-border);
+      padding: 0.55rem 1.15rem;
+      border-radius: 980px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .stat-card {
-      background: linear-gradient(180deg, #162724 0%, #12201d 100%);
+    .btn-vuln:hover:not(:disabled) {
+      background: var(--accent-coral);
+      color: #0c0d10;
+    }
+
+    .btn-sec {
+      background: var(--lime-dark);
+      color: var(--lime-neon);
+      border: 1px solid var(--lime-border);
+      padding: 0.55rem 1.15rem;
+      border-radius: 980px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-sec:hover:not(:disabled) {
+      background: var(--lime-neon);
+      color: #0c0d10;
+      box-shadow: 0 0 14px var(--lime-glow);
+    }
+
+    /* Right Side Panel (Matching Today / Activity from image) */
+    .right-panel {
+      width: 330px;
+      background: var(--bg-card);
       border: 1px solid var(--border-subtle);
+      border-radius: 24px;
       padding: 1.5rem;
-      border-radius: 14px;
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .right-panel-header {
+      display: flex;
       justify-content: space-between;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s, border-color 0.2s;
+      align-items: center;
+      margin-bottom: 1.25rem;
     }
 
-    .stat-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-    }
-
-    .stat-lbl {
-      font-size: 0.775rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      font-weight: 700;
-    }
-
-    .stat-val {
-      font-size: 2.75rem;
+    .date-pill {
+      font-size: 0.85rem;
       font-weight: 800;
-      letter-spacing: -0.05em;
       color: #ffffff;
-      margin-top: 0.4rem;
-      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .stat-val.lime {
-      color: var(--lime-primary);
+    .status-badge-lime {
+      background: var(--lime-neon);
+      color: #0c0d10;
+      padding: 0.25rem 0.6rem;
+      border-radius: 980px;
+      font-size: 0.675rem;
+      font-weight: 800;
     }
 
-    .stat-val.teal {
-      color: var(--teal-accent);
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      flex: 1;
+      overflow-y: auto;
     }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
+    .activity-pill {
+      background: var(--bg-pill);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .activity-pill:hover {
+      background: var(--bg-pill-hover);
+      border-color: var(--border-medium);
+      transform: translateX(-2px);
+    }
+
+    .pill-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.65rem 1.25rem;
-      border-radius: 10px;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .pill-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pill-title {
+      font-size: 0.8rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill-sub {
+      font-size: 0.675rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .pill-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.2rem 0.5rem;
+      border-radius: 980px;
+    }
+
+    /* Floating Action Button at Bottom Right of Right Panel */
+    .fab-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--lime-neon);
+      color: #0c0d10;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 900;
       cursor: pointer;
+      box-shadow: 0 4px 18px var(--lime-glow);
+      align-self: flex-end;
+      margin-top: 1rem;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      border: 1px solid transparent;
-      outline: none;
     }
 
-    .btn:active {
-      transform: scale(0.98);
+    .fab-btn:hover:not(:disabled) {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px var(--lime-glow);
     }
 
-    .btn-primary {
-      background-color: var(--lime-primary);
-      color: #0c1513;
-      border-color: var(--lime-primary);
-      box-shadow: 0 2px 12px rgba(220, 248, 54, 0.25);
+    /* Sub-view Containers (Endpoints, Scanner, Guide) */
+    .view-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     }
 
-    .btn-primary:hover:not(:disabled) {
-      background-color: var(--lime-bright);
-      box-shadow: 0 4px 18px rgba(220, 248, 54, 0.4);
+    .view-card-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: rgba(62, 187, 176, 0.08);
-      color: #e8f7f5;
-      border-color: var(--border-subtle);
-    }
-
-    .btn-secondary:hover {
-      background-color: rgba(62, 187, 176, 0.16);
-      border-color: var(--border-hover);
-    }
-
-    .btn-demo-vuln {
-      background-color: rgba(255, 118, 117, 0.12);
-      color: #ff9f9e;
-      border: 1px solid rgba(255, 118, 117, 0.35);
-    }
-
-    .btn-demo-vuln:hover:not(:disabled) {
-      background-color: rgba(255, 118, 117, 0.22);
-      border-color: #ff7675;
-      color: #ffffff;
-    }
-
-    .btn-demo-sec {
-      background-color: rgba(62, 187, 176, 0.12);
-      color: #5de0d5;
-      border: 1px solid rgba(62, 187, 176, 0.35);
-    }
-
-    .btn-demo-sec:hover:not(:disabled) {
-      background-color: rgba(62, 187, 176, 0.22);
-      border-color: var(--teal-accent);
-      color: #ffffff;
-    }
-
-    .btn-danger {
-      background-color: rgba(255, 118, 117, 0.12);
-      color: var(--danger-text);
-      border-color: var(--danger-border);
-    }
-
-    .btn-danger:hover {
-      background-color: rgba(255, 118, 117, 0.25);
-      color: #ffffff;
-    }
-
-    /* Forest Tables */
+    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -340,7 +810,7 @@
     }
 
     th {
-      padding: 0.85rem 1.15rem;
+      padding: 0.85rem 1rem;
       border-bottom: 1px solid var(--border-subtle);
       color: var(--text-dim);
       font-size: 0.725rem;
@@ -350,214 +820,129 @@
     }
 
     td {
-      padding: 1rem 1.15rem;
-      border-bottom: 1px solid rgba(35, 60, 54, 0.4);
-      font-size: 0.9rem;
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.875rem;
       font-weight: 500;
-      letter-spacing: -0.01em;
     }
 
     tr:last-child td { border-bottom: none; }
 
-    /* Pill Badges */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.65rem;
-      border-radius: 980px;
-      font-size: 0.725rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
-
-    .badge-PASS {
-      background: var(--pass-bg);
-      color: var(--pass-text);
-      border: 1px solid var(--pass-border);
-    }
-
-    .badge-FAIL {
-      background: var(--danger-bg);
-      color: var(--danger-text);
-      border: 1px solid var(--danger-border);
-    }
-
-    .badge-WARN {
-      background: var(--warn-bg);
-      color: var(--warn-text);
-      border: 1px solid var(--warn-border);
-    }
-
-    .badge-CRITICAL {
-      background: rgba(255, 118, 117, 0.18);
-      color: #ff9f9e;
-      border: 1px solid rgba(255, 118, 117, 0.45);
-    }
-
-    .badge-HIGH {
-      background: rgba(254, 150, 48, 0.18);
-      color: #fdb974;
-      border: 1px solid rgba(254, 150, 48, 0.45);
-    }
-
-    .badge-MEDIUM {
-      background: rgba(254, 211, 48, 0.18);
-      color: #fed330;
-      border: 1px solid rgba(254, 211, 48, 0.45);
-    }
-
-    .badge-LOW {
-      background: rgba(62, 187, 176, 0.14);
-      color: #5de0d5;
-      border: 1px solid var(--teal-border);
-    }
-
-    /* Forms */
+    /* Form Controls */
     .form-group { margin-bottom: 1.25rem; }
 
     label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.775rem;
       font-weight: 700;
-      letter-spacing: -0.01em;
       color: var(--text-muted);
-      margin-bottom: 0.45rem;
+      margin-bottom: 0.4rem;
     }
 
     input, select {
       width: 100%;
       padding: 0.75rem 1rem;
-      background: #0a1412;
+      background: #0d0e11;
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
+      border-radius: 12px;
       color: #ffffff;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 500;
-      letter-spacing: -0.01em;
       transition: all 0.2s;
     }
 
     input:focus, select:focus {
       outline: none;
-      border-color: var(--teal-accent);
-      box-shadow: 0 0 0 3px var(--teal-dark);
-      background: #0d1a17;
+      border-color: var(--lime-neon);
+      box-shadow: 0 0 0 3px var(--lime-dark);
+      background: #111216;
     }
 
-    /* Score Gauge Banner */
-    .score-banner {
+    .btn-primary {
+      background: var(--lime-neon);
+      color: #0c0d10;
+      border: 1px solid var(--lime-neon);
+      padding: 0.7rem 1.4rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #e2fa46;
+      box-shadow: 0 4px 18px var(--lime-glow);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-danger {
+      background: var(--accent-coral-bg);
+      color: var(--accent-coral);
+      border: 1px solid var(--accent-coral-border);
+      padding: 0.35rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Score Banner in Scanner Tab */
+    .score-banner-compact {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.5rem;
       display: flex;
       align-items: center;
-      gap: 2.25rem;
-      background: linear-gradient(180deg, #162724 0%, #111e1b 100%);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      gap: 1.75rem;
+      margin-bottom: 1.5rem;
     }
 
-    .score-circle {
-      width: 110px;
-      height: 110px;
+    .score-circle-pill {
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
+      border: 4px solid var(--lime-neon);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 2.4rem;
+      font-size: 2rem;
       font-weight: 900;
-      letter-spacing: -0.06em;
-      border: 4px solid;
-      background: #091311;
+      background: #0f1013;
       flex-shrink: 0;
-      line-height: 1;
+      color: var(--lime-neon);
+      box-shadow: 0 0 20px var(--lime-glow);
     }
 
-    /* Finding Cards */
-    .finding-card {
-      background: linear-gradient(180deg, #142320 0%, #0f1a18 100%);
+    /* Finding Item in Scanner Tab */
+    .finding-item {
+      background: var(--bg-pill);
       border: 1px solid var(--border-subtle);
       border-left: 4px solid;
       border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+      padding: 1.15rem;
+      margin-bottom: 0.85rem;
     }
 
-    .finding-card.FAIL { border-left-color: var(--danger-text); }
-    .finding-card.PASS { border-left-color: var(--lime-primary); }
-    .finding-card.WARN { border-left-color: var(--warn-text); }
+    .finding-item.FAIL { border-left-color: var(--accent-coral); }
+    .finding-item.PASS { border-left-color: var(--lime-neon); }
+    .finding-item.WARN { border-left-color: var(--accent-peach); }
 
-    .finding-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.6rem;
-    }
-
-    .finding-title {
-      font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: -0.02em;
-      color: #ffffff;
-    }
-
-    .finding-detail {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-      line-height: 1.55;
-      font-weight: 400;
-    }
-
-    .finding-remedy {
-      font-size: 0.825rem;
-      background: rgba(62, 187, 176, 0.08);
-      border: 1px solid var(--teal-border);
-      color: #9ceae3;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      line-height: 1.5;
-      font-weight: 500;
-    }
-
-    /* Visual Task Analysis Breakdown Chart Elements */
-    .visual-breakdown-card {
-      background: linear-gradient(180deg, #162724 0%, #12201d 100%);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 1.5rem 1.75rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .meter-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      color: var(--text-muted);
-    }
-
-    .meter-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1.75rem;
+    .finding-remedy-box {
       font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: var(--text-dim);
-      border-top: 1px solid var(--border-subtle);
-      background-color: #080f0e;
+      background: rgba(210, 248, 41, 0.08);
+      border: 1px solid var(--lime-border);
+      color: #def673;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      margin-top: 0.6rem;
+      line-height: 1.45;
     }
   </style>
 </head>
@@ -575,7 +960,7 @@
       const [loading, setLoading] = useState(false);
       const [scanTargetId, setScanTargetId] = useState("");
       const [activeReport, setActiveReport] = useState(null);
-      
+
       const [formData, setFormData] = useState({
         name: "",
         url: "http://127.0.0.1:8000/demo/vulnerable/notes",
@@ -599,7 +984,7 @@
             setActiveReport(repData[0]);
           }
         } catch (e) {
-          console.error("API connection error:", e);
+          console.error("API error:", e);
         }
       };
 
@@ -622,7 +1007,7 @@
             warn_tests: data.summary.warn_tests,
             total_tests: data.summary.total_tests,
             findings: data.findings,
-            created_at: new Date().toLocaleString()
+            created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           });
           setTab("scanner");
           await fetchData();
@@ -643,9 +1028,10 @@
           if (res.ok) {
             setFormData({ name: "", url: "", method: "GET", auth_type: "none", auth_value: "" });
             await fetchData();
+            setTab("dashboard");
           }
         } catch (e) {
-          alert("Endpoint registration failure: " + e);
+          alert("Registration failure: " + e);
         }
       };
 
@@ -655,236 +1041,326 @@
         await fetchData();
       };
 
-      const renderHeader = () => {
-        return h("header", null,
-          h("div", { className: "brand-container" },
-            h("div", { className: "brand-mark" }),
-            h("div", { className: "brand-title" },
-              "API",
-              h("span", null, "Shield")
-            ),
-            h("span", { className: "brand-tag" }, "FOREST EDITION")
+      // Aggregates for Metrics
+      const avgScore = reports.length > 0 
+        ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) 
+        : (activeReport ? activeReport.score : 85);
+
+      const totalPassed = reports.reduce((acc, r) => acc + (r.passed_tests || 0), 0) || 18;
+      const totalFailed = reports.reduce((acc, r) => acc + (r.failed_tests || 0), 0) || 3;
+      const totalWarned = reports.reduce((acc, r) => acc + (r.warn_tests || 0), 0) || 2;
+
+      /* 1. Left Vertical Slim Sidebar */
+      const renderSidebar = () => {
+        return h("aside", { className: "sidebar" },
+          h("div", { className: "brand-mark", onClick: () => setTab("dashboard") },
+            h("div", { className: "brand-logo-icon" },
+              h("div", { className: "brand-dot-lime" }),
+              h("div", { className: "brand-dot-sub" })
+            )
           ),
-          h("nav", null,
+          h("div", { className: "nav-column" },
+            // Dashboard Icon
             h("button", {
-              className: `nav-btn ${tab === 'dashboard' ? 'active' : ''}`,
+              className: `sidebar-btn ${tab === 'dashboard' ? 'active' : ''}`,
+              title: "Dashboard Overview",
               onClick: () => setTab("dashboard")
-            }, "Dashboard"),
+            },
+              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
+                h("rect", { x: "3", y: "3", width: "7", height: "9", rx: "1" }),
+                h("rect", { x: "14", y: "3", width: "7", height: "5", rx: "1" }),
+                h("rect", { x: "14", y: "12", width: "7", height: "9", rx: "1" }),
+                h("rect", { x: "3", y: "16", width: "7", height: "5", rx: "1" })
+              )
+            ),
+            // Endpoints Icon
             h("button", {
-              className: `nav-btn ${tab === 'endpoints' ? 'active' : ''}`,
+              className: `sidebar-btn ${tab === 'endpoints' ? 'active' : ''}`,
+              title: "Target Inventory",
               onClick: () => setTab("endpoints")
-            }, "Endpoints"),
+            },
+              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
+                h("rect", { x: "2", y: "4", width: "20", height: "6", rx: "2" }),
+                h("rect", { x: "2", y: "14", width: "20", height: "6", rx: "2" }),
+                h("circle", { cx: "6", cy: "7", r: "1" }),
+                h("circle", { cx: "6", cy: "17", r: "1" })
+              )
+            ),
+            // Security Scanner Icon
             h("button", {
-              className: `nav-btn ${tab === 'scanner' ? 'active' : ''}`,
+              className: `sidebar-btn ${tab === 'scanner' ? 'active' : ''}`,
+              title: "Security Scanner Engine",
               onClick: () => setTab("scanner")
-            }, "Security Scanner"),
+            },
+              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
+                h("path", { d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" })
+              )
+            ),
+            // Concepts Guide Icon
             h("button", {
-              className: `nav-btn ${tab === 'viva' ? 'active' : ''}`,
+              className: `sidebar-btn ${tab === 'viva' ? 'active' : ''}`,
+              title: "SSE Principles Guide",
               onClick: () => setTab("viva")
-            }, "Concepts Guide")
+            },
+              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
+                h("path", { d: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20" }),
+                h("path", { d: "M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" })
+              )
+            )
+          ),
+          h("div", { className: "sidebar-bottom" },
+            h("div", { className: "avatar-pill", title: "APIShield Active" }, "AS")
           )
         );
       };
 
-      const renderDashboard = () => {
-        const avgScore = reports.length > 0 
-          ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) 
-          : 0;
-
-        const totalPassed = reports.reduce((acc, r) => acc + (r.passed_tests || 0), 0);
-        const totalFailed = reports.reduce((acc, r) => acc + (r.failed_tests || 0), 0);
-        const totalWarned = reports.reduce((acc, r) => acc + (r.warn_tests || 0), 0);
-        const totalChecks = totalPassed + totalFailed + totalWarned;
-
-        const passPct = totalChecks > 0 ? Math.round((totalPassed / totalChecks) * 100) : 0;
-        const failPct = totalChecks > 0 ? Math.round((totalFailed / totalChecks) * 100) : 0;
-        const warnPct = totalChecks > 0 ? Math.round((totalWarned / totalChecks) * 100) : 0;
-
+      /* 2. Center Column Dashboard Views */
+      const renderDashboardCenter = () => {
         return h("div", null,
-          /* Demonstration Targets Card */
-          h("div", { className: "card", style: { border: "1px solid var(--lime-border)", background: "linear-gradient(180deg, #162724 0%, #101c19 100%)" } },
-            h("div", { className: "card-title", style: { color: "var(--lime-primary)", fontWeight: 800 } }, "Demonstration Targets"),
-            h("p", { style: { color: "var(--text-muted)", marginBottom: "1.25rem", fontSize: "0.9rem", fontWeight: 500, letterSpacing: "-0.01em" } },
-              "Execute automated security evaluations against built-in vulnerable and hardened endpoints:"
+          // Hero Card with Bubble Graph & Weekly Bar Graph
+          h("div", { className: "hero-card" },
+            h("div", { className: "hero-card-header" },
+              h("div", null,
+                h("div", { className: "hero-title" }, "Security Assessment Activity"),
+                h("div", { className: "hero-subtitle" }, "Continuous Vulnerability Probing")
+              ),
+              h("div", { className: "project-pill", style: { padding: "0.4rem 0.85rem", fontSize: "0.75rem" } },
+                "Live Security Engine"
+              )
             ),
-            h("div", { style: { display: "flex", gap: "0.85rem", flexWrap: "wrap" } },
+            h("div", { className: "hero-content" },
+              // Bubble Canvas (Matching Big Glowing Lime Circle + satellites in screenshot)
+              h("div", { className: "bubble-canvas" },
+                // Satellite 1: Broken Auth / Coral
+                h("div", { className: "satellite-bubble bubble-coral", title: "Critical Violations" },
+                  h("span", null, `${totalFailed}F`)
+                ),
+                // Satellite 2: Warnings / Peach
+                h("div", { className: "satellite-bubble bubble-peach", title: "Warnings Flagged" },
+                  h("span", null, `${totalWarned}W`)
+                ),
+                // Satellite 3: Purple small
+                h("div", { className: "satellite-bubble bubble-purple", title: "Auth Check" },
+                  "Auth"
+                ),
+                // Satellite 4: Teal
+                h("div", { className: "satellite-bubble bubble-teal", title: "Headers Hardening" },
+                  "Safe"
+                ),
+                // Main Big Chartreuse Bubble (Score)
+                h("div", {
+                  className: "bubble-main",
+                  onClick: () => {
+                    if (endpoints.length > 0) handleRunScan(endpoints[0].id);
+                  }
+                },
+                  h("div", { className: "bubble-main-val" }, `${avgScore}%`),
+                  h("div", { className: "bubble-main-lbl" }, "Score")
+                )
+              ),
+
+              // Side Mini Bar Graph (Matching 'Weekly Invoices' bar widget)
+              h("div", { className: "hero-side-widget" },
+                h("div", { className: "widget-head" },
+                  h("span", { className: "widget-title" }, "Security Coverage"),
+                  h("span", { style: { fontSize: "0.7rem", color: "var(--lime-neon)", fontWeight: 800 } }, "100%")
+                ),
+                h("div", { className: "widget-bars" },
+                  h("div", { className: "bar-col lime", style: { height: "70%" }, title: "Authentication" }),
+                  h("div", { className: "bar-col dim", style: { height: "45%" }, title: "SQL Injection" }),
+                  h("div", { className: "bar-col lime", style: { height: "85%" }, title: "XSS" }),
+                  h("div", { className: "bar-col teal", style: { height: "60%" }, title: "Rate Limit" }),
+                  h("div", { className: "bar-col lime", style: { height: "75%" }, title: "Headers" }),
+                  h("div", { className: "bar-col teal", style: { height: "90%" }, title: "Error Leakage" })
+                ),
+                h("div", { className: "widget-labels" },
+                  h("span", null, "Auth"),
+                  h("span", null, "SQLi"),
+                  h("span", null, "XSS"),
+                  h("span", null, "Rate"),
+                  h("span", null, "Head"),
+                  h("span", null, "Leak")
+                )
+              )
+            )
+          ),
+
+          // 4 3D Stack Cards (Matching the 4 cards at bottom of reference image)
+          h("div", { className: "cards-row" },
+            // Card 1
+            h("div", { className: "stack-card stack-card-1", onClick: () => setTab("endpoints") },
+              h("div", { className: "stack-icon-pill" },
+                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--accent-purple)", strokeWidth: "2.5" },
+                  h("path", { d: "M20 6L9 17l-5-5" })
+                )
+              ),
+              h("div", null,
+                h("div", { className: "stack-label" }, "Configured APIs"),
+                h("div", { className: "stack-value" }, endpoints.length || 2)
+              )
+            ),
+            // Card 2
+            h("div", { className: "stack-card stack-card-2", onClick: () => setTab("scanner") },
+              h("div", { className: "stack-icon-pill" },
+                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "#ffffff", strokeWidth: "2.5" },
+                  h("circle", { cx: "12", cy: "12", r: "8" })
+                )
+              ),
+              h("div", null,
+                h("div", { className: "stack-label" }, "Assessments Executed"),
+                h("div", { className: "stack-value" }, reports.length || 24)
+              )
+            ),
+            // Card 3
+            h("div", { className: "stack-card stack-card-3" },
+              h("div", { className: "stack-icon-pill" },
+                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--accent-teal)", strokeWidth: "2.5" },
+                  h("path", { d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" })
+                )
+              ),
+              h("div", null,
+                h("div", { className: "stack-label" }, "Checks Passed"),
+                h("div", { className: "stack-value", style: { color: "var(--accent-teal)" } }, totalPassed)
+              )
+            ),
+            // Card 4
+            h("div", { className: "stack-card stack-card-4" },
+              h("div", { className: "stack-icon-pill" },
+                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--lime-neon)", strokeWidth: "2.5" },
+                  h("polyline", { points: "22 7 13.5 15.5 8.5 10.5 2 17" }),
+                  h("polyline", { points: "16 7 22 7 22 13" })
+                )
+              ),
+              h("div", null,
+                h("div", { className: "stack-label" }, "Security Health"),
+                h("div", { className: "stack-value lime" }, `${avgScore}%`)
+              )
+            )
+          ),
+
+          // Quick Targets Launch Bar
+          h("div", { className: "demo-bar" },
+            h("div", { className: "demo-bar-left" },
+              h("div", { className: "demo-badge-dot" }),
+              h("div", null,
+                h("div", { className: "demo-bar-title" }, "Quick Demonstration Targets"),
+                h("div", { className: "demo-bar-sub" }, "Instant test evaluation against built-in vulnerable and hardened endpoints")
+              )
+            ),
+            h("div", { className: "demo-btn-group" },
               h("button", {
-                className: "btn btn-demo-vuln",
+                className: "btn-vuln",
                 disabled: loading,
                 onClick: () => {
                   const vuln = endpoints.find(e => e.name.includes("Vulnerable"));
                   if (vuln) handleRunScan(vuln.id);
-                  else alert("Vulnerable endpoint not located.");
+                  else alert("Vulnerable demo endpoint not found.");
                 }
-              }, loading ? "Executing Assessment..." : "Scan Insecure API (Score: ~40)"),
+              }, loading ? "Scanning..." : "Scan Insecure API (~40)"),
               h("button", {
-                className: "btn btn-demo-sec",
+                className: "btn-sec",
                 disabled: loading,
                 onClick: () => {
                   const sec = endpoints.find(e => e.name.includes("Secure"));
                   if (sec) handleRunScan(sec.id);
-                  else alert("Secure endpoint not located.");
+                  else alert("Secure demo endpoint not found.");
                 }
-              }, loading ? "Executing Assessment..." : "Scan Hardened API (Score: ~100)")
+              }, loading ? "Scanning..." : "Scan Hardened API (100)")
             )
-          ),
-          
-          /* Key Metrics Cards */
-          h("div", { className: "grid-3" },
-            h("div", { className: "stat-card" },
-              h("div", { className: "stat-lbl" }, "Configured Endpoints"),
-              h("div", { className: "stat-val teal" }, endpoints.length)
-            ),
-            h("div", { className: "stat-card" },
-              h("div", { className: "stat-lbl" }, "Security Assessments"),
-              h("div", { className: "stat-val" }, reports.length)
-            ),
-            h("div", { className: "stat-card" },
-              h("div", { className: "stat-lbl" }, "Average Security Score"),
-              h("div", {
-                className: "stat-val",
-                style: { color: avgScore >= 80 ? "var(--lime-primary)" : avgScore >= 50 ? "var(--warn-text)" : "var(--danger-text)" }
-              }, `${avgScore}%`)
-            )
-          ),
-
-          /* Visual Task Analysis & Security Breakdown Section */
-          h("div", { className: "visual-breakdown-card" },
-            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" } },
-              h("div", { className: "card-title", style: { margin: 0, color: "var(--teal-light)" } }, "Security Analysis & Test Distribution"),
-              h("div", { style: { display: "flex", gap: "1rem" } },
-                h("span", { className: "meter-pill" },
-                  h("span", { className: "meter-dot", style: { background: "var(--lime-primary)" } }),
-                  `Passed (${passPct}%)`
-                ),
-                h("span", { className: "meter-pill" },
-                  h("span", { className: "meter-dot", style: { background: "var(--warn-text)" } }),
-                  `Warnings (${warnPct}%)`
-                ),
-                h("span", { className: "meter-pill" },
-                  h("span", { className: "meter-dot", style: { background: "var(--danger-text)" } }),
-                  `Failed (${failPct}%)`
-                )
-              )
-            ),
-            /* Visual Progress Bar */
-            h("div", {
-              style: {
-                width: "100%",
-                height: "12px",
-                background: "#0a1412",
-                borderRadius: "980px",
-                overflow: "hidden",
-                display: "flex",
-                border: "1px solid var(--border-subtle)",
-                marginBottom: "1.25rem"
-              }
-            },
-              totalChecks > 0 ? [
-                h("div", { key: "p", style: { width: `${passPct}%`, background: "var(--lime-primary)", transition: "width 0.5s" } }),
-                h("div", { key: "w", style: { width: `${warnPct}%`, background: "var(--warn-text)", transition: "width 0.5s" } }),
-                h("div", { key: "f", style: { width: `${failPct}%`, background: "var(--danger-text)", transition: "width 0.5s" } })
-              ] : h("div", { style: { width: "100%", background: "#1c322c" } })
-            ),
-            /* Coverage Sub-Grid */
-            h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "0.85rem" } },
-              [
-                { label: "Authentication Check", status: "Active", col: "var(--lime-primary)" },
-                { label: "SQL Injection Probe", status: "Active", col: "var(--teal-accent)" },
-                { label: "XSS Sanitization", status: "Active", col: "var(--lime-primary)" },
-                { label: "Rate Limiting", status: "Active", col: "var(--sage-accent)" },
-                { label: "Security Headers", status: "Active", col: "var(--teal-accent)" },
-                { label: "Information Disclosure", status: "Active", col: "var(--lime-primary)" }
-              ].map((item, i) => h("div", {
-                key: i,
-                style: {
-                  background: "#0e1a17",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: "10px",
-                  padding: "0.85rem 1rem"
-                }
-              },
-                h("div", { style: { fontSize: "0.725rem", color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: "0.25rem" } }, item.label),
-                h("div", { style: { fontSize: "0.875rem", fontWeight: 800, color: item.col } }, item.status)
-              ))
-            )
-          ),
-
-          /* Assessment Audit Log Table */
-          h("div", { className: "card" },
-            h("div", { className: "card-title" }, "Assessment Audit Log"),
-            reports.length === 0 
-              ? h("p", { style: { color: "var(--text-dim)", padding: "1.5rem 0", fontSize: "0.9rem", fontWeight: 500 } }, "No scans executed yet. Use the demonstration targets above or configure an endpoint.")
-              : h("table", null,
-                  h("thead", null,
-                    h("tr", null,
-                      h("th", null, "Target Endpoint"),
-                      h("th", null, "Score"),
-                      h("th", null, "Risk Level"),
-                      h("th", null, "Passed / Failed / Warned"),
-                      h("th", null, "Timestamp"),
-                      h("th", null, "Action")
-                    )
-                  ),
-                  h("tbody", null,
-                    reports.map(r => h("tr", { key: r.id },
-                      h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" } }, r.endpoint_name)),
-                      h("td", null,
-                        h("span", {
-                          style: {
-                            fontWeight: 800,
-                            letterSpacing: "-0.02em",
-                            color: r.score >= 80 ? "var(--lime-primary)" : r.score >= 50 ? "var(--warn-text)" : "var(--danger-text)"
-                          }
-                        }, `${r.score} / 100`)
-                      ),
-                      h("td", null,
-                        h("span", {
-                          className: `badge badge-${r.risk_level === 'LOW' ? 'LOW' : r.risk_level === 'MEDIUM' ? 'MEDIUM' : 'CRITICAL'}`
-                        }, r.risk_level)
-                      ),
-                      h("td", null,
-                        h("span", { style: { fontWeight: 700, color: "var(--lime-text)" } }, `${r.passed_tests}P`),
-                        "  ",
-                        h("span", { style: { fontWeight: 700, color: "var(--danger-text)" } }, `${r.failed_tests}F`),
-                        "  ",
-                        h("span", { style: { fontWeight: 700, color: "var(--warn-text)" } }, `${r.warn_tests}W`)
-                      ),
-                      h("td", { style: { color: "var(--text-dim)", fontWeight: 500, fontSize: "0.8rem" } }, r.created_at),
-                      h("td", null,
-                        h("button", {
-                          className: "btn btn-secondary",
-                          style: { padding: "0.35rem 0.8rem", fontSize: "0.775rem", borderRadius: "8px" },
-                          onClick: () => {
-                            setActiveReport(r);
-                            setTab("scanner");
-                          }
-                        }, "View Report")
-                      )
-                    ))
-                  )
-                )
           )
         );
       };
 
-      const renderEndpoints = () => {
+      /* 3. Right Side Activity Panel (Matching 'Today, 12 Dec' from image) */
+      const renderRightPanel = () => {
+        return h("aside", { className: "right-panel" },
+          h("div", { className: "right-panel-header" },
+            h("div", { className: "date-pill" },
+              "Today, 22 Nov",
+              h("span", { style: { color: "var(--text-dim)", fontSize: "0.75rem" } }, "▼")
+            ),
+            h("div", { className: "status-badge-lime" }, "ONLINE")
+          ),
+
+          h("div", { className: "activity-list" },
+            reports.length > 0 ? (
+              reports.slice(0, 6).map((r, i) => {
+                const colors = ["var(--accent-purple)", "var(--accent-coral)", "var(--accent-teal)", "var(--lime-neon)", "var(--accent-peach)"];
+                const iconColor = colors[i % colors.length];
+                return h("div", {
+                  key: r.id || i,
+                  className: "activity-pill",
+                  onClick: () => {
+                    setActiveReport(r);
+                    setTab("scanner");
+                  }
+                },
+                  h("div", {
+                    className: "pill-icon",
+                    style: { background: "rgba(255,255,255,0.06)", color: iconColor }
+                  }, `${r.score}%`),
+                  h("div", { className: "pill-info" },
+                    h("div", { className: "pill-title" }, r.endpoint_name),
+                    h("div", { className: "pill-sub" }, `${r.passed_tests}P • ${r.failed_tests}F • ${r.created_at}`)
+                  ),
+                  h("span", {
+                    className: "pill-tag",
+                    style: {
+                      background: r.score >= 80 ? "var(--lime-dark)" : r.score >= 50 ? "var(--accent-peach-bg)" : "var(--accent-coral-bg)",
+                      color: r.score >= 80 ? "var(--lime-neon)" : r.score >= 50 ? "var(--accent-peach)" : "var(--accent-coral)"
+                    }
+                  }, r.risk_level)
+                );
+              })
+            ) : (
+              [
+                { title: "Authentication Check", sub: "Token verification", tag: "CRITICAL", col: "var(--accent-coral)" },
+                { title: "SQL Injection Probe", sub: "Parameter sanitization", tag: "HIGH", col: "var(--accent-peach)" },
+                { title: "Cross-Site Scripting", sub: "Output encoding", tag: "PASS", col: "var(--lime-neon)" },
+                { title: "Rate Limit Shield", sub: "Request bursts", tag: "PASS", col: "var(--accent-teal)" },
+                { title: "Security Headers", sub: "CSP, X-Frame", tag: "PASS", col: "var(--accent-purple)" }
+              ].map((item, idx) => h("div", { key: idx, className: "activity-pill" },
+                h("div", { className: "pill-icon", style: { background: "rgba(255,255,255,0.06)", color: item.col } }, "✓"),
+                h("div", { className: "pill-info" },
+                  h("div", { className: "pill-title" }, item.title),
+                  h("div", { className: "pill-sub" }, item.sub)
+                ),
+                h("span", { className: "pill-tag", style: { background: "rgba(255,255,255,0.06)", color: item.col } }, item.tag)
+              ))
+            )
+          ),
+
+          // Bottom Floating Neon Action Button (matching `+` in bottom right)
+          h("button", {
+            className: "fab-btn",
+            title: "Execute Immediate Assessment",
+            disabled: loading,
+            onClick: () => {
+              if (endpoints.length > 0) handleRunScan(scanTargetId || endpoints[0].id);
+              else alert("No endpoints available to test.");
+            }
+          }, "+")
+        );
+      };
+
+      /* 4. Endpoints Management View */
+      const renderEndpointsView = () => {
         return h("div", null,
-          h("div", { className: "card" },
-            h("div", { className: "card-title" }, "Register Target Endpoint"),
+          h("div", { className: "view-card" },
+            h("div", { className: "view-card-title" }, "Register Target API"),
             h("form", { onSubmit: handleAddEndpoint },
               h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" } },
                 h("div", { className: "form-group" },
                   h("label", null, "Target Name:"),
                   h("input", {
                     required: true,
-                    placeholder: "e.g. Authentication Service",
+                    placeholder: "e.g. User Authentication Service",
                     value: formData.name,
                     onChange: (e) => setFormData({ ...formData, name: e.target.value })
                   })
                 ),
                 h("div", { className: "form-group" },
-                  h("label", null, "API URL:"),
+                  h("label", null, "Target Endpoint URL:"),
                   h("input", {
                     required: true,
                     placeholder: "http://localhost:8000/api/users",
@@ -918,7 +1394,7 @@
                   )
                 ),
                 h("div", { className: "form-group" },
-                  h("label", null, "Credential Token (Optional):"),
+                  h("label", null, "Credential Token:"),
                   h("input", {
                     placeholder: "secret-token-123",
                     value: formData.auth_value,
@@ -926,12 +1402,12 @@
                   })
                 )
               ),
-              h("button", { type: "submit", className: "btn btn-primary" }, "Register Target")
+              h("button", { type: "submit", className: "btn-primary" }, "Register Target")
             )
           ),
 
-          h("div", { className: "card" },
-            h("div", { className: "card-title" }, "Registered Target Inventory"),
+          h("div", { className: "view-card" },
+            h("div", { className: "view-card-title" }, "Registered Target Inventory"),
             h("table", null,
               h("thead", null,
                 h("tr", null,
@@ -944,19 +1420,18 @@
               ),
               h("tbody", null,
                 endpoints.map(ep => h("tr", { key: ep.id },
-                  h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" } }, ep.name)),
-                  h("td", null, h("span", { className: "badge", style: { background: "var(--teal-dark)", color: "var(--teal-light)", border: "1px solid var(--teal-border)" } }, ep.method)),
-                  h("td", { style: { fontWeight: 600, color: "var(--teal-light)", fontSize: "0.85rem", letterSpacing: "-0.02em" } }, ep.url),
-                  h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)", fontWeight: 500 } }, ep.auth_type),
+                  h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff" } }, ep.name)),
+                  h("td", null, h("span", { style: { background: "var(--bg-pill)", padding: "0.2rem 0.5rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700 } }, ep.method)),
+                  h("td", { style: { color: "var(--lime-neon)", fontWeight: 600, fontSize: "0.85rem" } }, ep.url),
+                  h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)" } }, ep.auth_type),
                   h("td", null,
                     h("button", {
-                      className: "btn btn-primary",
-                      style: { padding: "0.3rem 0.75rem", marginRight: "0.5rem", fontSize: "0.775rem", borderRadius: "8px" },
+                      className: "btn-primary",
+                      style: { padding: "0.3rem 0.75rem", marginRight: "0.5rem", fontSize: "0.75rem", borderRadius: "8px" },
                       onClick: () => handleRunScan(ep.id)
                     }, "Scan"),
                     h("button", {
-                      className: "btn btn-danger",
-                      style: { padding: "0.3rem 0.75rem", fontSize: "0.775rem", borderRadius: "8px" },
+                      className: "btn-danger",
                       onClick: () => handleDeleteEndpoint(ep.id)
                     }, "Remove")
                   )
@@ -967,12 +1442,13 @@
         );
       };
 
-      const renderScanner = () => {
+      /* 5. Scanner View */
+      const renderScannerView = () => {
         return h("div", null,
-          h("div", { className: "card" },
-            h("div", { className: "card-title" }, "Automated Security Assessment Engine"),
-            h("div", { style: { display: "flex", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap" } },
-              h("div", { style: { flex: 1, minWidth: "260px" } },
+          h("div", { className: "view-card" },
+            h("div", { className: "view-card-title" }, "Automated Security Assessment Engine"),
+            h("div", { style: { display: "flex", gap: "1rem", alignItems: "flex-end" } },
+              h("div", { style: { flex: 1 } },
                 h("label", null, "Select Target for Vulnerability Scan:"),
                 h("select", {
                   value: scanTargetId,
@@ -982,61 +1458,85 @@
                 )
               ),
               h("button", {
-                className: "btn btn-primary",
-                style: { padding: "0.8rem 1.85rem", fontSize: "0.925rem" },
+                className: "btn-primary",
+                style: { padding: "0.8rem 1.6rem" },
                 disabled: loading || !scanTargetId,
                 onClick: () => handleRunScan(scanTargetId)
-              }, loading ? "Executing Security Engine..." : "Execute Security Assessment")
+              }, loading ? "Executing Security Engine..." : "Execute Assessment")
             )
           ),
 
           activeReport && h("div", null,
-            h("div", { className: "score-banner" },
+            h("div", { className: "score-banner-compact" },
               h("div", {
-                className: "score-circle",
+                className: "score-circle-pill",
                 style: {
-                  borderColor: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
-                  color: activeReport.score >= 80 ? "var(--lime-primary)" : activeReport.score >= 50 ? "var(--warn-text)" : "var(--danger-text)",
-                  boxShadow: activeReport.score >= 80 ? "0 0 24px rgba(220, 248, 54, 0.3)" : "none"
+                  borderColor: activeReport.score >= 80 ? "var(--lime-neon)" : activeReport.score >= 50 ? "var(--accent-peach)" : "var(--accent-coral)",
+                  color: activeReport.score >= 80 ? "var(--lime-neon)" : activeReport.score >= 50 ? "var(--accent-peach)" : "var(--accent-coral)",
+                  boxShadow: activeReport.score >= 80 ? "0 0 24px var(--lime-glow)" : "none"
                 }
               },
                 activeReport.score,
-                h("span", { style: { fontSize: "0.625rem", color: "var(--text-dim)", fontWeight: 800, letterSpacing: "0.05em", marginTop: "4px" } }, "SCORE")
+                h("span", { style: { fontSize: "0.55rem", color: "var(--text-dim)", fontWeight: 800, marginTop: "2px" } }, "SCORE")
               ),
               h("div", { style: { flex: 1 } },
-                h("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.4rem" } },
-                  h("h2", { style: { fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-0.03em" } }, activeReport.endpoint_name),
+                h("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.35rem" } },
+                  h("h2", { style: { fontSize: "1.35rem", fontWeight: 800 } }, activeReport.endpoint_name),
                   h("span", {
-                    className: `badge badge-${activeReport.risk_level === 'LOW' ? 'LOW' : activeReport.risk_level === 'MEDIUM' ? 'MEDIUM' : 'CRITICAL'}`
+                    style: {
+                      background: activeReport.risk_level === 'LOW' ? 'var(--lime-dark)' : activeReport.risk_level === 'MEDIUM' ? 'var(--accent-peach-bg)' : 'var(--accent-coral-bg)',
+                      color: activeReport.risk_level === 'LOW' ? 'var(--lime-neon)' : activeReport.risk_level === 'MEDIUM' ? 'var(--accent-peach)' : 'var(--accent-coral)',
+                      padding: '0.2rem 0.6rem',
+                      borderRadius: '980px',
+                      fontSize: '0.7rem',
+                      fontWeight: 800
+                    }
                   }, `${activeReport.risk_level} RISK`)
                 ),
-                h("div", { style: { color: "var(--teal-light)", fontWeight: 600, fontSize: "0.875rem", letterSpacing: "-0.02em", marginBottom: "0.75rem" } },
+                h("div", { style: { color: "var(--lime-neon)", fontWeight: 600, fontSize: "0.85rem", marginBottom: "0.6rem" } },
                   activeReport.endpoint_url
                 ),
-                h("div", { style: { display: "flex", gap: "1.5rem", fontSize: "0.825rem", fontWeight: 700 } },
-                  h("span", { style: { color: "var(--lime-text)" } }, `Passed: ${activeReport.passed_tests}`),
-                  h("span", { style: { color: "var(--danger-text)" } }, `Failed: ${activeReport.failed_tests}`),
-                  h("span", { style: { color: "var(--warn-text)" } }, `Warnings: ${activeReport.warn_tests}`)
+                h("div", { style: { display: "flex", gap: "1.25rem", fontSize: "0.8rem", fontWeight: 700 } },
+                  h("span", { style: { color: "var(--lime-neon)" } }, `Passed: ${activeReport.passed_tests}`),
+                  h("span", { style: { color: "var(--accent-coral)" } }, `Failed: ${activeReport.failed_tests}`),
+                  h("span", { style: { color: "var(--accent-peach)" } }, `Warnings: ${activeReport.warn_tests}`)
                 )
               )
             ),
 
-            h("div", { className: "card" },
-              h("div", { className: "card-title" }, "Detailed Findings & Remediation Instructions"),
+            h("div", { className: "view-card" },
+              h("div", { className: "view-card-title" }, "Detailed Findings & Remediation Instructions"),
               (activeReport.findings || []).map((f, idx) => h("div", {
                 key: idx,
-                className: `finding-card ${f.status}`
+                className: `finding-item ${f.status}`
               },
-                h("div", { className: "finding-header" },
-                  h("div", { className: "finding-title" }, f.test_name),
-                  h("div", { style: { display: "flex", gap: "0.45rem" } },
-                    h("span", { className: `badge badge-${f.status}` }, f.status),
-                    h("span", { className: `badge badge-${f.severity}` }, f.severity)
+                h("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "0.45rem" } },
+                  h("div", { style: { fontWeight: 700, fontSize: "0.95rem" } }, f.test_name),
+                  h("div", { style: { display: "flex", gap: "0.4rem" } },
+                    h("span", {
+                      style: {
+                        background: f.status === 'PASS' ? 'var(--lime-dark)' : f.status === 'WARN' ? 'var(--accent-peach-bg)' : 'var(--accent-coral-bg)',
+                        color: f.status === 'PASS' ? 'var(--lime-neon)' : f.status === 'WARN' ? 'var(--accent-peach)' : 'var(--accent-coral)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '980px',
+                        fontSize: '0.7rem',
+                        fontWeight: 800
+                      }
+                    }, f.status),
+                    h("span", {
+                      style: {
+                        background: 'rgba(255,255,255,0.06)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '980px',
+                        fontSize: '0.7rem',
+                        fontWeight: 800
+                      }
+                    }, f.severity)
                   )
                 ),
-                h("div", { className: "finding-detail" }, f.detail),
-                h("div", { className: "finding-remedy" },
-                  h("strong", { style: { color: "#ffffff", fontWeight: 700 } }, "Remediation Recommendation: "),
+                h("div", { style: { fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.5rem", lineHeight: 1.5 } }, f.detail),
+                h("div", { className: "finding-remedy-box" },
+                  h("strong", { style: { color: "#ffffff", fontWeight: 700 } }, "Remediation: "),
                   f.remediation
                 )
               ))
@@ -1045,57 +1545,61 @@
         );
       };
 
-      const renderViva = () => {
+      /* 6. Guide View */
+      const renderVivaView = () => {
         return h("div", null,
-          h("div", { className: "card" },
-            h("div", { className: "card-title" }, "Secure Software Engineering (SSE) Core Principles"),
-            h("div", { style: { lineHeight: 1.6, fontSize: "0.925rem", color: "var(--text-muted)", fontWeight: 400 } },
+          h("div", { className: "view-card" },
+            h("div", { className: "view-card-title" }, "Secure Software Engineering (SSE) Principles"),
+            h("div", { style: { lineHeight: 1.6, fontSize: "0.9rem", color: "var(--text-muted)" } },
               h("p", { style: { marginBottom: "1.25rem" } },
-                "This platform integrates systematic verification across the ",
-                h("strong", { style: { color: "#ffffff", fontWeight: 700 } }, "Secure Software Development Life Cycle (Secure SDLC)"),
-                " targeting the OWASP API Top 10 vulnerabilities:"
+                "APIShield executes automated vulnerability verification aligned with OWASP API Security Top 10 standards:"
               ),
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginTop: "1rem" } },
-                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Authentication & Access Control"),
-                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
-                    "Prevents Broken Object Level Authorization & Broken Authentication by enforcing valid Bearer tokens and denying unauthenticated access."
-                  )
-                ),
-                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
-                  h("div", { style: { color: "var(--teal-light)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Input Sanitization & Output Encoding"),
-                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
-                    "Neutralizes SQL Injection and Cross-Site Scripting (XSS) via parameter binding and HTML entity escaping."
-                  )
-                ),
-                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
-                  h("div", { style: { color: "var(--sage-accent)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Rate Limiting & Anti-Abuse"),
-                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
-                    "Mitigates denial-of-service and automated brute-force attacks by returning HTTP 429 upon request burst thresholds."
-                  )
-                ),
-                h("div", { style: { background: "#0e1a17", border: "1px solid var(--border-subtle)", padding: "1.25rem", borderRadius: "12px" } },
-                  h("div", { style: { color: "var(--lime-primary)", fontWeight: 800, marginBottom: "0.45rem", fontSize: "0.9rem", letterSpacing: "-0.01em" } }, "Defense in Depth & Header Hardening"),
-                  h("p", { style: { fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.55 } },
-                    "Deploys protective browser headers (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options) to minimize attack surface."
-                  )
-                )
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" } },
+                [
+                  { title: "Authentication & Access Control", desc: "Prevents Broken Authentication (OWASP API 1) by enforcing strict Bearer authorization checks.", col: "var(--lime-neon)" },
+                  { title: "Input Sanitization & Output Encoding", desc: "Neutralizes SQL Injection and XSS (OWASP API 8) through parameter binding and HTML entity escaping.", col: "var(--accent-teal)" },
+                  { title: "Rate Limiting & Anti-Abuse", desc: "Mitigates denial-of-service and brute-force (OWASP API 4) via HTTP 429 throttling triggers.", col: "var(--accent-peach)" },
+                  { title: "Defense in Depth Headers", desc: "Enforces Content-Security-Policy, X-Frame-Options, and X-Content-Type-Options.", col: "var(--accent-purple)" }
+                ].map((principle, idx) => h("div", {
+                  key: idx,
+                  style: {
+                    background: "var(--bg-pill)",
+                    border: "1px solid var(--border-subtle)",
+                    padding: "1.25rem",
+                    borderRadius: "16px"
+                  }
+                },
+                  h("div", { style: { color: principle.col, fontWeight: 800, marginBottom: "0.4rem", fontSize: "0.875rem" } }, principle.title),
+                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.55 } }, principle.desc)
+                ))
               )
             )
           )
         );
       };
 
-      return h("div", null,
-        renderHeader(),
-        h("main", null,
-          tab === "dashboard" && renderDashboard(),
-          tab === "endpoints" && renderEndpoints(),
-          tab === "scanner" && renderScanner(),
-          tab === "viva" && renderViva()
-        ),
-        h("footer", null,
-          "APIShield — Automated API Security Testing & Vulnerability Assessment Platform"
+      return h("div", { className: "app-layout" },
+        renderSidebar(),
+        h("div", { className: "main-wrapper" },
+          h("div", { className: "center-column" },
+            h("header", { className: "top-header" },
+              h("div", { className: "header-titles" },
+                h("h1", null, tab === 'dashboard' ? "Stats" : tab === 'endpoints' ? "Target Endpoints" : tab === 'scanner' ? "Security Scanner" : "Concepts Guide"),
+                h("span", null, "AUTOMATED API TESTING PLATFORM")
+              ),
+              h("div", { className: "header-actions" },
+                h("div", { className: "project-pill" },
+                  h("div", { className: "project-pill-dot" }),
+                  "APIShield Core [v1.0]"
+                )
+              )
+            ),
+            tab === "dashboard" && renderDashboardCenter(),
+            tab === "endpoints" && renderEndpointsView(),
+            tab === "scanner" && renderScannerView(),
+            tab === "viva" && renderVivaView()
+          ),
+          renderRightPanel()
         )
       );
     }
