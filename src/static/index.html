@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APIShield — Automated API Security Testing Platform</title>
   
-  <!-- Inter Font -->
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Offline local React scripts -->
+  
   <script src="/static/js/react.js"></script>
   <script src="/static/js/react-dom.js"></script>
   
   <style>
     :root {
-      /* Dark Matte Theme Palette */
+      
       --bg-page: #191a1e;
       --bg-sidebar: #101113;
       --bg-card: #131417;
@@ -28,13 +28,13 @@
       --border-medium: rgba(255, 255, 255, 0.12);
       --border-active: rgba(255, 255, 255, 0.22);
       
-      /* Neon Lime Primary Accent */
+      
       --lime-neon: #d2f829;
       --lime-glow: rgba(210, 248, 41, 0.35);
       --lime-dark: rgba(210, 248, 41, 0.12);
       --lime-border: rgba(210, 248, 41, 0.35);
       
-      /* Multi-Accent Palette */
+      
       --accent-coral: #ff5c7c;
       --accent-coral-bg: rgba(255, 92, 124, 0.14);
       --accent-coral-border: rgba(255, 92, 124, 0.35);
@@ -51,7 +51,7 @@
       --accent-purple-bg: rgba(157, 114, 255, 0.14);
       --accent-purple-border: rgba(157, 114, 255, 0.35);
 
-      /* Typography */
+      
       --text-white: #ffffff;
       --text-muted: #8e9099;
       --text-dim: #5c5e68;
@@ -75,7 +75,7 @@
       overflow-x: hidden;
     }
 
-    /* Outer Dashboard Layout */
+    
     .app-layout {
       display: flex;
       width: 100vw;
@@ -83,7 +83,7 @@
       background-color: var(--bg-page);
     }
 
-    /* Left Slim Vertical Sidebar */
+    
     .sidebar {
       width: 76px;
       background-color: var(--bg-sidebar);
@@ -188,7 +188,7 @@
       color: var(--lime-neon);
     }
 
-    /* Main Content Area */
+    
     .main-wrapper {
       flex: 1;
       padding: 1.75rem 2rem;
@@ -205,7 +205,7 @@
       min-width: 0;
     }
 
-    /* Top Stats Header */
+    
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -258,7 +258,7 @@
       box-shadow: 0 0 8px var(--lime-glow);
     }
 
-    /* Hero Card (Executive Telemetry Hub) */
+    
     .hero-card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -301,7 +301,7 @@
       gap: 1.5rem;
     }
 
-    /* Refined Telemetry Graph Container */
+    
     .telemetry-chart-container {
       flex: 1;
       background: #0f1013;
@@ -353,7 +353,7 @@
       gap: 0.4rem;
     }
 
-    /* SVG Chart */
+    
     .svg-telemetry-wrapper {
       width: 100%;
       height: 125px;
@@ -366,7 +366,7 @@
       overflow: visible;
     }
 
-    /* Telemetry KPI Strip */
+    
     .telemetry-kpi-row {
       display: flex;
       align-items: center;
@@ -392,7 +392,7 @@
       border-radius: 50%;
     }
 
-    /* Right side Security Dimension Meter in Hero Card */
+    
     .hero-side-widget {
       width: 250px;
       background: #0f1013;
@@ -471,7 +471,7 @@
       padding: 0 0.1rem;
     }
 
-    /* 4 3D Stack Cards Row */
+    
     .cards-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -572,7 +572,7 @@
       color: var(--lime-neon);
     }
 
-    /* Bottom Quick Targets Banner */
+    
     .demo-bar {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -650,7 +650,7 @@
       box-shadow: 0 0 14px var(--lime-glow);
     }
 
-    /* Right Side Panel */
+    
     .right-panel {
       width: 330px;
       background: var(--bg-card);
@@ -759,7 +759,7 @@
       flex-shrink: 0;
     }
 
-    /* Floating Action Button at Bottom Right */
+    
     .fab-btn {
       width: 48px;
       height: 48px;
@@ -784,7 +784,7 @@
       box-shadow: 0 6px 24px var(--lime-glow);
     }
 
-    /* Sub-view Containers (Endpoints, Scanner, Guide) */
+    
     .view-card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -806,7 +806,7 @@
       align-items: center;
     }
 
-    /* Tables */
+    
     table {
       width: 100%;
       border-collapse: collapse;
@@ -832,7 +832,7 @@
 
     tr:last-child td { border-bottom: none; }
 
-    /* Form Controls */
+    
     .form-group { margin-bottom: 1.25rem; }
 
     label {
@@ -895,7 +895,7 @@
       cursor: pointer;
     }
 
-    /* Score Banner in Scanner Tab */
+    
     .score-banner-compact {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -924,7 +924,7 @@
       box-shadow: 0 0 20px var(--lime-glow);
     }
 
-    /* Finding Item in Scanner Tab */
+    
     .finding-item {
       background: var(--bg-pill);
       border: 1px solid var(--border-subtle);
@@ -1045,7 +1045,6 @@
         await fetchData();
       };
 
-      // Aggregates for Metrics
       const avgScore = reports.length > 0 
         ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) 
         : (activeReport ? activeReport.score : 85);
@@ -1054,7 +1053,7 @@
       const totalFailed = reports.reduce((acc, r) => acc + (r.failed_tests || 0), 0) || 3;
       const totalWarned = reports.reduce((acc, r) => acc + (r.warn_tests || 0), 0) || 2;
 
-      /* 1. Left Vertical Slim Sidebar */
+      
       const renderSidebar = () => {
         return h("aside", { className: "sidebar" },
           h("div", { className: "brand-mark", onClick: () => setTab("dashboard") },
@@ -1064,7 +1063,6 @@
             )
           ),
           h("div", { className: "nav-column" },
-            // Dashboard Icon
             h("button", {
               className: `sidebar-btn ${tab === 'dashboard' ? 'active' : ''}`,
               title: "Dashboard Overview",
@@ -1077,7 +1075,6 @@
                 h("rect", { x: "3", y: "16", width: "7", height: "5", rx: "1" })
               )
             ),
-            // Endpoints Icon
             h("button", {
               className: `sidebar-btn ${tab === 'endpoints' ? 'active' : ''}`,
               title: "Target Inventory",
@@ -1090,7 +1087,6 @@
                 h("circle", { cx: "6", cy: "17", r: "1" })
               )
             ),
-            // Security Scanner Icon
             h("button", {
               className: `sidebar-btn ${tab === 'scanner' ? 'active' : ''}`,
               title: "Security Scanner Engine",
@@ -1100,7 +1096,6 @@
                 h("path", { d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" })
               )
             ),
-            // Concepts Guide Icon
             h("button", {
               className: `sidebar-btn ${tab === 'viva' ? 'active' : ''}`,
               title: "SSE Principles Guide",
@@ -1118,10 +1113,9 @@
         );
       };
 
-      /* 2. Center Column Dashboard Views */
+      
       const renderDashboardCenter = () => {
         return h("div", null,
-          // Refined Hero Card (High-Precision Telemetry Graph + Metrics)
           h("div", { className: "hero-card" },
             h("div", { className: "hero-card-header" },
               h("div", null,
@@ -1134,7 +1128,6 @@
               )
             ),
             h("div", { className: "hero-content" },
-              // Interactive SVG Telemetry Spline Chart (Replaces awkward floating circles)
               h("div", { className: "telemetry-chart-container" },
                 h("div", { className: "chart-header-row" },
                   h("div", { className: "chart-status-indicator" },
@@ -1147,7 +1140,6 @@
                   )
                 ),
 
-                // SVG Spline Curve with Gradient Glow Area
                 h("div", { className: "svg-telemetry-wrapper" },
                   h("svg", { viewBox: "0 0 540 120", preserveAspectRatio: "none" },
                     h("defs", null,
@@ -1156,23 +1148,19 @@
                         h("stop", { offset: "100%", stopColor: "var(--lime-neon)", stopOpacity: "0.0" })
                       )
                     ),
-                    // Horizontal subtle gridlines
                     h("line", { x1: "0", y1: "25", x2: "540", y2: "25", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
                     h("line", { x1: "0", y1: "60", x2: "540", y2: "60", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
                     h("line", { x1: "0", y1: "95", x2: "540", y2: "95", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
                     
-                    // Grid labels
                     h("text", { x: "4", y: "23", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "100%"),
                     h("text", { x: "4", y: "58", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "75%"),
                     h("text", { x: "4", y: "93", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "50%"),
 
-                    // Filled Gradient Area
                     h("path", {
                       d: "M 30,85 C 80,85 100,75 140,75 C 180,75 200,90 240,90 C 280,90 300,55 340,55 C 380,55 400,38 440,38 C 480,38 500,32 525,32 L 525,120 L 30,120 Z",
                       fill: "url(#telemetryGlow)"
                     }),
 
-                    // Smooth Neon Spline Curve
                     h("path", {
                       d: "M 30,85 C 80,85 100,75 140,75 C 180,75 200,90 240,90 C 280,90 300,55 340,55 C 380,55 400,38 440,38 C 480,38 500,32 525,32",
                       fill: "none",
@@ -1181,19 +1169,16 @@
                       strokeLinecap: "round"
                     }),
 
-                    // Data Nodes on Curve
                     h("circle", { cx: "140", cy: "75", r: "3.5", fill: "var(--accent-coral)" }),
                     h("circle", { cx: "240", cy: "90", r: "3.5", fill: "var(--accent-peach)" }),
                     h("circle", { cx: "340", cy: "55", r: "3.5", fill: "var(--accent-teal)" }),
                     h("circle", { cx: "440", cy: "38", r: "3.5", fill: "var(--lime-neon)" }),
 
-                    // Active Endpoint Node with Pulsing Halo
                     h("circle", { cx: "525", cy: "32", r: "8", fill: "rgba(210, 248, 41, 0.25)" }),
                     h("circle", { cx: "525", cy: "32", r: "4", fill: "var(--lime-neon)" })
                   )
                 ),
 
-                // Telemetry KPI Strip below graph
                 h("div", { className: "telemetry-kpi-row" },
                   h("div", { className: "telemetry-kpi-item" },
                     h("span", { className: "kpi-dot", style: { background: "var(--lime-neon)" } }),
@@ -1214,7 +1199,6 @@
                 )
               ),
 
-              // Side Mini Bar Graph: Dimension Breakdown
               h("div", { className: "hero-side-widget" },
                 h("div", { className: "widget-head" },
                   h("span", { className: "widget-title" }, "Security Dimensions"),
@@ -1258,9 +1242,7 @@
             )
           ),
 
-          // 4 3D Stack Cards Row
           h("div", { className: "cards-row" },
-            // Card 1
             h("div", { className: "stack-card stack-card-1", onClick: () => setTab("endpoints") },
               h("div", { className: "stack-icon-pill" },
                 h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--accent-purple)", strokeWidth: "2.5" },
@@ -1272,7 +1254,6 @@
                 h("div", { className: "stack-value" }, endpoints.length || 2)
               )
             ),
-            // Card 2
             h("div", { className: "stack-card stack-card-2", onClick: () => setTab("scanner") },
               h("div", { className: "stack-icon-pill" },
                 h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "#ffffff", strokeWidth: "2.5" },
@@ -1284,7 +1265,6 @@
                 h("div", { className: "stack-value" }, reports.length || 10)
               )
             ),
-            // Card 3
             h("div", { className: "stack-card stack-card-3" },
               h("div", { className: "stack-icon-pill" },
                 h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--accent-teal)", strokeWidth: "2.5" },
@@ -1296,7 +1276,6 @@
                 h("div", { className: "stack-value", style: { color: "var(--accent-teal)" } }, totalPassed)
               )
             ),
-            // Card 4
             h("div", { className: "stack-card stack-card-4" },
               h("div", { className: "stack-icon-pill" },
                 h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--lime-neon)", strokeWidth: "2.5" },
@@ -1311,7 +1290,6 @@
             )
           ),
 
-          // Quick Targets Launch Bar
           h("div", { className: "demo-bar" },
             h("div", { className: "demo-bar-left" },
               h("div", { className: "demo-badge-dot" }),
@@ -1344,7 +1322,7 @@
         );
       };
 
-      /* 3. Right Side Activity Panel */
+      
       const renderRightPanel = () => {
         return h("aside", { className: "right-panel" },
           h("div", { className: "right-panel-header" },
@@ -1407,7 +1385,6 @@
             )
           ),
 
-          // Bottom Floating Neon Action Button
           h("button", {
             className: "fab-btn",
             title: "Execute Immediate Assessment",
@@ -1420,7 +1397,7 @@
         );
       };
 
-      /* 4. Endpoints Management View */
+      
       const renderEndpointsView = () => {
         return h("div", null,
           h("div", { className: "view-card" },
@@ -1519,7 +1496,7 @@
         );
       };
 
-      /* 5. Scanner View */
+      
       const renderScannerView = () => {
         return h("div", null,
           h("div", { className: "view-card" },
@@ -1622,7 +1599,7 @@
         );
       };
 
-      /* 6. Guide View */
+      
       const renderVivaView = () => {
         return h("div", null,
           h("div", { className: "view-card" },
