@@ -307,18 +307,19 @@
       background: #0f1013;
       border-radius: 18px;
       border: 1px solid var(--border-subtle);
-      padding: 1.25rem 1.5rem 1rem 1.5rem;
+      padding: 1.5rem 1.6rem 1.25rem 1.6rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      min-height: 330px;
     }
 
     .chart-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.85rem;
     }
 
     .chart-status-indicator {
@@ -356,7 +357,7 @@
     
     .svg-telemetry-wrapper {
       width: 100%;
-      height: 125px;
+      height: 200px;
       position: relative;
     }
 
@@ -372,16 +373,16 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      margin-top: 0.4rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 0.75rem;
     }
 
     .telemetry-kpi-item {
       display: flex;
       align-items: center;
       gap: 0.45rem;
-      font-size: 0.75rem;
+      font-size: 0.775rem;
       font-weight: 700;
       color: var(--text-muted);
     }
@@ -398,7 +399,7 @@
       background: #0f1013;
       border-radius: 18px;
       border: 1px solid var(--border-subtle);
-      padding: 1.25rem 1.15rem;
+      padding: 1.5rem 1.25rem 1.25rem 1.25rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -422,7 +423,7 @@
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      height: 90px;
+      height: 160px;
       padding: 0 0.25rem;
     }
 
@@ -1141,41 +1142,54 @@
                 ),
 
                 h("div", { className: "svg-telemetry-wrapper" },
-                  h("svg", { viewBox: "0 0 540 120", preserveAspectRatio: "none" },
+                  h("svg", { viewBox: "0 0 680 200", preserveAspectRatio: "none" },
                     h("defs", null,
                       h("linearGradient", { id: "telemetryGlow", x1: "0", y1: "0", x2: "0", y2: "1" },
-                        h("stop", { offset: "0%", stopColor: "var(--lime-neon)", stopOpacity: "0.35" }),
+                        h("stop", { offset: "0%", stopColor: "var(--lime-neon)", stopOpacity: "0.32" }),
+                        h("stop", { offset: "65%", stopColor: "var(--lime-neon)", stopOpacity: "0.08" }),
                         h("stop", { offset: "100%", stopColor: "var(--lime-neon)", stopOpacity: "0.0" })
                       )
                     ),
-                    h("line", { x1: "0", y1: "25", x2: "540", y2: "25", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
-                    h("line", { x1: "0", y1: "60", x2: "540", y2: "60", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
-                    h("line", { x1: "0", y1: "95", x2: "540", y2: "95", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
                     
-                    h("text", { x: "4", y: "23", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "100%"),
-                    h("text", { x: "4", y: "58", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "75%"),
-                    h("text", { x: "4", y: "93", fill: "var(--text-dim)", fontSize: "9", fontWeight: "700" }, "50%"),
+                    h("line", { x1: "52", y1: "28", x2: "655", y2: "28", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    h("line", { x1: "52", y1: "68", x2: "655", y2: "68", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    h("line", { x1: "52", y1: "108", x2: "655", y2: "108", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    h("line", { x1: "52", y1: "148", x2: "655", y2: "148", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
+                    h("line", { x1: "52", y1: "168", x2: "655", y2: "168", stroke: "rgba(255,255,255,0.08)" }),
+                    
+                    h("text", { x: "42", y: "32", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "100%"),
+                    h("text", { x: "42", y: "72", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "75%"),
+                    h("text", { x: "42", y: "112", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "50%"),
+                    h("text", { x: "42", y: "152", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "25%"),
+
+                    h("text", { x: "55", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 60m"),
+                    h("text", { x: "175", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 45m"),
+                    h("text", { x: "295", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 30m"),
+                    h("text", { x: "415", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 15m"),
+                    h("text", { x: "535", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 5m"),
+                    h("text", { x: "640", y: "186", fill: "var(--lime-neon)", fontSize: "9.5", fontWeight: "800", textAnchor: "middle" }, "Live Engine"),
 
                     h("path", {
-                      d: "M 30,85 C 80,85 100,75 140,75 C 180,75 200,90 240,90 C 280,90 300,55 340,55 C 380,55 400,38 440,38 C 480,38 500,32 525,32 L 525,120 L 30,120 Z",
+                      d: "M 52,142 C 105,142 135,118 175,118 C 220,118 250,132 295,132 C 340,132 370,82 415,82 C 460,82 490,52 535,52 C 575,52 610,28 640,28 L 640,168 L 52,168 Z",
                       fill: "url(#telemetryGlow)"
                     }),
 
                     h("path", {
-                      d: "M 30,85 C 80,85 100,75 140,75 C 180,75 200,90 240,90 C 280,90 300,55 340,55 C 380,55 400,38 440,38 C 480,38 500,32 525,32",
+                      d: "M 52,142 C 105,142 135,118 175,118 C 220,118 250,132 295,132 C 340,132 370,82 415,82 C 460,82 490,52 535,52 C 575,52 610,28 640,28",
                       fill: "none",
                       stroke: "var(--lime-neon)",
-                      strokeWidth: "2.8",
-                      strokeLinecap: "round"
+                      strokeWidth: "3.2",
+                      strokeLinecap: "round",
+                      strokeLinejoin: "round"
                     }),
 
-                    h("circle", { cx: "140", cy: "75", r: "3.5", fill: "var(--accent-coral)" }),
-                    h("circle", { cx: "240", cy: "90", r: "3.5", fill: "var(--accent-peach)" }),
-                    h("circle", { cx: "340", cy: "55", r: "3.5", fill: "var(--accent-teal)" }),
-                    h("circle", { cx: "440", cy: "38", r: "3.5", fill: "var(--lime-neon)" }),
+                    h("circle", { cx: "175", cy: "118", r: "4.5", fill: "var(--accent-coral)", stroke: "#0f1013", strokeWidth: "2" }),
+                    h("circle", { cx: "295", cy: "132", r: "4.5", fill: "var(--accent-peach)", stroke: "#0f1013", strokeWidth: "2" }),
+                    h("circle", { cx: "415", cy: "82", r: "4.5", fill: "var(--accent-teal)", stroke: "#0f1013", strokeWidth: "2" }),
+                    h("circle", { cx: "535", cy: "52", r: "4.5", fill: "var(--lime-neon)", stroke: "#0f1013", strokeWidth: "2" }),
 
-                    h("circle", { cx: "525", cy: "32", r: "8", fill: "rgba(210, 248, 41, 0.25)" }),
-                    h("circle", { cx: "525", cy: "32", r: "4", fill: "var(--lime-neon)" })
+                    h("circle", { cx: "640", cy: "28", r: "11", fill: "rgba(210, 248, 41, 0.22)", stroke: "rgba(210, 248, 41, 0.45)", strokeWidth: "1.5" }),
+                    h("circle", { cx: "640", cy: "28", r: "4.5", fill: "var(--lime-neon)", stroke: "#0f1013", strokeWidth: "2" })
                   )
                 ),
 
@@ -1207,27 +1221,27 @@
                 h("div", { className: "widget-bars" },
                   h("div", { className: "bar-col-wrapper" },
                     h("div", { className: "bar-val" }, "100"),
-                    h("div", { className: "bar-col lime", style: { height: "70px" }, title: "Authentication Check" })
+                    h("div", { className: "bar-col lime", style: { height: "120px" }, title: "Authentication Check" })
                   ),
                   h("div", { className: "bar-col-wrapper" },
                     h("div", { className: "bar-val" }, "100"),
-                    h("div", { className: "bar-col teal", style: { height: "70px" }, title: "SQL Injection Probe" })
+                    h("div", { className: "bar-col teal", style: { height: "120px" }, title: "SQL Injection Probe" })
                   ),
                   h("div", { className: "bar-col-wrapper" },
                     h("div", { className: "bar-val" }, "100"),
-                    h("div", { className: "bar-col lime", style: { height: "70px" }, title: "XSS Sanitization" })
+                    h("div", { className: "bar-col lime", style: { height: "120px" }, title: "XSS Sanitization" })
                   ),
                   h("div", { className: "bar-col-wrapper" },
                     h("div", { className: "bar-val" }, "80"),
-                    h("div", { className: "bar-col dim", style: { height: "55px" }, title: "Rate Limiting" })
+                    h("div", { className: "bar-col dim", style: { height: "96px" }, title: "Rate Limiting" })
                   ),
                   h("div", { className: "bar-col-wrapper" },
                     h("div", { className: "bar-val" }, "65"),
-                    h("div", { className: "bar-col dim", style: { height: "45px" }, title: "Security Headers" })
+                    h("div", { className: "bar-col dim", style: { height: "78px" }, title: "Security Headers" })
                   ),
                   h("div", { className: "bar-col-wrapper" },
                     h("div", { className: "bar-val" }, "90"),
-                    h("div", { className: "bar-col teal", style: { height: "62px" }, title: "Information Disclosure" })
+                    h("div", { className: "bar-col teal", style: { height: "108px" }, title: "Information Disclosure" })
                   )
                 ),
                 h("div", { className: "widget-labels" },
