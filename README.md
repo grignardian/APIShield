@@ -2,7 +2,7 @@
 
 **Automated API Security Testing & Vulnerability Assessment Platform**
 
-APIShield is a lightweight, automated security scanner that analyzes REST APIs for common vulnerabilities, misconfigurations, and attack vectors defined in the OWASP API Security Top 10. It evaluates endpoints against real-world security checks, calculates an overall security risk score (0–100), and provides actionable developer remediation guidance.
+APIShield is a lightweight, automated security scanner that analyzes REST APIs for common vulnerabilities, misconfigurations, and attack vectors defined in the OWASP API Security Top 10. It evaluates endpoints against real-world security checks, calculates an overall security risk score (0–100), and provides actionable developer guidance.
 
 ---
 
