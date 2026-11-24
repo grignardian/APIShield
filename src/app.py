@@ -1,6 +1,5 @@
 import html
 import json
-import logging
 import os
 import sqlite3
 import time
@@ -14,17 +13,18 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.testclient import TestClient
 
-logger = logging.getLogger("apishield")
-
 DB_FILE = os.path.join(os.path.dirname(__file__), "apishield.db")
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
+# In-memory data for demo endpoints
 DEMO_NOTES = [
-    {"id": 1, "title": "Welcome Note", "content": "Welcome to APIShield testing!"},
-    {"id": 2, "title": "Confidential", "content": "Exam paper draft: Top Secret"}
+    {"id": 1, "title": "Welcome", "content": "Welcome to APIShield security testing!"},
+    {"id": 2, "title": "Confidential", "content": "Mid-term paper draft: Top Secret"}
 ]
 DEMO_RATE_LIMIT = {}
 
+
+# --- Database Helpers ---
 
 def get_db():
     conn = sqlite3.connect(DB_FILE)
@@ -34,8 +34,7 @@ def get_db():
 
 def init_db():
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS endpoints (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -46,7 +45,7 @@ def init_db():
             created_at TEXT
         )
     """)
-    cursor.execute("""
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             endpoint_id INTEGER,
@@ -62,18 +61,12 @@ def init_db():
             findings_json TEXT
         )
     """)
-
-    cursor.execute("SELECT COUNT(*) FROM endpoints")
-    if cursor.fetchone()[0] == 0:
+    if conn.execute("SELECT COUNT(*) FROM endpoints").fetchone()[0] == 0:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        cursor.execute(
-            "INSERT INTO endpoints (name, url, method, auth_type, auth_value, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            ("Vulnerable Notes API (Demo)", "http://127.0.0.1:8000/demo/vulnerable/notes", "GET", "none", "", now)
-        )
-        cursor.execute(
-            "INSERT INTO endpoints (name, url, method, auth_type, auth_value, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-            ("Secure Notes API (Demo)", "http://127.0.0.1:8000/demo/secure/notes", "GET", "bearer", "secret-token-123", now)
-        )
+        conn.execute("INSERT INTO endpoints (name, url, method, auth_type, auth_value, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                     ("Vulnerable Notes API (Demo)", "http://127.0.0.1:8000/demo/vulnerable/notes", "GET", "none", "", now))
+        conn.execute("INSERT INTO endpoints (name, url, method, auth_type, auth_value, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                     ("Secure Notes API (Demo)", "http://127.0.0.1:8000/demo/secure/notes", "GET", "bearer", "secret-token-123", now))
     conn.commit()
     conn.close()
 
@@ -81,47 +74,39 @@ def init_db():
 init_db()
 
 app = FastAPI(title="APIShield", docs_url=None, redoc_url=None, openapi_url=None)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 
 # --- Built-in Demo Endpoints (For Testing & Verification) ---
 
 @app.get("/demo/vulnerable/notes")
-def vulnerable_get_notes(q: str | None = None):
-    """Vulnerable endpoint: allows unauthenticated access and reflects raw queries."""
+def vulnerable_notes(q: str | None = None):
+    """Vulnerable endpoint: publicly open and reflects SQL search parameters."""
     if q:
         query_str = f"SELECT * FROM notes WHERE content LIKE '%{q}%'"  # nosec B608
-        return {"query_executed": query_str, "notes": DEMO_NOTES, "warning": "Vulnerable: query reflected unescaped!"}
+        return {"query_executed": query_str, "notes": DEMO_NOTES, "warning": "Vulnerable: query reflected raw!"}
     return {"notes": DEMO_NOTES}
 
 
 @app.post("/demo/vulnerable/notes")
 async def vulnerable_add_note(request: Request):
-    """Vulnerable endpoint: leaks internal traceback on bad JSON."""
+    """Vulnerable endpoint: exposes internal stack trace on invalid JSON."""
     try:
         body = await request.json()
     except (ValueError, json.JSONDecodeError):
         return Response(
-            content="Internal Server Error: Traceback (most recent call last):\n  File 'app.py', line 75, in vulnerable_add_note\nJSONDecodeError: Expecting value: line 1 column 1",
+            content="Internal Server Error: Traceback (most recent call last):\n  File 'app.py', line 50\nJSONDecodeError: Expecting value: line 1 column 1",
             status_code=500,
             media_type="text/plain",
         )
-    content = body.get("content", "")
-    new_note = {"id": len(DEMO_NOTES) + 1, "title": body.get("title", "Untitled"), "content": content}
+    new_note = {"id": len(DEMO_NOTES) + 1, "title": body.get("title", "Untitled"), "content": body.get("content", "")}
     DEMO_NOTES.append(new_note)
-    return {"status": "success", "echoed_raw": content, "note": new_note}
+    return {"status": "success", "note": new_note}
 
 
 @app.get("/demo/secure/notes")
-def secure_get_notes(request: Request, response: Response, q: str | None = None):
-    """Hardened endpoint: requires token, sets security headers, and rate limits."""
+def secure_notes(request: Request, response: Response, q: str | None = None):
+    """Hardened endpoint: requires Bearer token, rate limits, and sets security headers."""
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Content-Security-Policy"] = "default-src 'self'"
@@ -135,160 +120,96 @@ def secure_get_notes(request: Request, response: Response, q: str | None = None)
     requests.append(now)
     DEMO_RATE_LIMIT[client_ip] = requests
 
-    auth_header = request.headers.get("Authorization", "")
-    if auth_header != "Bearer secret-token-123":
+    if request.headers.get("Authorization") != "Bearer secret-token-123":
         response.status_code = 401
         return {"detail": "Authentication Required: Invalid or missing Bearer token."}
 
     if q:
         safe_q = html.escape(q)
-        return {
-            "query_sanitized": safe_q,
-            "parameterized_query": "SELECT * FROM notes WHERE content LIKE :safe_query",
-            "notes": [n for n in DEMO_NOTES if safe_q.lower() in n["content"].lower()]
-        }
-
+        return {"query_sanitized": safe_q, "notes": [n for n in DEMO_NOTES if safe_q.lower() in n["content"].lower()]}
     return {"notes": DEMO_NOTES}
 
 
 # --- Security Testing Modules ---
 
-def get_scanner_client(target_url: str):
-    """Uses FastAPI TestClient for localhost targets, and httpx for remote targets."""
-    if "127.0.0.1:8000" in target_url or "localhost:8000" in target_url:
-        return TestClient(app, base_url="http://127.0.0.1:8000", raise_server_exceptions=False)
-    return httpx.Client(timeout=4.0)
+def make_request(method: str, url: str, headers: dict | None = None, content: bytes | None = None):
+    """Sends requests to external URLs or internal demo routes."""
+    if "127.0.0.1:8000" in url or "localhost:8000" in url:
+        return TestClient(app, base_url="http://127.0.0.1:8000", raise_server_exceptions=False).request(
+            method, url, headers=headers, content=content
+        )
+    return httpx.request(method, url, headers=headers, content=content, timeout=4.0)
 
 
-def test_broken_auth(client, url: str, method: str, headers: dict) -> dict:
-    """Check 1: Checks if the endpoint allows unauthenticated access."""
+def check_auth(url: str, method: str, headers: dict) -> dict:
+    """1. Broken Authentication Check."""
     try:
         no_auth = {k: v for k, v in headers.items() if k.lower() != "authorization"}
-        resp = client.request(method, url, headers=no_auth)
+        resp = make_request(method, url, headers=no_auth)
         if resp.status_code == 200:
-            return {
-                "test_name": "Broken Authentication",
-                "status": "FAIL",
-                "severity": "CRITICAL",
-                "detail": "Endpoint responded with HTTP 200 without authentication. Publicly accessible.",
-                "remediation": "Add token or session authentication to this endpoint."
-            }
-        if resp.status_code in [401, 403]:
-            return {
-                "test_name": "Broken Authentication",
-                "status": "PASS",
-                "severity": "LOW",
-                "detail": f"Protected. Unauthenticated request rejected with HTTP {resp.status_code}.",
-                "remediation": "No action needed. Authentication is active."
-            }
-        return {
-            "test_name": "Broken Authentication",
-            "status": "WARN",
-            "severity": "MEDIUM",
-            "detail": f"Endpoint returned status code {resp.status_code} without authentication.",
-            "remediation": "Verify endpoint access control policies."
-        }
+            return {"test_name": "Broken Authentication", "status": "FAIL", "severity": "CRITICAL",
+                    "detail": "Endpoint responded with HTTP 200 without authentication.", "remediation": "Enforce authentication on this route."}
+        if resp.status_code in (401, 403):
+            return {"test_name": "Broken Authentication", "status": "PASS", "severity": "LOW",
+                    "detail": f"Protected. Rejected unauthenticated request with HTTP {resp.status_code}.", "remediation": "Authentication active."}
+        return {"test_name": "Broken Authentication", "status": "WARN", "severity": "MEDIUM",
+                "detail": f"Returned status code {resp.status_code} without auth.", "remediation": "Verify endpoint access policy."}
     except (httpx.HTTPError, OSError) as e:
-        return {
-            "test_name": "Broken Authentication",
-            "status": "WARN",
-            "severity": "LOW",
-            "detail": f"Could not reach endpoint: {e!s}",
-            "remediation": "Ensure target API server is running."
-        }
+        return {"test_name": "Broken Authentication", "status": "WARN", "severity": "LOW",
+                "detail": f"Could not connect: {e!s}", "remediation": "Verify endpoint is reachable."}
 
 
-def test_sql_injection(client, url: str, method: str, headers: dict) -> dict:
-    """Check 2: Tests if SQL payloads cause database errors or reflections."""
+def check_sqli(url: str, method: str, headers: dict) -> dict:
+    """2. SQL Injection Check."""
     try:
         payload = "' OR '1'='1"
         test_url = f"{url}?q={payload}" if "?" not in url else f"{url}&q={payload}"
-        resp = client.request(method, test_url, headers=headers)
+        resp = make_request(method, test_url, headers=headers)
         body = resp.text.lower()
-        sql_errors = ["syntax error", "sqlite3", "sql", "mysql", "ora-", "unterminated quotation"]
-
-        if resp.status_code == 500 or any(err in body for err in sql_errors):
-            return {
-                "test_name": "SQL Injection",
-                "status": "FAIL",
-                "severity": "HIGH",
-                "detail": "SQL Injection detected: response contains database error signatures.",
-                "remediation": "Use parameterized queries or ORM. Never concatenate input into queries."
-            }
+        if resp.status_code == 500 or any(err in body for err in ("syntax error", "sqlite3", "sql", "mysql")):
+            return {"test_name": "SQL Injection", "status": "FAIL", "severity": "HIGH",
+                    "detail": "Database error signature detected in response.", "remediation": "Use parameterized queries or ORM."}
         if payload in resp.text:
-            return {
-                "test_name": "SQL Injection",
-                "status": "WARN",
-                "severity": "MEDIUM",
-                "detail": "SQL payload was reflected raw in the response body.",
-                "remediation": "Sanitize and validate all query parameters."
-            }
-        return {
-            "test_name": "SQL Injection",
-            "status": "PASS",
-            "severity": "LOW",
-            "detail": "No SQL syntax errors or query leakage detected.",
-            "remediation": "Keep using parameterized inputs."
-        }
-    except (httpx.HTTPError, OSError) as err:
-        logger.debug("SQL probe notice: %s", err)
+            return {"test_name": "SQL Injection", "status": "WARN", "severity": "MEDIUM",
+                    "detail": "Payload reflected raw in output.", "remediation": "Sanitize query parameters."}
+        return {"test_name": "SQL Injection", "status": "PASS", "severity": "LOW",
+                "detail": "No SQL syntax errors or query reflections found.", "remediation": "Input properly handled."}
+    except (httpx.HTTPError, OSError):
         return {"test_name": "SQL Injection", "status": "PASS", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
 
 
-def test_xss(client, url: str, method: str, headers: dict) -> dict:
-    """Check 3: Tests if script tags are reflected unescaped."""
+def check_xss(url: str, method: str, headers: dict) -> dict:
+    """3. Cross-Site Scripting (XSS) Check."""
     try:
         payload = "<script>alert('xss')</script>"
         test_url = f"{url}?q={payload}" if "?" not in url else f"{url}&q={payload}"
-        resp = client.request(method, test_url, headers=headers)
+        resp = make_request(method, test_url, headers=headers)
         if payload in resp.text:
-            return {
-                "test_name": "Cross-Site Scripting (XSS)",
-                "status": "FAIL",
-                "severity": "HIGH",
-                "detail": "Input was reflected unescaped in response. Attackers can execute JavaScript.",
-                "remediation": "Escape user input using HTML entity encoding."
-            }
-        return {
-            "test_name": "Cross-Site Scripting (XSS)",
-            "status": "PASS",
-            "severity": "LOW",
-            "detail": "Script tags were safely stripped or sanitized.",
-            "remediation": "Maintain contextual output encoding."
-        }
-    except (httpx.HTTPError, OSError) as err:
-        logger.debug("XSS probe notice: %s", err)
+            return {"test_name": "Cross-Site Scripting (XSS)", "status": "FAIL", "severity": "HIGH",
+                    "detail": "Script tag was reflected unescaped in response.", "remediation": "Escape HTML entities in output."}
+        return {"test_name": "Cross-Site Scripting (XSS)", "status": "PASS", "severity": "LOW",
+                "detail": "Script tags sanitized properly.", "remediation": "Output encoding is active."}
+    except (httpx.HTTPError, OSError):
         return {"test_name": "Cross-Site Scripting (XSS)", "status": "PASS", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
 
 
-def test_rate_limiting(client, url: str, method: str, headers: dict) -> dict:
-    """Check 4: Sends 8 rapid requests to verify throttling."""
+def check_rate_limit(url: str, method: str, headers: dict) -> dict:
+    """4. Rate Limiting Check."""
     try:
-        has_limit = any(client.request(method, url, headers=headers).status_code == 429 for _ in range(8))
-        if has_limit:
-            return {
-                "test_name": "Rate Limiting",
-                "status": "PASS",
-                "severity": "LOW",
-                "detail": "Rate limiting is active. Throttled bursts with HTTP 429.",
-                "remediation": "Current rate limiting configuration is sufficient."
-            }
-        return {
-            "test_name": "Rate Limiting",
-            "status": "FAIL",
-            "severity": "MEDIUM",
-            "detail": "No rate limiting detected. Server handled 8 rapid requests without throttling.",
-            "remediation": "Implement rate limiting per IP or client token."
-        }
-    except (httpx.HTTPError, OSError) as err:
-        logger.debug("Rate probe notice: %s", err)
+        limited = any(make_request(method, url, headers=headers).status_code == 429 for _ in range(8))
+        if limited:
+            return {"test_name": "Rate Limiting", "status": "PASS", "severity": "LOW",
+                    "detail": "Server successfully throttled rapid requests with HTTP 429.", "remediation": "Rate limiting is working."}
+        return {"test_name": "Rate Limiting", "status": "FAIL", "severity": "MEDIUM",
+                "detail": "Server handled 8 rapid requests without rate limiting.", "remediation": "Add request throttling per IP/token."}
+    except (httpx.HTTPError, OSError):
         return {"test_name": "Rate Limiting", "status": "WARN", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
 
 
-def test_security_headers(client, url: str, method: str, headers: dict) -> dict:
-    """Check 5: Checks for standard defense-in-depth HTTP headers."""
+def check_headers(url: str, method: str, headers: dict) -> dict:
+    """5. Security Headers Check."""
     try:
-        resp = client.request(method, url, headers=headers)
+        resp = make_request(method, url, headers=headers)
         missing = []
         if "x-content-type-options" not in resp.headers:
             missing.append("X-Content-Type-Options")
@@ -298,85 +219,56 @@ def test_security_headers(client, url: str, method: str, headers: dict) -> dict:
             missing.append("Content-Security-Policy")
 
         if missing:
-            return {
-                "test_name": "Security Headers",
-                "status": "WARN",
-                "severity": "LOW",
-                "detail": f"Missing security headers: {', '.join(missing)}",
-                "remediation": "Add middleware to send X-Content-Type-Options, X-Frame-Options, and CSP."
-            }
-        return {
-            "test_name": "Security Headers",
-            "status": "PASS",
-            "severity": "LOW",
-            "detail": "All critical security headers are present.",
-            "remediation": "Headers configured according to best practices."
-        }
-    except (httpx.HTTPError, OSError) as err:
-        logger.debug("Headers probe notice: %s", err)
+            return {"test_name": "Security Headers", "status": "WARN", "severity": "LOW",
+                    "detail": f"Missing recommended headers: {', '.join(missing)}", "remediation": "Add security headers in responses."}
+        return {"test_name": "Security Headers", "status": "PASS", "severity": "LOW",
+                "detail": "All key security headers are present.", "remediation": "Headers properly configured."}
+    except (httpx.HTTPError, OSError):
         return {"test_name": "Security Headers", "status": "WARN", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
 
 
-def test_info_disclosure(client, url: str) -> dict:
-    """Check 6: Checks if invalid JSON input exposes backend stack traces."""
+def check_info_leak(url: str) -> dict:
+    """6. Information Disclosure Check."""
     try:
-        resp = client.post(url, headers={"Content-Type": "application/json"}, content=b"{bad_json:")
+        resp = make_request("POST", url, headers={"Content-Type": "application/json"}, content=b"{malformed_json:")
         body = resp.text.lower()
-        leak_words = ["traceback", "file \"", "line ", "internal server error", "exception:"]
-        if any(w in body for w in leak_words):
-            return {
-                "test_name": "Information Disclosure",
-                "status": "FAIL",
-                "severity": "MEDIUM",
-                "detail": "Server leaks internal stack traces when receiving malformed JSON.",
-                "remediation": "Use generic error handling to hide server internals in production."
-            }
-        return {
-            "test_name": "Information Disclosure",
-            "status": "PASS",
-            "severity": "LOW",
-            "detail": "No stack traces or sensitive internals were leaked.",
-            "remediation": "Centralized error handling is active."
-        }
-    except (httpx.HTTPError, OSError) as err:
-        logger.debug("Info disclosure probe notice: %s", err)
+        if any(w in body for w in ("traceback", "file \"", "internal server error", "exception:")):
+            return {"test_name": "Information Disclosure", "status": "FAIL", "severity": "MEDIUM",
+                    "detail": "Server exposed internal stack trace on malformed input.", "remediation": "Enable centralized error handling."}
+        return {"test_name": "Information Disclosure", "status": "PASS", "severity": "LOW",
+                "detail": "No stack traces or internals were leaked.", "remediation": "Safe error handling."}
+    except (httpx.HTTPError, OSError):
         return {"test_name": "Information Disclosure", "status": "PASS", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
 
 
-def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: str) -> list[dict]:
-    """Runs all 6 security checks against the target endpoint and aggregates findings."""
+def run_security_scan(url: str, method: str, auth_type: str, auth_value: str) -> list[dict]:
+    """Runs all 6 checks and aggregates results."""
     headers = {"Content-Type": "application/json"}
     if auth_type == "bearer" and auth_value:
         headers["Authorization"] = f"Bearer {auth_value}"
     elif auth_type == "basic" and auth_value:
         headers["Authorization"] = f"Basic {auth_value}"
 
-    with get_scanner_client(url) as client:
-        return [
-            test_broken_auth(client, url, method, headers),
-            test_sql_injection(client, url, method, headers),
-            test_xss(client, url, method, headers),
-            test_rate_limiting(client, url, method, headers),
-            test_security_headers(client, url, method, headers),
-            test_info_disclosure(client, url)
-        ]
+    return [
+        check_auth(url, method, headers),
+        check_sqli(url, method, headers),
+        check_xss(url, method, headers),
+        check_rate_limit(url, method, headers),
+        check_headers(url, method, headers),
+        check_info_leak(url)
+    ]
 
 
-def calculate_security_score(findings: list[dict]) -> dict:
-    """Calculates a 0-100 security score based on finding severities."""
+def calculate_score(findings: list[dict]) -> dict:
+    """Calculates a 0-100 score based on severity penalties."""
     score = 100
     penalties = {"CRITICAL": 30, "HIGH": 20, "MEDIUM": 10, "LOW": 5}
-    fail_counts = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0}
-
     for f in findings:
         if f["status"] == "FAIL":
-            sev = f["severity"]
-            fail_counts[sev] = fail_counts.get(sev, 0) + 1
-            score -= penalties.get(sev, 0)
+            score -= penalties.get(f["severity"], 0)
 
     score = max(0, min(100, score))
     risk = "LOW" if score >= 80 else "MEDIUM" if score >= 50 else "HIGH"
-
     return {
         "score": score,
         "risk_level": risk,
@@ -384,7 +276,6 @@ def calculate_security_score(findings: list[dict]) -> dict:
         "passed_tests": sum(1 for f in findings if f["status"] == "PASS"),
         "failed_tests": sum(1 for f in findings if f["status"] == "FAIL"),
         "warn_tests": sum(1 for f in findings if f["status"] == "WARN"),
-        "fail_counts": fail_counts
     }
 
 
@@ -407,18 +298,16 @@ def list_endpoints():
 
 
 @app.post("/api/endpoints")
-def create_endpoint(ep: EndpointCreate):
+def add_endpoint(ep: EndpointCreate):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO endpoints (name, url, method, auth_type, auth_value, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-        (ep.name, ep.url, ep.method.upper(), ep.auth_type, ep.auth_value or "", now)
-    )
+    cur = conn.cursor()
+    cur.execute("INSERT INTO endpoints (name, url, method, auth_type, auth_value, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (ep.name, ep.url, ep.method.upper(), ep.auth_type, ep.auth_value or "", now))
     conn.commit()
-    new_id = cursor.lastrowid
+    new_id = cur.lastrowid
     conn.close()
-    return {"id": new_id, "message": "Endpoint saved successfully!"}
+    return {"id": new_id, "message": "Endpoint saved."}
 
 
 @app.delete("/api/endpoints/{endpoint_id}")
@@ -427,7 +316,7 @@ def delete_endpoint(endpoint_id: int):
     conn.execute("DELETE FROM endpoints WHERE id = ?", (endpoint_id,))
     conn.commit()
     conn.close()
-    return {"message": "Endpoint deleted"}
+    return {"message": "Endpoint deleted."}
 
 
 @app.post("/api/scan/{endpoint_id}")
@@ -438,28 +327,20 @@ def scan_endpoint(endpoint_id: int):
         conn.close()
         raise HTTPException(status_code=404, detail="Endpoint not found")
 
-    findings = run_all_security_tests(
-        url=ep["url"],
-        method=ep["method"],
-        auth_type=ep["auth_type"],
-        auth_value=ep["auth_value"]
-    )
-    summary = calculate_security_score(findings)
+    findings = run_security_scan(ep["url"], ep["method"], ep["auth_type"], ep["auth_value"])
+    summary = calculate_score(findings)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO reports (
-            endpoint_id, endpoint_name, endpoint_url, score, risk_level,
-            total_tests, passed_tests, failed_tests, warn_tests, created_at, findings_json
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        ep["id"], ep["name"], ep["url"], summary["score"], summary["risk_level"],
-        summary["total_tests"], summary["passed_tests"], summary["failed_tests"], summary["warn_tests"],
-        now, json.dumps(findings)
-    ))
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO reports (endpoint_id, endpoint_name, endpoint_url, score, risk_level,
+                            total_tests, passed_tests, failed_tests, warn_tests, created_at, findings_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (ep["id"], ep["name"], ep["url"], summary["score"], summary["risk_level"],
+          summary["total_tests"], summary["passed_tests"], summary["failed_tests"], summary["warn_tests"],
+          now, json.dumps(findings)))
     conn.commit()
-    report_id = cursor.lastrowid
+    report_id = cur.lastrowid
     conn.close()
 
     return {
@@ -474,7 +355,7 @@ def scan_endpoint(endpoint_id: int):
 @app.get("/api/reports")
 def list_reports():
     conn = get_db()
-    rows = conn.execute("SELECT * FROM reports ORDER BY id DESC LIMIT 15").fetchall()
+    rows = conn.execute("SELECT * FROM reports ORDER BY id DESC LIMIT 10").fetchall()
     conn.close()
     result = []
     for r in rows:

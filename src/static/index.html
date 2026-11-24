@@ -3,1676 +3,675 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIShield — Automated API Security Testing Platform</title>
-  
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  
-  <script src="/static/js/react.js"></script>
-  <script src="/static/js/react-dom.js"></script>
-  
+  <title>APIShield — Automated Security Testing Platform</title>
   <style>
     :root {
-      
-      --bg-page: #191a1e;
-      --bg-sidebar: #101113;
-      --bg-card: #131417;
-      --bg-card-elevated: #17181d;
-      --bg-pill: #1e1f25;
-      --bg-pill-hover: #25262e;
-      
-      --border-subtle: rgba(255, 255, 255, 0.06);
-      --border-medium: rgba(255, 255, 255, 0.12);
-      --border-active: rgba(255, 255, 255, 0.22);
-      
-      
+      --bg-dark: #0e0f12;
+      --bg-card: #17181c;
+      --bg-card-subtle: #1f2026;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(210, 248, 41, 0.35);
       --lime-neon: #d2f829;
-      --lime-glow: rgba(210, 248, 41, 0.35);
-      --lime-dark: rgba(210, 248, 41, 0.12);
-      --lime-border: rgba(210, 248, 41, 0.35);
-      
-      
-      --accent-coral: #ff5c7c;
-      --accent-coral-bg: rgba(255, 92, 124, 0.14);
-      --accent-coral-border: rgba(255, 92, 124, 0.35);
-
-      --accent-peach: #f8a538;
-      --accent-peach-bg: rgba(248, 165, 56, 0.14);
-      --accent-peach-border: rgba(248, 165, 56, 0.35);
-
-      --accent-teal: #3ebbb0;
-      --accent-teal-bg: rgba(62, 187, 176, 0.14);
-      --accent-teal-border: rgba(62, 187, 176, 0.35);
-
-      --accent-purple: #9d72ff;
-      --accent-purple-bg: rgba(157, 114, 255, 0.14);
-      --accent-purple-border: rgba(157, 114, 255, 0.35);
-
-      
+      --lime-glow: rgba(210, 248, 41, 0.15);
+      --coral: #ff5757;
+      --amber: #ffb03a;
+      --teal: #3ebbb0;
       --text-white: #ffffff;
-      --text-muted: #8e9099;
-      --text-dim: #5c5e68;
+      --text-muted: #9a9ba4;
+      --text-dim: #65666f;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
-    
+
     body {
-      background-color: var(--bg-page);
+      background-color: var(--bg-dark);
       color: var(--text-white);
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
       min-height: 100vh;
-      display: flex;
-      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
     }
 
-    
-    .app-layout {
-      display: flex;
-      width: 100vw;
-      min-height: 100vh;
-      background-color: var(--bg-page);
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
     }
 
-    
-    .sidebar {
-      width: 76px;
-      background-color: var(--bg-sidebar);
-      border-right: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1.5rem 0;
-      flex-shrink: 0;
-      z-index: 50;
-    }
-
-    .brand-mark {
-      width: 40px;
-      height: 40px;
-      background: #191b20;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 2.5rem;
-      border: 1px solid var(--border-subtle);
-      cursor: pointer;
-    }
-
-    .brand-logo-icon {
-      width: 20px;
-      height: 20px;
-      display: flex;
-      gap: 3px;
-      align-items: center;
-    }
-
-    .brand-dot-lime {
-      width: 6px;
-      height: 18px;
-      background-color: var(--lime-neon);
-      border-radius: 4px;
-      box-shadow: 0 0 10px var(--lime-glow);
-    }
-
-    .brand-dot-sub {
-      width: 6px;
-      height: 10px;
-      background-color: var(--text-muted);
-      border-radius: 4px;
-    }
-
-    .nav-column {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      flex: 1;
-      width: 100%;
-      align-items: center;
-    }
-
-    .sidebar-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .sidebar-btn:hover {
-      background: var(--bg-pill);
-      color: var(--text-white);
-    }
-
-    .sidebar-btn.active {
-      background: var(--bg-card-elevated);
-      color: var(--lime-neon);
-      border: 1px solid var(--lime-border);
-      box-shadow: 0 4px 14px rgba(210, 248, 41, 0.15);
-    }
-
-    .sidebar-bottom {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .avatar-pill {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #23252d;
-      border: 2px solid var(--lime-neon);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.75rem;
-      color: var(--lime-neon);
-    }
-
-    
-    .main-wrapper {
-      flex: 1;
-      padding: 1.75rem 2rem;
-      overflow-y: auto;
-      max-width: calc(100vw - 76px);
-      display: flex;
-      gap: 1.75rem;
-    }
-
-    .center-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    
-    .top-header {
+    /* Header */
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    .header-titles h1 {
-      font-size: 2rem;
+    .brand-title {
+      font-size: 1.6rem;
       font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      color: var(--text-white);
-    }
-
-    .header-titles span {
-      font-size: 0.725rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-top: 0.2rem;
-      display: block;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .project-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 0.55rem 1.1rem;
-      border-radius: 980px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-white);
+      letter-spacing: -0.03em;
       display: flex;
       align-items: center;
       gap: 0.6rem;
     }
 
-    .project-pill-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--lime-neon);
-      box-shadow: 0 0 8px var(--lime-glow);
+    .brand-badge {
+      background: #1e2507;
+      color: var(--lime-neon);
+      border: 1px solid rgba(210, 248, 41, 0.3);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 980px;
+      letter-spacing: 0.02em;
     }
 
-    
+    .brand-subtitle {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border);
+      color: var(--text-white);
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn:hover {
+      background: #282a33;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-lime {
+      background: var(--lime-neon);
+      color: #0e0f12;
+      border: none;
+    }
+
+    .btn-lime:hover {
+      background: #e1ff47;
+      box-shadow: 0 0 15px var(--lime-glow);
+    }
+
+    .btn-coral {
+      background: rgba(255, 87, 87, 0.12);
+      border-color: rgba(255, 87, 87, 0.3);
+      color: #ff8585;
+    }
+
+    .btn-coral:hover {
+      background: rgba(255, 87, 87, 0.2);
+    }
+
+    /* Hero Score & Status Banner */
     .hero-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 24px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
       padding: 1.75rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    @media (max-width: 820px) {
+      .hero-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .score-box {
+      background: #111215;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem 1.25rem;
       display: flex;
       flex-direction: column;
-      position: relative;
-    }
-
-    .hero-card-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.25rem;
+      justify-content: center;
+      text-align: center;
     }
 
-    .hero-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #ffffff;
+    .score-number {
+      font-size: 3.8rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--lime-neon);
     }
 
-    .hero-subtitle {
-      font-size: 0.725rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-top: 2px;
-    }
-
-    .hero-content {
-      display: flex;
-      align-items: stretch;
-      justify-content: space-between;
-      gap: 1.5rem;
-    }
-
-    
-    .telemetry-chart-container {
-      flex: 1;
-      background: #0f1013;
-      border-radius: 18px;
-      border: 1px solid var(--border-subtle);
-      padding: 1.5rem 1.6rem 1.25rem 1.6rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      min-height: 330px;
-    }
-
-    .chart-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.85rem;
-    }
-
-    .chart-status-indicator {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    .score-label {
       font-size: 0.775rem;
       font-weight: 700;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.5rem;
+    }
+
+    .score-status-pill {
+      margin-top: 1rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 980px;
+      font-size: 0.775rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      background: #1e2507;
+      color: var(--lime-neon);
+      border: 1px solid rgba(210, 248, 41, 0.3);
+    }
+
+    .score-status-pill.danger {
+      background: rgba(255, 87, 87, 0.15);
+      color: var(--coral);
+      border-color: rgba(255, 87, 87, 0.3);
+    }
+
+    .score-status-pill.warning {
+      background: rgba(255, 176, 58, 0.15);
+      color: var(--amber);
+      border-color: rgba(255, 176, 58, 0.3);
+    }
+
+    .hero-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .target-info-head {
+      margin-bottom: 1.25rem;
+    }
+
+    .target-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .target-url {
+      font-family: monospace;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+      word-break: break-all;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-pill {
+      background: #111215;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+    }
+
+    .stat-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 0.15rem;
+    }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 6px;
+      height: 16px;
+      background: var(--lime-neon);
+      border-radius: 2px;
+    }
+
+    /* Checks Grid */
+    .checks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.15rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .check-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.2s ease;
+    }
+
+    .check-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .check-card.fail {
+      border-left: 4px solid var(--coral);
+    }
+
+    .check-card.pass {
+      border-left: 4px solid var(--lime-neon);
+    }
+
+    .check-card.warn {
+      border-left: 4px solid var(--amber);
+    }
+
+    .check-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .check-name {
+      font-size: 0.925rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .check-badges {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
 
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--lime-neon);
-      box-shadow: 0 0 10px var(--lime-glow);
-    }
+    .badge-pass { background: #1e2507; color: var(--lime-neon); }
+    .badge-fail { background: rgba(255, 87, 87, 0.18); color: var(--coral); }
+    .badge-warn { background: rgba(255, 176, 58, 0.18); color: var(--amber); }
 
-    .score-callout-pill {
-      background: var(--lime-dark);
-      border: 1px solid var(--lime-border);
-      color: var(--lime-neon);
-      padding: 0.35rem 0.85rem;
-      border-radius: 980px;
-      font-size: 0.825rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
+    .badge-critical { background: rgba(255, 87, 87, 0.25); color: #ff9191; }
+    .badge-high { background: rgba(255, 120, 71, 0.2); color: #ff9f75; }
+    .badge-medium { background: rgba(255, 176, 58, 0.2); color: #ffd180; }
+    .badge-low { background: #202229; color: var(--text-muted); }
 
-    
-    .svg-telemetry-wrapper {
-      width: 100%;
-      height: 200px;
-      position: relative;
-    }
-
-    .svg-telemetry-wrapper svg {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    
-    .telemetry-kpi-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      margin-top: 0.75rem;
-    }
-
-    .telemetry-kpi-item {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.775rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .kpi-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-
-    
-    .hero-side-widget {
-      width: 250px;
-      background: #0f1013;
-      border-radius: 18px;
-      border: 1px solid var(--border-subtle);
-      padding: 1.5rem 1.25rem 1.25rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .widget-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.85rem;
-    }
-
-    .widget-title {
+    .check-desc {
       font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: -0.01em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      line-height: 1.45;
+    }
+
+    .check-remediation {
+      background: #111215;
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.74rem;
+      color: #bbbcc6;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .check-remediation strong {
       color: var(--text-white);
     }
 
-    .widget-bars {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      height: 160px;
-      padding: 0 0.25rem;
-    }
-
-    .bar-col-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.35rem;
-      height: 100%;
-      justify-content: flex-end;
-    }
-
-    .bar-col {
-      width: 13px;
-      border-radius: 980px;
-      transition: height 0.4s ease;
-    }
-
-    .bar-col.lime {
-      background: var(--lime-neon);
-      box-shadow: 0 0 10px rgba(210, 248, 41, 0.3);
-    }
-
-    .bar-col.teal {
-      background: var(--accent-teal);
-      box-shadow: 0 0 8px rgba(62, 187, 176, 0.25);
-    }
-
-    .bar-col.dim {
-      background: #272832;
-    }
-
-    .bar-val {
-      font-size: 0.6rem;
-      font-weight: 800;
-      color: var(--text-dim);
-    }
-
-    .widget-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      font-weight: 700;
-      margin-top: 0.65rem;
-      padding: 0 0.1rem;
-    }
-
-    
-    .cards-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .stack-card {
-      border-radius: 20px;
-      padding: 1.35rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      border: 1px solid var(--border-subtle);
-      cursor: pointer;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
-      min-height: 145px;
-    }
-
-    .stack-card::before {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 10px;
-      right: 10px;
-      height: 8px;
-      background: rgba(18, 19, 23, 0.85);
-      border-radius: 14px;
-      z-index: -1;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-
-    .stack-card::after {
-      content: "";
-      position: absolute;
-      bottom: -12px;
-      left: 20px;
-      right: 20px;
-      height: 8px;
-      background: rgba(12, 13, 16, 0.65);
-      border-radius: 12px;
-      z-index: -2;
-    }
-
-    .stack-card:hover {
-      transform: translateY(-3px);
-    }
-
-    .stack-card-1 {
-      background: linear-gradient(160deg, #1b2030 0%, #12141c 100%);
-    }
-
-    .stack-card-2 {
-      background: linear-gradient(160deg, #202127 0%, #131417 100%);
-    }
-
-    .stack-card-3 {
-      background: linear-gradient(160deg, #132426 0%, #0e1617 100%);
-    }
-
-    .stack-card-4 {
-      background: linear-gradient(160deg, #1b2618 0%, #111810 100%);
-    }
-
-    .stack-icon-pill {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    .stack-label {
-      font-size: 0.675rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .stack-value {
-      font-size: 2.25rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: #ffffff;
-      margin-top: 0.3rem;
-      line-height: 1;
-      display: flex;
-      align-items: baseline;
-      gap: 0.4rem;
-    }
-
-    .stack-value.lime {
-      color: var(--lime-neon);
-    }
-
-    
-    .demo-bar {
+    /* Target Management Table */
+    .targets-section {
       background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 1.15rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .demo-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    .demo-badge-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--lime-neon);
-      box-shadow: 0 0 10px var(--lime-glow);
-    }
-
-    .demo-bar-title {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    .demo-bar-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .demo-btn-group {
-      display: flex;
-      gap: 0.75rem;
-    }
-
-    .btn-vuln {
-      background: var(--accent-coral-bg);
-      color: #ff99ae;
-      border: 1px solid var(--accent-coral-border);
-      padding: 0.55rem 1.15rem;
-      border-radius: 980px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-vuln:hover:not(:disabled) {
-      background: var(--accent-coral);
-      color: #0c0d10;
-    }
-
-    .btn-sec {
-      background: var(--lime-dark);
-      color: var(--lime-neon);
-      border: 1px solid var(--lime-border);
-      padding: 0.55rem 1.15rem;
-      border-radius: 980px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-sec:hover:not(:disabled) {
-      background: var(--lime-neon);
-      color: #0c0d10;
-      box-shadow: 0 0 14px var(--lime-glow);
-    }
-
-    
-    .right-panel {
-      width: 330px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 24px;
       padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      position: relative;
+      margin-bottom: 2.5rem;
     }
 
-    .right-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .date-pill {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .status-badge-lime {
-      background: var(--lime-neon);
-      color: #0c0d10;
-      padding: 0.25rem 0.6rem;
-      border-radius: 980px;
-      font-size: 0.675rem;
-      font-weight: 800;
-    }
-
-    .activity-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .activity-pill {
-      background: var(--bg-pill);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 0.85rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .activity-pill:hover {
-      background: var(--bg-pill-hover);
-      border-color: var(--border-medium);
-      transform: translateX(-2px);
-    }
-
-    .pill-left {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .pill-indicator-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .pill-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .pill-title {
-      font-size: 0.825rem;
-      font-weight: 700;
-      color: #ffffff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .pill-sub {
-      font-size: 0.675rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-      font-weight: 500;
-    }
-
-    .pill-tag {
-      font-size: 0.65rem;
-      font-weight: 800;
-      padding: 0.22rem 0.55rem;
-      border-radius: 980px;
-      flex-shrink: 0;
-    }
-
-    
-    .fab-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--lime-neon);
-      color: #0c0d10;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 4px 18px var(--lime-glow);
-      align-self: flex-end;
-      margin-top: 1rem;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .fab-btn:hover:not(:disabled) {
-      transform: scale(1.1);
-      box-shadow: 0 6px 24px var(--lime-glow);
-    }
-
-    
-    .view-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 22px;
-      padding: 1.75rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .view-card-title {
-      font-size: 0.85rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 1.25rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    
-    table {
+    .targets-table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .targets-table th, .targets-table td {
+      padding: 0.75rem 0.85rem;
       text-align: left;
+      font-size: 0.825rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    th {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--border-subtle);
+    .targets-table th {
       color: var(--text-dim);
-      font-size: 0.725rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-weight: 800;
-    }
-
-    td {
-      padding: 0.95rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    tr:last-child td { border-bottom: none; }
-
-    
-    .form-group { margin-bottom: 1.25rem; }
-
-    label {
-      display: block;
-      font-size: 0.775rem;
       font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+    }
+
+    .targets-table td code {
+      font-family: monospace;
       color: var(--text-muted);
-      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
     }
 
-    input, select {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: #0d0e11;
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      color: #ffffff;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.2s;
+    /* Target Add Form */
+    .add-form {
+      display: grid;
+      grid-template-columns: 2fr 3fr 1fr 1fr auto;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
     }
 
-    input:focus, select:focus {
+    @media (max-width: 768px) {
+      .add-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-field {
+      background: #111215;
+      border: 1px solid var(--border);
+      color: var(--text-white);
+      padding: 0.6rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.825rem;
+    }
+
+    .input-field:focus {
       outline: none;
       border-color: var(--lime-neon);
-      box-shadow: 0 0 0 3px var(--lime-dark);
-      background: #111216;
     }
 
-    .btn-primary {
-      background: var(--lime-neon);
-      color: #0c0d10;
-      border: 1px solid var(--lime-neon);
-      padding: 0.7rem 1.4rem;
-      border-radius: 12px;
-      font-size: 0.875rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #e2fa46;
-      box-shadow: 0 4px 18px var(--lime-glow);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-danger {
-      background: var(--accent-coral-bg);
-      color: var(--accent-coral);
-      border: 1px solid var(--accent-coral-border);
-      padding: 0.35rem 0.8rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    
-    .score-banner-compact {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .score-circle-pill {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 4px solid var(--lime-neon);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 900;
-      background: #0f1013;
-      flex-shrink: 0;
-      color: var(--lime-neon);
-      box-shadow: 0 0 20px var(--lime-glow);
-    }
-
-    
-    .finding-item {
-      background: var(--bg-pill);
-      border: 1px solid var(--border-subtle);
-      border-left: 4px solid;
-      border-radius: 12px;
-      padding: 1.15rem;
-      margin-bottom: 0.85rem;
-    }
-
-    .finding-item.FAIL { border-left-color: var(--accent-coral); }
-    .finding-item.PASS { border-left-color: var(--lime-neon); }
-    .finding-item.WARN { border-left-color: var(--accent-peach); }
-
-    .finding-remedy-box {
-      font-size: 0.8rem;
-      background: rgba(210, 248, 41, 0.08);
-      border: 1px solid var(--lime-border);
-      color: #def673;
-      padding: 0.65rem 0.9rem;
-      border-radius: 8px;
-      margin-top: 0.6rem;
-      line-height: 1.45;
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div>
+        <div class="brand-title">
+          APIShield
+          <span class="brand-badge">v1.0 • Core</span>
+        </div>
+        <div class="brand-subtitle">Automated API Security Testing & Vulnerability Assessment</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-coral" onclick="runDemoScan(1)">Scan Insecure API</button>
+        <button class="btn btn-lime" onclick="runDemoScan(2)">Scan Hardened API</button>
+      </div>
+    </header>
+
+    <!-- Hero Score Summary -->
+    <div class="hero-card">
+      <div class="score-box">
+        <div class="score-number" id="heroScore">--</div>
+        <div class="score-label">Security Health</div>
+        <div class="score-status-pill" id="heroRisk">Ready to Scan</div>
+      </div>
+
+      <div class="hero-details">
+        <div class="target-info-head">
+          <div class="target-title" id="targetName">Select an endpoint below to assess</div>
+          <div class="target-url" id="targetUrl">http://127.0.0.1:8000/demo/secure/notes</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-pill">
+            <div class="stat-val" style="color: var(--lime-neon);" id="statPassed">0</div>
+            <div class="stat-name">Passed Checks</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" style="color: var(--coral);" id="statFailed">0</div>
+            <div class="stat-name">Critical Issues</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" style="color: var(--amber);" id="statWarn">0</div>
+            <div class="stat-name">Warnings</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" style="color: var(--teal);" id="statTotal">6</div>
+            <div class="stat-name">Total Evaluated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Findings Grid -->
+    <div class="section-title">Vulnerability Assessment Findings</div>
+    <div class="checks-grid" id="checksGrid">
+      <div class="empty-state" style="grid-column: 1 / -1;">Click "Scan Insecure API" or "Scan Hardened API" above to run an evaluation.</div>
+    </div>
+
+    <!-- Target Inventory -->
+    <div class="targets-section">
+      <div class="section-title">Configured Target Endpoints</div>
+      <table class="targets-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Auth Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="endpointsTableBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+
+      <!-- Add Target Form -->
+      <form class="add-form" onsubmit="handleAddEndpoint(event)">
+        <input type="text" id="newEpName" class="input-field" placeholder="Target Name (e.g. User Profile API)" required>
+        <input type="url" id="newEpUrl" class="input-field" placeholder="https://api.example.com/v1/user" required>
+        <select id="newEpMethod" class="input-field">
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+        </select>
+        <select id="newEpAuth" class="input-field">
+          <option value="none">No Auth</option>
+          <option value="bearer">Bearer Token</option>
+        </select>
+        <button type="submit" class="btn btn-lime">Add Target</button>
+      </form>
+    </div>
+  </div>
 
   <script>
-    const { useState, useEffect, createElement: h } = React;
-    const API_BASE = "http://localhost:8000";
+    let currentEndpoints = [];
 
-    function App() {
-      const [tab, setTab] = useState("dashboard");
-      const [endpoints, setEndpoints] = useState([]);
-      const [reports, setReports] = useState([]);
-      const [loading, setLoading] = useState(false);
-      const [scanTargetId, setScanTargetId] = useState("");
-      const [activeReport, setActiveReport] = useState(null);
-
-      const [formData, setFormData] = useState({
-        name: "",
-        url: "http://127.0.0.1:8000/demo/vulnerable/notes",
-        method: "GET",
-        auth_type: "none",
-        auth_value: ""
-      });
-
-      const fetchData = async () => {
-        try {
-          const epRes = await fetch(`${API_BASE}/api/endpoints`);
-          const epData = await epRes.json();
-          setEndpoints(epData);
-          if (epData.length > 0 && !scanTargetId) {
-            setScanTargetId(epData[0].id);
-          }
-          const repRes = await fetch(`${API_BASE}/api/reports`);
-          const repData = await repRes.json();
-          setReports(repData);
-          if (repData.length > 0 && !activeReport) {
-            setActiveReport(repData[0]);
-          }
-        } catch (e) {
-          console.error("API error:", e);
-        }
-      };
-
-      useEffect(() => {
-        fetchData();
-      }, []);
-
-      const handleRunScan = async (id) => {
-        setLoading(true);
-        try {
-          const res = await fetch(`${API_BASE}/api/scan/${id}`, { method: "POST" });
-          const data = await res.json();
-          setActiveReport({
-            endpoint_name: data.endpoint_name,
-            endpoint_url: data.endpoint_url,
-            score: data.summary.score,
-            risk_level: data.summary.risk_level,
-            passed_tests: data.summary.passed_tests,
-            failed_tests: data.summary.failed_tests,
-            warn_tests: data.summary.warn_tests,
-            total_tests: data.summary.total_tests,
-            findings: data.findings,
-            created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          });
-          setTab("scanner");
-          await fetchData();
-        } catch (e) {
-          alert("Scan execution failure: " + e);
-        }
-        setLoading(false);
-      };
-
-      const handleAddEndpoint = async (e) => {
-        e.preventDefault();
-        try {
-          const res = await fetch(`${API_BASE}/api/endpoints`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-          });
-          if (res.ok) {
-            setFormData({ name: "", url: "", method: "GET", auth_type: "none", auth_value: "" });
-            await fetchData();
-            setTab("dashboard");
-          }
-        } catch (e) {
-          alert("Registration failure: " + e);
-        }
-      };
-
-      const handleDeleteEndpoint = async (id) => {
-        if (!confirm("Confirm endpoint removal?")) return;
-        await fetch(`${API_BASE}/api/endpoints/${id}`, { method: "DELETE" });
-        await fetchData();
-      };
-
-      const avgScore = reports.length > 0 
-        ? Math.round(reports.reduce((acc, r) => acc + r.score, 0) / reports.length) 
-        : (activeReport ? activeReport.score : 85);
-
-      const totalPassed = reports.reduce((acc, r) => acc + (r.passed_tests || 0), 0) || 18;
-      const totalFailed = reports.reduce((acc, r) => acc + (r.failed_tests || 0), 0) || 3;
-      const totalWarned = reports.reduce((acc, r) => acc + (r.warn_tests || 0), 0) || 2;
-
-      
-      const renderSidebar = () => {
-        return h("aside", { className: "sidebar" },
-          h("div", { className: "brand-mark", onClick: () => setTab("dashboard") },
-            h("div", { className: "brand-logo-icon" },
-              h("div", { className: "brand-dot-lime" }),
-              h("div", { className: "brand-dot-sub" })
-            )
-          ),
-          h("div", { className: "nav-column" },
-            h("button", {
-              className: `sidebar-btn ${tab === 'dashboard' ? 'active' : ''}`,
-              title: "Dashboard Overview",
-              onClick: () => setTab("dashboard")
-            },
-              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
-                h("rect", { x: "3", y: "3", width: "7", height: "9", rx: "1" }),
-                h("rect", { x: "14", y: "3", width: "7", height: "5", rx: "1" }),
-                h("rect", { x: "14", y: "12", width: "7", height: "9", rx: "1" }),
-                h("rect", { x: "3", y: "16", width: "7", height: "5", rx: "1" })
-              )
-            ),
-            h("button", {
-              className: `sidebar-btn ${tab === 'endpoints' ? 'active' : ''}`,
-              title: "Target Inventory",
-              onClick: () => setTab("endpoints")
-            },
-              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
-                h("rect", { x: "2", y: "4", width: "20", height: "6", rx: "2" }),
-                h("rect", { x: "2", y: "14", width: "20", height: "6", rx: "2" }),
-                h("circle", { cx: "6", cy: "7", r: "1" }),
-                h("circle", { cx: "6", cy: "17", r: "1" })
-              )
-            ),
-            h("button", {
-              className: `sidebar-btn ${tab === 'scanner' ? 'active' : ''}`,
-              title: "Security Scanner Engine",
-              onClick: () => setTab("scanner")
-            },
-              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
-                h("path", { d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" })
-              )
-            ),
-            h("button", {
-              className: `sidebar-btn ${tab === 'viva' ? 'active' : ''}`,
-              title: "SSE Principles Guide",
-              onClick: () => setTab("viva")
-            },
-              h("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2" },
-                h("path", { d: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20" }),
-                h("path", { d: "M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" })
-              )
-            )
-          ),
-          h("div", { className: "sidebar-bottom" },
-            h("div", { className: "avatar-pill", title: "APIShield Active" }, "AS")
-          )
-        );
-      };
-
-      
-      const renderDashboardCenter = () => {
-        return h("div", null,
-          h("div", { className: "hero-card" },
-            h("div", { className: "hero-card-header" },
-              h("div", null,
-                h("div", { className: "hero-title" }, "Security Assessment Telemetry"),
-                h("div", { className: "hero-subtitle" }, "Continuous Vulnerability Evaluation & Benchmark")
-              ),
-              h("div", { className: "project-pill", style: { padding: "0.4rem 0.85rem", fontSize: "0.75rem" } },
-                h("div", { className: "project-pill-dot" }),
-                "Engine Active"
-              )
-            ),
-            h("div", { className: "hero-content" },
-              h("div", { className: "telemetry-chart-container" },
-                h("div", { className: "chart-header-row" },
-                  h("div", { className: "chart-status-indicator" },
-                    h("span", { className: "pulse-dot" }),
-                    "Security Score Trajectory"
-                  ),
-                  h("div", { className: "score-callout-pill" },
-                    h("strong", null, `${avgScore}%`),
-                    "Score • Passing"
-                  )
-                ),
-
-                h("div", { className: "svg-telemetry-wrapper" },
-                  h("svg", { viewBox: "0 0 680 200", preserveAspectRatio: "none" },
-                    h("defs", null,
-                      h("linearGradient", { id: "telemetryGlow", x1: "0", y1: "0", x2: "0", y2: "1" },
-                        h("stop", { offset: "0%", stopColor: "var(--lime-neon)", stopOpacity: "0.32" }),
-                        h("stop", { offset: "65%", stopColor: "var(--lime-neon)", stopOpacity: "0.08" }),
-                        h("stop", { offset: "100%", stopColor: "var(--lime-neon)", stopOpacity: "0.0" })
-                      )
-                    ),
-                    
-                    h("line", { x1: "52", y1: "28", x2: "655", y2: "28", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
-                    h("line", { x1: "52", y1: "68", x2: "655", y2: "68", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
-                    h("line", { x1: "52", y1: "108", x2: "655", y2: "108", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
-                    h("line", { x1: "52", y1: "148", x2: "655", y2: "148", stroke: "rgba(255,255,255,0.05)", strokeDasharray: "4 4" }),
-                    h("line", { x1: "52", y1: "168", x2: "655", y2: "168", stroke: "rgba(255,255,255,0.08)" }),
-                    
-                    h("text", { x: "42", y: "32", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "100%"),
-                    h("text", { x: "42", y: "72", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "75%"),
-                    h("text", { x: "42", y: "112", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "50%"),
-                    h("text", { x: "42", y: "152", fill: "var(--text-dim)", fontSize: "10", fontWeight: "700", textAnchor: "end" }, "25%"),
-
-                    h("text", { x: "55", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 60m"),
-                    h("text", { x: "175", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 45m"),
-                    h("text", { x: "295", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 30m"),
-                    h("text", { x: "415", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 15m"),
-                    h("text", { x: "535", y: "186", fill: "var(--text-dim)", fontSize: "9.5", fontWeight: "600", textAnchor: "middle" }, "T - 5m"),
-                    h("text", { x: "640", y: "186", fill: "var(--lime-neon)", fontSize: "9.5", fontWeight: "800", textAnchor: "middle" }, "Live Engine"),
-
-                    h("path", {
-                      d: "M 52,142 C 105,142 135,118 175,118 C 220,118 250,132 295,132 C 340,132 370,82 415,82 C 460,82 490,52 535,52 C 575,52 610,28 640,28 L 640,168 L 52,168 Z",
-                      fill: "url(#telemetryGlow)"
-                    }),
-
-                    h("path", {
-                      d: "M 52,142 C 105,142 135,118 175,118 C 220,118 250,132 295,132 C 340,132 370,82 415,82 C 460,82 490,52 535,52 C 575,52 610,28 640,28",
-                      fill: "none",
-                      stroke: "var(--lime-neon)",
-                      strokeWidth: "3.2",
-                      strokeLinecap: "round",
-                      strokeLinejoin: "round"
-                    }),
-
-                    h("circle", { cx: "175", cy: "118", r: "4.5", fill: "var(--accent-coral)", stroke: "#0f1013", strokeWidth: "2" }),
-                    h("circle", { cx: "295", cy: "132", r: "4.5", fill: "var(--accent-peach)", stroke: "#0f1013", strokeWidth: "2" }),
-                    h("circle", { cx: "415", cy: "82", r: "4.5", fill: "var(--accent-teal)", stroke: "#0f1013", strokeWidth: "2" }),
-                    h("circle", { cx: "535", cy: "52", r: "4.5", fill: "var(--lime-neon)", stroke: "#0f1013", strokeWidth: "2" }),
-
-                    h("circle", { cx: "640", cy: "28", r: "11", fill: "rgba(210, 248, 41, 0.22)", stroke: "rgba(210, 248, 41, 0.45)", strokeWidth: "1.5" }),
-                    h("circle", { cx: "640", cy: "28", r: "4.5", fill: "var(--lime-neon)", stroke: "#0f1013", strokeWidth: "2" })
-                  )
-                ),
-
-                h("div", { className: "telemetry-kpi-row" },
-                  h("div", { className: "telemetry-kpi-item" },
-                    h("span", { className: "kpi-dot", style: { background: "var(--lime-neon)" } }),
-                    `${totalPassed} Passed`
-                  ),
-                  h("div", { className: "telemetry-kpi-item" },
-                    h("span", { className: "kpi-dot", style: { background: "var(--accent-coral)" } }),
-                    `${totalFailed} Critical`
-                  ),
-                  h("div", { className: "telemetry-kpi-item" },
-                    h("span", { className: "kpi-dot", style: { background: "var(--accent-peach)" } }),
-                    `${totalWarned} Warnings`
-                  ),
-                  h("div", { className: "telemetry-kpi-item" },
-                    h("span", { className: "kpi-dot", style: { background: "var(--accent-teal)" } }),
-                    "Latency: 14ms"
-                  )
-                )
-              ),
-
-              h("div", { className: "hero-side-widget" },
-                h("div", { className: "widget-head" },
-                  h("span", { className: "widget-title" }, "Security Dimensions"),
-                  h("span", { style: { fontSize: "0.725rem", color: "var(--lime-neon)", fontWeight: 800 } }, "100% Coverage")
-                ),
-                h("div", { className: "widget-bars" },
-                  h("div", { className: "bar-col-wrapper" },
-                    h("div", { className: "bar-val" }, "100"),
-                    h("div", { className: "bar-col lime", style: { height: "120px" }, title: "Authentication Check" })
-                  ),
-                  h("div", { className: "bar-col-wrapper" },
-                    h("div", { className: "bar-val" }, "100"),
-                    h("div", { className: "bar-col teal", style: { height: "120px" }, title: "SQL Injection Probe" })
-                  ),
-                  h("div", { className: "bar-col-wrapper" },
-                    h("div", { className: "bar-val" }, "100"),
-                    h("div", { className: "bar-col lime", style: { height: "120px" }, title: "XSS Sanitization" })
-                  ),
-                  h("div", { className: "bar-col-wrapper" },
-                    h("div", { className: "bar-val" }, "80"),
-                    h("div", { className: "bar-col dim", style: { height: "96px" }, title: "Rate Limiting" })
-                  ),
-                  h("div", { className: "bar-col-wrapper" },
-                    h("div", { className: "bar-val" }, "65"),
-                    h("div", { className: "bar-col dim", style: { height: "78px" }, title: "Security Headers" })
-                  ),
-                  h("div", { className: "bar-col-wrapper" },
-                    h("div", { className: "bar-val" }, "90"),
-                    h("div", { className: "bar-col teal", style: { height: "108px" }, title: "Information Disclosure" })
-                  )
-                ),
-                h("div", { className: "widget-labels" },
-                  h("span", null, "Auth"),
-                  h("span", null, "SQLi"),
-                  h("span", null, "XSS"),
-                  h("span", null, "Rate"),
-                  h("span", null, "Head"),
-                  h("span", null, "Leak")
-                )
-              )
-            )
-          ),
-
-          h("div", { className: "cards-row" },
-            h("div", { className: "stack-card stack-card-1", onClick: () => setTab("endpoints") },
-              h("div", { className: "stack-icon-pill" },
-                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--accent-purple)", strokeWidth: "2.5" },
-                  h("path", { d: "M20 6L9 17l-5-5" })
-                )
-              ),
-              h("div", null,
-                h("div", { className: "stack-label" }, "Configured APIs"),
-                h("div", { className: "stack-value" }, endpoints.length || 2)
-              )
-            ),
-            h("div", { className: "stack-card stack-card-2", onClick: () => setTab("scanner") },
-              h("div", { className: "stack-icon-pill" },
-                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "#ffffff", strokeWidth: "2.5" },
-                  h("circle", { cx: "12", cy: "12", r: "8" })
-                )
-              ),
-              h("div", null,
-                h("div", { className: "stack-label" }, "Assessments Executed"),
-                h("div", { className: "stack-value" }, reports.length || 10)
-              )
-            ),
-            h("div", { className: "stack-card stack-card-3" },
-              h("div", { className: "stack-icon-pill" },
-                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--accent-teal)", strokeWidth: "2.5" },
-                  h("path", { d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" })
-                )
-              ),
-              h("div", null,
-                h("div", { className: "stack-label" }, "Checks Passed"),
-                h("div", { className: "stack-value", style: { color: "var(--accent-teal)" } }, totalPassed)
-              )
-            ),
-            h("div", { className: "stack-card stack-card-4" },
-              h("div", { className: "stack-icon-pill" },
-                h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "var(--lime-neon)", strokeWidth: "2.5" },
-                  h("polyline", { points: "22 7 13.5 15.5 8.5 10.5 2 17" }),
-                  h("polyline", { points: "16 7 22 7 22 13" })
-                )
-              ),
-              h("div", null,
-                h("div", { className: "stack-label" }, "Security Health"),
-                h("div", { className: "stack-value lime" }, `${avgScore}%`)
-              )
-            )
-          ),
-
-          h("div", { className: "demo-bar" },
-            h("div", { className: "demo-bar-left" },
-              h("div", { className: "demo-badge-dot" }),
-              h("div", null,
-                h("div", { className: "demo-bar-title" }, "Quick Demonstration Targets"),
-                h("div", { className: "demo-bar-sub" }, "Instant test evaluation against built-in vulnerable and hardened endpoints")
-              )
-            ),
-            h("div", { className: "demo-btn-group" },
-              h("button", {
-                className: "btn-vuln",
-                disabled: loading,
-                onClick: () => {
-                  const vuln = endpoints.find(e => e.name.includes("Vulnerable"));
-                  if (vuln) handleRunScan(vuln.id);
-                  else alert("Vulnerable demo endpoint not found.");
-                }
-              }, loading ? "Scanning..." : "Scan Insecure API (~40)"),
-              h("button", {
-                className: "btn-sec",
-                disabled: loading,
-                onClick: () => {
-                  const sec = endpoints.find(e => e.name.includes("Secure"));
-                  if (sec) handleRunScan(sec.id);
-                  else alert("Secure demo endpoint not found.");
-                }
-              }, loading ? "Scanning..." : "Scan Hardened API (100)")
-            )
-          )
-        );
-      };
-
-      
-      const renderRightPanel = () => {
-        return h("aside", { className: "right-panel" },
-          h("div", { className: "right-panel-header" },
-            h("div", { className: "date-pill" },
-              "Today, 22 Nov",
-              h("span", { style: { color: "var(--text-dim)", fontSize: "0.75rem" } }, "▼")
-            ),
-            h("div", { className: "status-badge-lime" }, "ONLINE")
-          ),
-
-          h("div", { className: "activity-list" },
-            reports.length > 0 ? (
-              reports.slice(0, 7).map((r, i) => {
-                const isPassed = r.score >= 80;
-                const isWarn = r.score >= 50 && r.score < 80;
-                const dotColor = isPassed ? "var(--lime-neon)" : isWarn ? "var(--accent-peach)" : "var(--accent-coral)";
-                
-                return h("div", {
-                  key: r.id || i,
-                  className: "activity-pill",
-                  onClick: () => {
-                    setActiveReport(r);
-                    setTab("scanner");
-                  }
-                },
-                  h("div", { className: "pill-left" },
-                    h("span", { className: "pill-indicator-dot", style: { background: dotColor, boxShadow: `0 0 8px ${dotColor}` } }),
-                    h("div", { className: "pill-info" },
-                      h("div", { className: "pill-title" }, r.endpoint_name),
-                      h("div", { className: "pill-sub" }, `${r.score}% Score • ${r.passed_tests}P ${r.failed_tests}F`)
-                    )
-                  ),
-                  h("span", {
-                    className: "pill-tag",
-                    style: {
-                      background: isPassed ? "var(--lime-dark)" : isWarn ? "var(--accent-peach-bg)" : "var(--accent-coral-bg)",
-                      color: isPassed ? "var(--lime-neon)" : isWarn ? "var(--accent-peach)" : "var(--accent-coral)",
-                      border: `1px solid ${isPassed ? "var(--lime-border)" : isWarn ? "var(--accent-peach-border)" : "var(--accent-coral-border)"}`
-                    }
-                  }, r.risk_level)
-                );
-              })
-            ) : (
-              [
-                { title: "Authentication Check", sub: "Token verification", tag: "CRITICAL", col: "var(--accent-coral)" },
-                { title: "SQL Injection Probe", sub: "Parameter sanitization", tag: "HIGH", col: "var(--accent-peach)" },
-                { title: "Cross-Site Scripting", sub: "Output encoding", tag: "PASS", col: "var(--lime-neon)" },
-                { title: "Rate Limit Shield", sub: "Request bursts", tag: "PASS", col: "var(--accent-teal)" },
-                { title: "Security Headers", sub: "CSP, X-Frame", tag: "PASS", col: "var(--accent-purple)" }
-              ].map((item, idx) => h("div", { key: idx, className: "activity-pill" },
-                h("div", { className: "pill-left" },
-                  h("span", { className: "pill-indicator-dot", style: { background: item.col } }),
-                  h("div", { className: "pill-info" },
-                    h("div", { className: "pill-title" }, item.title),
-                    h("div", { className: "pill-sub" }, item.sub)
-                  )
-                ),
-                h("span", { className: "pill-tag", style: { background: "rgba(255,255,255,0.06)", color: item.col } }, item.tag)
-              ))
-            )
-          ),
-
-          h("button", {
-            className: "fab-btn",
-            title: "Execute Immediate Assessment",
-            disabled: loading,
-            onClick: () => {
-              if (endpoints.length > 0) handleRunScan(scanTargetId || endpoints[0].id);
-              else alert("No endpoints available to test.");
-            }
-          }, "+")
-        );
-      };
-
-      
-      const renderEndpointsView = () => {
-        return h("div", null,
-          h("div", { className: "view-card" },
-            h("div", { className: "view-card-title" }, "Register Target API"),
-            h("form", { onSubmit: handleAddEndpoint },
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" } },
-                h("div", { className: "form-group" },
-                  h("label", null, "Target Name:"),
-                  h("input", {
-                    required: true,
-                    placeholder: "e.g. User Authentication Service",
-                    value: formData.name,
-                    onChange: (e) => setFormData({ ...formData, name: e.target.value })
-                  })
-                ),
-                h("div", { className: "form-group" },
-                  h("label", null, "Target Endpoint URL:"),
-                  h("input", {
-                    required: true,
-                    placeholder: "http://localhost:8000/api/users",
-                    value: formData.url,
-                    onChange: (e) => setFormData({ ...formData, url: e.target.value })
-                  })
-                )
-              ),
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.25rem" } },
-                h("div", { className: "form-group" },
-                  h("label", null, "HTTP Method:"),
-                  h("select", {
-                    value: formData.method,
-                    onChange: (e) => setFormData({ ...formData, method: e.target.value })
-                  },
-                    h("option", { value: "GET" }, "GET"),
-                    h("option", { value: "POST" }, "POST"),
-                    h("option", { value: "PUT" }, "PUT"),
-                    h("option", { value: "DELETE" }, "DELETE")
-                  )
-                ),
-                h("div", { className: "form-group" },
-                  h("label", null, "Authentication Scheme:"),
-                  h("select", {
-                    value: formData.auth_type,
-                    onChange: (e) => setFormData({ ...formData, auth_type: e.target.value })
-                  },
-                    h("option", { value: "none" }, "None (Public API)"),
-                    h("option", { value: "bearer" }, "Bearer Token"),
-                    h("option", { value: "basic" }, "Basic Authentication")
-                  )
-                ),
-                h("div", { className: "form-group" },
-                  h("label", null, "Credential Token:"),
-                  h("input", {
-                    placeholder: "secret-token-123",
-                    value: formData.auth_value,
-                    onChange: (e) => setFormData({ ...formData, auth_value: e.target.value })
-                  })
-                )
-              ),
-              h("button", { type: "submit", className: "btn-primary" }, "Register Target")
-            )
-          ),
-
-          h("div", { className: "view-card" },
-            h("div", { className: "view-card-title" }, "Registered Target Inventory"),
-            h("table", null,
-              h("thead", null,
-                h("tr", null,
-                  h("th", null, "Name"),
-                  h("th", null, "Method"),
-                  h("th", null, "URL"),
-                  h("th", null, "Auth Type"),
-                  h("th", null, "Operations")
-                )
-              ),
-              h("tbody", null,
-                endpoints.map(ep => h("tr", { key: ep.id },
-                  h("td", null, h("span", { style: { fontWeight: 700, color: "#ffffff" } }, ep.name)),
-                  h("td", null, h("span", { style: { background: "var(--bg-pill)", padding: "0.2rem 0.5rem", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700 } }, ep.method)),
-                  h("td", { style: { color: "var(--lime-neon)", fontWeight: 600, fontSize: "0.85rem" } }, ep.url),
-                  h("td", { style: { textTransform: "capitalize", color: "var(--text-muted)" } }, ep.auth_type),
-                  h("td", null,
-                    h("button", {
-                      className: "btn-primary",
-                      style: { padding: "0.3rem 0.75rem", marginRight: "0.5rem", fontSize: "0.75rem", borderRadius: "8px" },
-                      onClick: () => handleRunScan(ep.id)
-                    }, "Scan"),
-                    h("button", {
-                      className: "btn-danger",
-                      onClick: () => handleDeleteEndpoint(ep.id)
-                    }, "Remove")
-                  )
-                ))
-              )
-            )
-          )
-        );
-      };
-
-      
-      const renderScannerView = () => {
-        return h("div", null,
-          h("div", { className: "view-card" },
-            h("div", { className: "view-card-title" }, "Automated Security Assessment Engine"),
-            h("div", { style: { display: "flex", gap: "1rem", alignItems: "flex-end" } },
-              h("div", { style: { flex: 1 } },
-                h("label", null, "Select Target for Vulnerability Scan:"),
-                h("select", {
-                  value: scanTargetId,
-                  onChange: (e) => setScanTargetId(e.target.value)
-                },
-                  endpoints.map(ep => h("option", { key: ep.id, value: ep.id }, `${ep.name} [${ep.method} ${ep.url}]`))
-                )
-              ),
-              h("button", {
-                className: "btn-primary",
-                style: { padding: "0.8rem 1.6rem" },
-                disabled: loading || !scanTargetId,
-                onClick: () => handleRunScan(scanTargetId)
-              }, loading ? "Executing Security Engine..." : "Execute Assessment")
-            )
-          ),
-
-          activeReport && h("div", null,
-            h("div", { className: "score-banner-compact" },
-              h("div", {
-                className: "score-circle-pill",
-                style: {
-                  borderColor: activeReport.score >= 80 ? "var(--lime-neon)" : activeReport.score >= 50 ? "var(--accent-peach)" : "var(--accent-coral)",
-                  color: activeReport.score >= 80 ? "var(--lime-neon)" : activeReport.score >= 50 ? "var(--accent-peach)" : "var(--accent-coral)",
-                  boxShadow: activeReport.score >= 80 ? "0 0 24px var(--lime-glow)" : "none"
-                }
-              },
-                activeReport.score,
-                h("span", { style: { fontSize: "0.55rem", color: "var(--text-dim)", fontWeight: 800, marginTop: "2px" } }, "SCORE")
-              ),
-              h("div", { style: { flex: 1 } },
-                h("div", { style: { display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.35rem" } },
-                  h("h2", { style: { fontSize: "1.35rem", fontWeight: 800 } }, activeReport.endpoint_name),
-                  h("span", {
-                    style: {
-                      background: activeReport.risk_level === 'LOW' ? 'var(--lime-dark)' : activeReport.risk_level === 'MEDIUM' ? 'var(--accent-peach-bg)' : 'var(--accent-coral-bg)',
-                      color: activeReport.risk_level === 'LOW' ? 'var(--lime-neon)' : activeReport.risk_level === 'MEDIUM' ? 'var(--accent-peach)' : 'var(--accent-coral)',
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '980px',
-                      fontSize: '0.7rem',
-                      fontWeight: 800
-                    }
-                  }, `${activeReport.risk_level} RISK`)
-                ),
-                h("div", { style: { color: "var(--lime-neon)", fontWeight: 600, fontSize: "0.85rem", marginBottom: "0.6rem" } },
-                  activeReport.endpoint_url
-                ),
-                h("div", { style: { display: "flex", gap: "1.25rem", fontSize: "0.8rem", fontWeight: 700 } },
-                  h("span", { style: { color: "var(--lime-neon)" } }, `Passed: ${activeReport.passed_tests}`),
-                  h("span", { style: { color: "var(--accent-coral)" } }, `Failed: ${activeReport.failed_tests}`),
-                  h("span", { style: { color: "var(--accent-peach)" } }, `Warnings: ${activeReport.warn_tests}`)
-                )
-              )
-            ),
-
-            h("div", { className: "view-card" },
-              h("div", { className: "view-card-title" }, "Detailed Findings & Remediation Instructions"),
-              (activeReport.findings || []).map((f, idx) => h("div", {
-                key: idx,
-                className: `finding-item ${f.status}`
-              },
-                h("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "0.45rem" } },
-                  h("div", { style: { fontWeight: 700, fontSize: "0.95rem" } }, f.test_name),
-                  h("div", { style: { display: "flex", gap: "0.4rem" } },
-                    h("span", {
-                      style: {
-                        background: f.status === 'PASS' ? 'var(--lime-dark)' : f.status === 'WARN' ? 'var(--accent-peach-bg)' : 'var(--accent-coral-bg)',
-                        color: f.status === 'PASS' ? 'var(--lime-neon)' : f.status === 'WARN' ? 'var(--accent-peach)' : 'var(--accent-coral)',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '980px',
-                        fontSize: '0.7rem',
-                        fontWeight: 800
-                      }
-                    }, f.status),
-                    h("span", {
-                      style: {
-                        background: 'rgba(255,255,255,0.06)',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '980px',
-                        fontSize: '0.7rem',
-                        fontWeight: 800
-                      }
-                    }, f.severity)
-                  )
-                ),
-                h("div", { style: { fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.5rem", lineHeight: 1.5 } }, f.detail),
-                h("div", { className: "finding-remedy-box" },
-                  h("strong", { style: { color: "#ffffff", fontWeight: 700 } }, "Remediation: "),
-                  f.remediation
-                )
-              ))
-            )
-          )
-        );
-      };
-
-      
-      const renderVivaView = () => {
-        return h("div", null,
-          h("div", { className: "view-card" },
-            h("div", { className: "view-card-title" }, "Secure Software Engineering (SSE) Principles"),
-            h("div", { style: { lineHeight: 1.6, fontSize: "0.9rem", color: "var(--text-muted)" } },
-              h("p", { style: { marginBottom: "1.25rem" } },
-                "APIShield executes automated vulnerability verification aligned with OWASP API Security Top 10 standards:"
-              ),
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" } },
-                [
-                  { title: "Authentication & Access Control", desc: "Prevents Broken Authentication (OWASP API 1) by enforcing strict Bearer authorization checks.", col: "var(--lime-neon)" },
-                  { title: "Input Sanitization & Output Encoding", desc: "Neutralizes SQL Injection and XSS (OWASP API 8) through parameter binding and HTML entity escaping.", col: "var(--accent-teal)" },
-                  { title: "Rate Limiting & Anti-Abuse", desc: "Mitigates denial-of-service and brute-force (OWASP API 4) via HTTP 429 throttling triggers.", col: "var(--accent-peach)" },
-                  { title: "Defense in Depth Headers", desc: "Enforces Content-Security-Policy, X-Frame-Options, and X-Content-Type-Options.", col: "var(--accent-purple)" }
-                ].map((principle, idx) => h("div", {
-                  key: idx,
-                  style: {
-                    background: "var(--bg-pill)",
-                    border: "1px solid var(--border-subtle)",
-                    padding: "1.25rem",
-                    borderRadius: "16px"
-                  }
-                },
-                  h("div", { style: { color: principle.col, fontWeight: 800, marginBottom: "0.4rem", fontSize: "0.875rem" } }, principle.title),
-                  h("p", { style: { fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.55 } }, principle.desc)
-                ))
-              )
-            )
-          )
-        );
-      };
-
-      return h("div", { className: "app-layout" },
-        renderSidebar(),
-        h("div", { className: "main-wrapper" },
-          h("div", { className: "center-column" },
-            h("header", { className: "top-header" },
-              h("div", { className: "header-titles" },
-                h("h1", null, tab === 'dashboard' ? "Stats" : tab === 'endpoints' ? "Target Endpoints" : tab === 'scanner' ? "Security Scanner" : "Concepts Guide"),
-                h("span", null, "AUTOMATED API TESTING PLATFORM")
-              ),
-              h("div", { className: "header-actions" },
-                h("div", { className: "project-pill" },
-                  h("div", { className: "project-pill-dot" }),
-                  "APIShield Core [v1.0]"
-                )
-              )
-            ),
-            tab === "dashboard" && renderDashboardCenter(),
-            tab === "endpoints" && renderEndpointsView(),
-            tab === "scanner" && renderScannerView(),
-            tab === "viva" && renderVivaView()
-          ),
-          renderRightPanel()
-        )
-      );
+    // Load initial endpoints on page load
+    async function init() {
+      await loadEndpoints();
+      // Run demo scan on first load
+      if (currentEndpoints.length > 0) {
+        scanEndpoint(currentEndpoints[0].id);
+      }
     }
 
-    ReactDOM.createRoot(document.getElementById("root")).render(h(App));
+    async function loadEndpoints() {
+      try {
+        const res = await fetch("/api/endpoints");
+        currentEndpoints = await res.json();
+        renderEndpointsTable();
+      } catch (err) {
+        console.error("Failed to load endpoints:", err);
+      }
+    }
+
+    function renderEndpointsTable() {
+      const tbody = document.getElementById("endpointsTableBody");
+      if (!currentEndpoints.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-dim);">No endpoints configured.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = currentEndpoints.map(ep => `
+        <tr>
+          <td><strong>${ep.name}</strong></td>
+          <td><code>${ep.url}</code></td>
+          <td><span class="badge badge-low">${ep.method}</span></td>
+          <td>${ep.auth_type}</td>
+          <td>
+            <button class="btn btn-lime" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="scanEndpoint(${ep.id})">Scan</button>
+            <button class="btn btn-coral" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="deleteEndpoint(${ep.id})">Delete</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function scanEndpoint(id) {
+      try {
+        const res = await fetch(`/api/scan/${id}`, { method: "POST" });
+        if (!res.ok) throw new Error("Scan request failed");
+        const data = await res.json();
+        renderScanResults(data);
+      } catch (err) {
+        alert("Scan failed: " + err.message);
+      }
+    }
+
+    function runDemoScan(index) {
+      if (currentEndpoints[index - 1]) {
+        scanEndpoint(currentEndpoints[index - 1].id);
+      } else if (currentEndpoints.length > 0) {
+        scanEndpoint(currentEndpoints[0].id);
+      }
+    }
+
+    function renderScanResults(data) {
+      const { summary, findings, endpoint_name, endpoint_url } = data;
+
+      // Update Hero Score
+      document.getElementById("heroScore").innerText = summary.score + "%";
+      document.getElementById("targetName").innerText = endpoint_name;
+      document.getElementById("targetUrl").innerText = endpoint_url;
+
+      // Risk Pill Styling
+      const riskPill = document.getElementById("heroRisk");
+      riskPill.innerText = `${summary.risk_level} RISK • ${summary.score >= 80 ? "PASSING" : "ATTENTION"}`;
+      riskPill.className = "score-status-pill " + (summary.risk_level === "HIGH" ? "danger" : (summary.risk_level === "MEDIUM" ? "warning" : ""));
+
+      // Update Counts
+      document.getElementById("statPassed").innerText = summary.passed_tests;
+      document.getElementById("statFailed").innerText = summary.failed_tests;
+      document.getElementById("statWarn").innerText = summary.warn_tests;
+      document.getElementById("statTotal").innerText = summary.total_tests;
+
+      // Render Check Cards
+      const grid = document.getElementById("checksGrid");
+      grid.innerHTML = findings.map(f => {
+        const statusClass = f.status.toLowerCase();
+        const sevClass = "badge-" + f.severity.toLowerCase();
+        return `
+          <div class="check-card ${statusClass}">
+            <div class="check-head">
+              <div class="check-name">${f.test_name}</div>
+              <div class="check-badges">
+                <span class="badge ${sevClass}">${f.severity}</span>
+                <span class="badge badge-${statusClass}">${f.status}</span>
+              </div>
+            </div>
+            <div class="check-desc">${f.detail}</div>
+            <div class="check-remediation">
+              <strong>Remediation:</strong> ${f.remediation}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function handleAddEndpoint(e) {
+      e.preventDefault();
+      const name = document.getElementById("newEpName").value;
+      const url = document.getElementById("newEpUrl").value;
+      const method = document.getElementById("newEpMethod").value;
+      const auth_type = document.getElementById("newEpAuth").value;
+
+      try {
+        const res = await fetch("/api/endpoints", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, url, method, auth_type, auth_value: "" })
+        });
+        if (res.ok) {
+          e.target.reset();
+          await loadEndpoints();
+        }
+      } catch (err) {
+        alert("Failed to add endpoint: " + err.message);
+      }
+    }
+
+    async function deleteEndpoint(id) {
+      if (!confirm("Are you sure you want to remove this endpoint?")) return;
+      try {
+        await fetch(`/api/endpoints/${id}`, { method: "DELETE" });
+        await loadEndpoints();
+      } catch (err) {
+        alert("Failed to delete endpoint: " + err.message);
+      }
+    }
+
+    // Initialize
+    window.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
 </html>
