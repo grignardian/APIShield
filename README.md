@@ -59,7 +59,6 @@ python src/app.py
 
 The application will start on **port 8000**:
 - **Web Dashboard:** [http://localhost:8000](http://localhost:8000)
-- **Interactive OpenAPI (Swagger) Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 

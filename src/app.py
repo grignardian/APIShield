@@ -80,7 +80,7 @@ def init_db():
 
 init_db()
 
-app = FastAPI(title="APIShield", version="1.0")
+app = FastAPI(title="APIShield", docs_url=None, redoc_url=None, openapi_url=None)
 
 app.add_middleware(
     CORSMiddleware,
