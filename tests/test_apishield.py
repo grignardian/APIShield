@@ -31,6 +31,21 @@ def test_endpoints_crud():
     assert list_res.status_code == 200
     assert any(ep["id"] == ep_id for ep in list_res.json())
 
+    updated_ep = {
+        "name": "Pytest Mock API Updated",
+        "url": "http://127.0.0.1:8000/demo/secure/notes",
+        "method": "POST",
+        "auth_type": "bearer",
+        "auth_value": "secret-token-123"
+    }
+    update_res = client.put(f"/api/endpoints/{ep_id}", json=updated_ep)
+    assert update_res.status_code == 200
+
+    list_after = client.get("/api/endpoints").json()
+    matched = next(ep for ep in list_after if ep["id"] == ep_id)
+    assert matched["name"] == "Pytest Mock API Updated"
+    assert matched["method"] == "POST"
+
     del_res = client.delete(f"/api/endpoints/{ep_id}")
     assert del_res.status_code == 200
 

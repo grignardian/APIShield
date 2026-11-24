@@ -310,6 +310,22 @@ def add_endpoint(ep: EndpointCreate):
     return {"id": new_id, "message": "Endpoint saved."}
 
 
+@app.put("/api/endpoints/{endpoint_id}")
+def update_endpoint(endpoint_id: int, ep: EndpointCreate):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE endpoints SET name = ?, url = ?, method = ?, auth_type = ?, auth_value = ? WHERE id = ?",
+        (ep.name, ep.url, ep.method.upper(), ep.auth_type, ep.auth_value or "", endpoint_id)
+    )
+    conn.commit()
+    updated = cur.rowcount
+    conn.close()
+    if updated == 0:
+        raise HTTPException(status_code=404, detail="Endpoint not found")
+    return {"id": endpoint_id, "message": "Endpoint updated."}
+
+
 @app.delete("/api/endpoints/{endpoint_id}")
 def delete_endpoint(endpoint_id: int):
     conn = get_db()
