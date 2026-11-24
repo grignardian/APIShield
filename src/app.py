@@ -369,14 +369,24 @@ if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
+def read_static_page(filename: str) -> str:
+    page_path = os.path.join(STATIC_DIR, filename)
+    if os.path.exists(page_path):
+        with open(page_path, encoding="utf-8") as f:
+            return f.read()
+    return "<h1>APIShield is running</h1>"
+
+
 @app.get("/", response_class=HTMLResponse)
 @app.head("/", response_class=HTMLResponse)
 def serve_home():
-    index_file = os.path.join(STATIC_DIR, "index.html")
-    if os.path.exists(index_file):
-        with open(index_file, encoding="utf-8") as f:
-            return f.read()
-    return "<h1>APIShield is running</h1>"
+    return read_static_page("index.html")
+
+
+@app.get("/targets", response_class=HTMLResponse)
+@app.head("/targets", response_class=HTMLResponse)
+def serve_targets():
+    return read_static_page("targets.html")
 
 
 if __name__ == "__main__":

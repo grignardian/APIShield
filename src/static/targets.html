@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIShield — Add & Manage Targets</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="brand-title">
+          APIShield
+          <span class="brand-badge">v1.0 • Core</span>
+        </div>
+        <div class="brand-subtitle">Automated API Security Testing & Vulnerability Assessment</div>
+      </div>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Security Analysis</a>
+        <a href="/targets" class="nav-link active">Add & Manage Targets</a>
+      </nav>
+    </header>
+
+    <!-- Add Target Form -->
+    <div class="panel-card">
+      <div class="section-title">Add New Target API</div>
+      <form class="add-form" onsubmit="handleAddEndpoint(event)">
+        <div class="form-group">
+          <label class="form-label" for="newEpName">Target Name</label>
+          <input type="text" id="newEpName" class="input-field" placeholder="e.g. User Profile API" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newEpUrl">Endpoint URL</label>
+          <input type="url" id="newEpUrl" class="input-field" placeholder="https://api.example.com/v1/user" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newEpMethod">HTTP Method</label>
+          <select id="newEpMethod" class="input-field">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newEpAuth">Auth Type</label>
+          <select id="newEpAuth" class="input-field">
+            <option value="none">No Auth</option>
+            <option value="bearer">Bearer Token</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newEpToken">Auth Token (Optional)</label>
+          <input type="text" id="newEpToken" class="input-field" placeholder="secret-token-123">
+        </div>
+        <div class="form-group" style="justify-content: flex-end;">
+          <button type="submit" class="btn btn-blue" style="justify-content: center;">Save Target</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Configured Targets Table -->
+    <div class="panel-card">
+      <div class="section-title">Configured Target Endpoints</div>
+      <table class="targets-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Auth Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="endpointsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function loadEndpoints() {
+      try {
+        const res = await fetch("/api/endpoints");
+        const endpoints = await res.json();
+        const tbody = document.getElementById("endpointsTableBody");
+
+        if (!endpoints.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-dim);">No endpoints configured yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = endpoints.map(ep => `
+          <tr>
+            <td><strong>${ep.name}</strong></td>
+            <td><code>${ep.url}</code></td>
+            <td><span class="badge badge-low">${ep.method}</span></td>
+            <td>${ep.auth_type}</td>
+            <td style="display: flex; gap: 0.5rem;">
+              <a href="/?endpoint_id=${ep.id}" class="btn btn-blue" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Analyze</a>
+              <button class="btn btn-coral" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="deleteEndpoint(${ep.id})">Delete</button>
+            </td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error("Failed to load endpoints:", err);
+      }
+    }
+
+    async function handleAddEndpoint(e) {
+      e.preventDefault();
+      const name = document.getElementById("newEpName").value;
+      const url = document.getElementById("newEpUrl").value;
+      const method = document.getElementById("newEpMethod").value;
+      const auth_type = document.getElementById("newEpAuth").value;
+      const auth_value = document.getElementById("newEpToken").value;
+
+      try {
+        const res = await fetch("/api/endpoints", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, url, method, auth_type, auth_value })
+        });
+        if (res.ok) {
+          e.target.reset();
+          await loadEndpoints();
+        }
+      } catch (err) {
+        alert("Failed to add endpoint: " + err.message);
+      }
+    }
+
+    async function deleteEndpoint(id) {
+      if (!confirm("Are you sure you want to remove this endpoint?")) return;
+      try {
+        await fetch(`/api/endpoints/${id}`, { method: "DELETE" });
+        await loadEndpoints();
+      } catch (err) {
+        alert("Failed to delete endpoint: " + err.message);
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", loadEndpoints);
+  </script>
+</body>
+</html>

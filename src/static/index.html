@@ -3,448 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIShield — Automated Security Testing Platform</title>
-  <style>
-    :root {
-      --bg-dark: #0e0f12;
-      --bg-card: #17181c;
-      --bg-card-subtle: #1f2026;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-active: rgba(210, 248, 41, 0.35);
-      --lime-neon: #d2f829;
-      --lime-glow: rgba(210, 248, 41, 0.15);
-      --coral: #ff5757;
-      --amber: #ffb03a;
-      --teal: #3ebbb0;
-      --text-white: #ffffff;
-      --text-muted: #9a9ba4;
-      --text-dim: #65666f;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-white);
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.5;
-      padding: 2rem 1.5rem;
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: 1180px;
-      margin: 0 auto;
-    }
-
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 1.75rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .brand-title {
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .brand-badge {
-      background: #1e2507;
-      color: var(--lime-neon);
-      border: 1px solid rgba(210, 248, 41, 0.3);
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2rem 0.55rem;
-      border-radius: 980px;
-      letter-spacing: 0.02em;
-    }
-
-    .brand-subtitle {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
-
-    /* Buttons */
-    .btn {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border);
-      color: var(--text-white);
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
-      font-size: 0.825rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .btn:hover {
-      background: #282a33;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-lime {
-      background: var(--lime-neon);
-      color: #0e0f12;
-      border: none;
-    }
-
-    .btn-lime:hover {
-      background: #e1ff47;
-      box-shadow: 0 0 15px var(--lime-glow);
-    }
-
-    .btn-coral {
-      background: rgba(255, 87, 87, 0.12);
-      border-color: rgba(255, 87, 87, 0.3);
-      color: #ff8585;
-    }
-
-    .btn-coral:hover {
-      background: rgba(255, 87, 87, 0.2);
-    }
-
-    /* Hero Score & Status Banner */
-    .hero-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.75rem;
-      margin-bottom: 2rem;
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 2rem;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-    }
-
-    @media (max-width: 820px) {
-      .hero-card {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .score-box {
-      background: #111215;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.75rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .score-number {
-      font-size: 3.8rem;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      color: var(--lime-neon);
-    }
-
-    .score-label {
-      font-size: 0.775rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 0.5rem;
-    }
-
-    .score-status-pill {
-      margin-top: 1rem;
-      padding: 0.35rem 0.85rem;
-      border-radius: 980px;
-      font-size: 0.775rem;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-      background: #1e2507;
-      color: var(--lime-neon);
-      border: 1px solid rgba(210, 248, 41, 0.3);
-    }
-
-    .score-status-pill.danger {
-      background: rgba(255, 87, 87, 0.15);
-      color: var(--coral);
-      border-color: rgba(255, 87, 87, 0.3);
-    }
-
-    .score-status-pill.warning {
-      background: rgba(255, 176, 58, 0.15);
-      color: var(--amber);
-      border-color: rgba(255, 176, 58, 0.3);
-    }
-
-    .hero-details {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .target-info-head {
-      margin-bottom: 1.25rem;
-    }
-
-    .target-title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .target-url {
-      font-family: monospace;
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-      word-break: break-all;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-    }
-
-    @media (max-width: 600px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .stat-pill {
-      background: #111215;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.85rem 1rem;
-    }
-
-    .stat-val {
-      font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .stat-name {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-top: 0.15rem;
-    }
-
-    /* Section Headers */
-    .section-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .section-title::before {
-      content: "";
-      width: 6px;
-      height: 16px;
-      background: var(--lime-neon);
-      border-radius: 2px;
-    }
-
-    /* Checks Grid */
-    .checks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1.15rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .check-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: border-color 0.2s ease;
-    }
-
-    .check-card:hover {
-      border-color: rgba(255, 255, 255, 0.18);
-    }
-
-    .check-card.fail {
-      border-left: 4px solid var(--coral);
-    }
-
-    .check-card.pass {
-      border-left: 4px solid var(--lime-neon);
-    }
-
-    .check-card.warn {
-      border-left: 4px solid var(--amber);
-    }
-
-    .check-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.75rem;
-    }
-
-    .check-name {
-      font-size: 0.925rem;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-    }
-
-    .check-badges {
-      display: flex;
-      gap: 0.4rem;
-    }
-
-    .badge {
-      font-size: 0.68rem;
-      font-weight: 800;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .badge-pass { background: #1e2507; color: var(--lime-neon); }
-    .badge-fail { background: rgba(255, 87, 87, 0.18); color: var(--coral); }
-    .badge-warn { background: rgba(255, 176, 58, 0.18); color: var(--amber); }
-
-    .badge-critical { background: rgba(255, 87, 87, 0.25); color: #ff9191; }
-    .badge-high { background: rgba(255, 120, 71, 0.2); color: #ff9f75; }
-    .badge-medium { background: rgba(255, 176, 58, 0.2); color: #ffd180; }
-    .badge-low { background: #202229; color: var(--text-muted); }
-
-    .check-desc {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-      line-height: 1.45;
-    }
-
-    .check-remediation {
-      background: #111215;
-      border-radius: 8px;
-      padding: 0.6rem 0.75rem;
-      font-size: 0.74rem;
-      color: #bbbcc6;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .check-remediation strong {
-      color: var(--text-white);
-    }
-
-    /* Target Management Table */
-    .targets-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 1.5rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .targets-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-
-    .targets-table th, .targets-table td {
-      padding: 0.75rem 0.85rem;
-      text-align: left;
-      font-size: 0.825rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .targets-table th {
-      color: var(--text-dim);
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
-    }
-
-    .targets-table td code {
-      font-family: monospace;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    /* Target Add Form */
-    .add-form {
-      display: grid;
-      grid-template-columns: 2fr 3fr 1fr 1fr auto;
-      gap: 0.75rem;
-      margin-top: 1.25rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-
-    @media (max-width: 768px) {
-      .add-form {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .input-field {
-      background: #111215;
-      border: 1px solid var(--border);
-      color: var(--text-white);
-      padding: 0.6rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.825rem;
-    }
-
-    .input-field:focus {
-      outline: none;
-      border-color: var(--lime-neon);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-  </style>
+  <title>APIShield — Security Analysis</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-
   <div class="container">
-    <!-- Header -->
     <header>
       <div>
         <div class="brand-title">
@@ -453,7 +16,21 @@
         </div>
         <div class="brand-subtitle">Automated API Security Testing & Vulnerability Assessment</div>
       </div>
+      <nav class="nav-links">
+        <a href="/" class="nav-link active">Security Analysis</a>
+        <a href="/targets" class="nav-link">Add & Manage Targets</a>
+      </nav>
     </header>
+
+    <!-- Target Selector Toolbar -->
+    <div class="toolbar-card">
+      <div class="toolbar-controls">
+        <label for="targetSelect" class="form-label" style="white-space: nowrap;">Target API:</label>
+        <select id="targetSelect" class="input-field" style="max-width: 420px;"></select>
+        <button class="btn btn-blue" onclick="runSelectedScan()">Run Security Scan</button>
+      </div>
+      <a href="/targets" class="btn">+ Add New Target</a>
+    </div>
 
     <!-- Hero Score Summary -->
     <div class="hero-card">
@@ -465,13 +42,13 @@
 
       <div class="hero-details">
         <div class="target-info-head">
-          <div class="target-title" id="targetName">Select an endpoint below to assess</div>
-          <div class="target-url" id="targetUrl">http://127.0.0.1:8000/demo/secure/notes</div>
+          <div class="target-title" id="targetName">Select an endpoint above to assess</div>
+          <div class="target-url" id="targetUrl">-</div>
         </div>
 
         <div class="stats-grid">
           <div class="stat-pill">
-            <div class="stat-val" style="color: var(--lime-neon);" id="statPassed">0</div>
+            <div class="stat-val" style="color: var(--cyan-pass);" id="statPassed">0</div>
             <div class="stat-name">Passed Checks</div>
           </div>
           <div class="stat-pill">
@@ -483,7 +60,7 @@
             <div class="stat-name">Warnings</div>
           </div>
           <div class="stat-pill">
-            <div class="stat-val" style="color: var(--teal);" id="statTotal">6</div>
+            <div class="stat-val" style="color: var(--blue-bright);" id="statTotal">6</div>
             <div class="stat-name">Total Evaluated</div>
           </div>
         </div>
@@ -493,84 +70,40 @@
     <!-- Security Findings Grid -->
     <div class="section-title">Vulnerability Assessment Findings</div>
     <div class="checks-grid" id="checksGrid">
-      <div class="empty-state" style="grid-column: 1 / -1;">Select an endpoint below and click "Scan" to run an evaluation.</div>
-    </div>
-
-    <!-- Target Inventory -->
-    <div class="targets-section">
-      <div class="section-title">Configured Target Endpoints</div>
-      <table class="targets-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>URL</th>
-            <th>Method</th>
-            <th>Auth Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="endpointsTableBody">
-          <!-- Populated by JavaScript -->
-        </tbody>
-      </table>
-
-      <!-- Add Target Form -->
-      <form class="add-form" onsubmit="handleAddEndpoint(event)">
-        <input type="text" id="newEpName" class="input-field" placeholder="Target Name (e.g. User Profile API)" required>
-        <input type="url" id="newEpUrl" class="input-field" placeholder="https://api.example.com/v1/user" required>
-        <select id="newEpMethod" class="input-field">
-          <option value="GET">GET</option>
-          <option value="POST">POST</option>
-        </select>
-        <select id="newEpAuth" class="input-field">
-          <option value="none">No Auth</option>
-          <option value="bearer">Bearer Token</option>
-        </select>
-        <button type="submit" class="btn btn-lime">Add Target</button>
-      </form>
+      <div class="empty-state" style="grid-column: 1 / -1;">Choose a target API above and click "Run Security Scan".</div>
     </div>
   </div>
 
   <script>
     let currentEndpoints = [];
 
-    // Load initial endpoints on page load
     async function init() {
-      await loadEndpoints();
-      // Run demo scan on first load
-      if (currentEndpoints.length > 0) {
-        scanEndpoint(currentEndpoints[0].id);
-      }
-    }
+      const res = await fetch("/api/endpoints");
+      currentEndpoints = await res.json();
 
-    async function loadEndpoints() {
-      try {
-        const res = await fetch("/api/endpoints");
-        currentEndpoints = await res.json();
-        renderEndpointsTable();
-      } catch (err) {
-        console.error("Failed to load endpoints:", err);
-      }
-    }
-
-    function renderEndpointsTable() {
-      const tbody = document.getElementById("endpointsTableBody");
+      const select = document.getElementById("targetSelect");
       if (!currentEndpoints.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-dim);">No endpoints configured.</td></tr>';
+        select.innerHTML = '<option value="">No targets configured</option>';
         return;
       }
-      tbody.innerHTML = currentEndpoints.map(ep => `
-        <tr>
-          <td><strong>${ep.name}</strong></td>
-          <td><code>${ep.url}</code></td>
-          <td><span class="badge badge-low">${ep.method}</span></td>
-          <td>${ep.auth_type}</td>
-          <td>
-            <button class="btn btn-lime" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="scanEndpoint(${ep.id})">Scan</button>
-            <button class="btn btn-coral" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="deleteEndpoint(${ep.id})">Delete</button>
-          </td>
-        </tr>
-      `).join("");
+
+      select.innerHTML = currentEndpoints.map(ep =>
+        `<option value="${ep.id}">${ep.name} (${ep.method})</option>`
+      ).join("");
+
+      const params = new URLSearchParams(window.location.search);
+      const requestedId = params.get("endpoint_id");
+      const initialId = requestedId && currentEndpoints.some(ep => String(ep.id) === requestedId)
+        ? requestedId
+        : currentEndpoints[0].id;
+
+      select.value = initialId;
+      await scanEndpoint(initialId);
+    }
+
+    function runSelectedScan() {
+      const id = document.getElementById("targetSelect").value;
+      if (id) scanEndpoint(id);
     }
 
     async function scanEndpoint(id) {
@@ -587,23 +120,19 @@
     function renderScanResults(data) {
       const { summary, findings, endpoint_name, endpoint_url } = data;
 
-      // Update Hero Score
       document.getElementById("heroScore").innerText = summary.score + "%";
       document.getElementById("targetName").innerText = endpoint_name;
       document.getElementById("targetUrl").innerText = endpoint_url;
 
-      // Risk Pill Styling
       const riskPill = document.getElementById("heroRisk");
       riskPill.innerText = `${summary.risk_level} RISK • ${summary.score >= 80 ? "PASSING" : "ATTENTION"}`;
       riskPill.className = "score-status-pill " + (summary.risk_level === "HIGH" ? "danger" : (summary.risk_level === "MEDIUM" ? "warning" : ""));
 
-      // Update Counts
       document.getElementById("statPassed").innerText = summary.passed_tests;
       document.getElementById("statFailed").innerText = summary.failed_tests;
       document.getElementById("statWarn").innerText = summary.warn_tests;
       document.getElementById("statTotal").innerText = summary.total_tests;
 
-      // Render Check Cards
       const grid = document.getElementById("checksGrid");
       grid.innerHTML = findings.map(f => {
         const statusClass = f.status.toLowerCase();
@@ -626,39 +155,6 @@
       }).join("");
     }
 
-    async function handleAddEndpoint(e) {
-      e.preventDefault();
-      const name = document.getElementById("newEpName").value;
-      const url = document.getElementById("newEpUrl").value;
-      const method = document.getElementById("newEpMethod").value;
-      const auth_type = document.getElementById("newEpAuth").value;
-
-      try {
-        const res = await fetch("/api/endpoints", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, url, method, auth_type, auth_value: "" })
-        });
-        if (res.ok) {
-          e.target.reset();
-          await loadEndpoints();
-        }
-      } catch (err) {
-        alert("Failed to add endpoint: " + err.message);
-      }
-    }
-
-    async function deleteEndpoint(id) {
-      if (!confirm("Are you sure you want to remove this endpoint?")) return;
-      try {
-        await fetch(`/api/endpoints/${id}`, { method: "DELETE" });
-        await loadEndpoints();
-      } catch (err) {
-        alert("Failed to delete endpoint: " + err.message);
-      }
-    }
-
-    // Initialize
     window.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
