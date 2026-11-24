@@ -21,7 +21,7 @@ STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
 DEMO_NOTES = [
     {"id": 1, "title": "Welcome Note", "content": "Welcome to APIShield testing!"},
-    {"id": 2, "title": "Confidential Project", "content": "Exam question paper draft: Top Secret"}
+    {"id": 2, "title": "Confidential", "content": "Exam paper draft: Top Secret"}
 ]
 DEMO_RATE_LIMIT = {}
 
@@ -91,8 +91,11 @@ app.add_middleware(
 )
 
 
+# --- Built-in Demo Endpoints (For Testing & Verification) ---
+
 @app.get("/demo/vulnerable/notes")
 def vulnerable_get_notes(q: str | None = None):
+    """Vulnerable endpoint: allows unauthenticated access and reflects raw queries."""
     if q:
         query_str = f"SELECT * FROM notes WHERE content LIKE '%{q}%'"  # nosec B608
         return {"query_executed": query_str, "notes": DEMO_NOTES, "warning": "Vulnerable: query reflected unescaped!"}
@@ -101,11 +104,12 @@ def vulnerable_get_notes(q: str | None = None):
 
 @app.post("/demo/vulnerable/notes")
 async def vulnerable_add_note(request: Request):
+    """Vulnerable endpoint: leaks internal traceback on bad JSON."""
     try:
         body = await request.json()
     except (ValueError, json.JSONDecodeError):
         return Response(
-            content="Internal Server Error: Traceback (most recent call last):\n  File 'app.py', line 78, in vulnerable_add_note\nJSONDecodeError: Expecting value: line 1 column 1",
+            content="Internal Server Error: Traceback (most recent call last):\n  File 'app.py', line 75, in vulnerable_add_note\nJSONDecodeError: Expecting value: line 1 column 1",
             status_code=500,
             media_type="text/plain",
         )
@@ -117,6 +121,7 @@ async def vulnerable_add_note(request: Request):
 
 @app.get("/demo/secure/notes")
 def secure_get_notes(request: Request, response: Response, q: str | None = None):
+    """Hardened endpoint: requires token, sets security headers, and rate limits."""
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Content-Security-Policy"] = "default-src 'self'"
@@ -146,14 +151,200 @@ def secure_get_notes(request: Request, response: Response, q: str | None = None)
     return {"notes": DEMO_NOTES}
 
 
+# --- Security Testing Modules ---
+
 def get_scanner_client(target_url: str):
+    """Uses FastAPI TestClient for localhost targets, and httpx for remote targets."""
     if "127.0.0.1:8000" in target_url or "localhost:8000" in target_url:
         return TestClient(app, base_url="http://127.0.0.1:8000", raise_server_exceptions=False)
     return httpx.Client(timeout=4.0)
 
 
+def test_broken_auth(client, url: str, method: str, headers: dict) -> dict:
+    """Check 1: Checks if the endpoint allows unauthenticated access."""
+    try:
+        no_auth = {k: v for k, v in headers.items() if k.lower() != "authorization"}
+        resp = client.request(method, url, headers=no_auth)
+        if resp.status_code == 200:
+            return {
+                "test_name": "Broken Authentication",
+                "status": "FAIL",
+                "severity": "CRITICAL",
+                "detail": "Endpoint responded with HTTP 200 without authentication. Publicly accessible.",
+                "remediation": "Add token or session authentication to this endpoint."
+            }
+        if resp.status_code in [401, 403]:
+            return {
+                "test_name": "Broken Authentication",
+                "status": "PASS",
+                "severity": "LOW",
+                "detail": f"Protected. Unauthenticated request rejected with HTTP {resp.status_code}.",
+                "remediation": "No action needed. Authentication is active."
+            }
+        return {
+            "test_name": "Broken Authentication",
+            "status": "WARN",
+            "severity": "MEDIUM",
+            "detail": f"Endpoint returned status code {resp.status_code} without authentication.",
+            "remediation": "Verify endpoint access control policies."
+        }
+    except (httpx.HTTPError, OSError) as e:
+        return {
+            "test_name": "Broken Authentication",
+            "status": "WARN",
+            "severity": "LOW",
+            "detail": f"Could not reach endpoint: {e!s}",
+            "remediation": "Ensure target API server is running."
+        }
+
+
+def test_sql_injection(client, url: str, method: str, headers: dict) -> dict:
+    """Check 2: Tests if SQL payloads cause database errors or reflections."""
+    try:
+        payload = "' OR '1'='1"
+        test_url = f"{url}?q={payload}" if "?" not in url else f"{url}&q={payload}"
+        resp = client.request(method, test_url, headers=headers)
+        body = resp.text.lower()
+        sql_errors = ["syntax error", "sqlite3", "sql", "mysql", "ora-", "unterminated quotation"]
+
+        if resp.status_code == 500 or any(err in body for err in sql_errors):
+            return {
+                "test_name": "SQL Injection",
+                "status": "FAIL",
+                "severity": "HIGH",
+                "detail": "SQL Injection detected: response contains database error signatures.",
+                "remediation": "Use parameterized queries or ORM. Never concatenate input into queries."
+            }
+        if payload in resp.text:
+            return {
+                "test_name": "SQL Injection",
+                "status": "WARN",
+                "severity": "MEDIUM",
+                "detail": "SQL payload was reflected raw in the response body.",
+                "remediation": "Sanitize and validate all query parameters."
+            }
+        return {
+            "test_name": "SQL Injection",
+            "status": "PASS",
+            "severity": "LOW",
+            "detail": "No SQL syntax errors or query leakage detected.",
+            "remediation": "Keep using parameterized inputs."
+        }
+    except (httpx.HTTPError, OSError) as err:
+        logger.debug("SQL probe notice: %s", err)
+        return {"test_name": "SQL Injection", "status": "PASS", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
+
+
+def test_xss(client, url: str, method: str, headers: dict) -> dict:
+    """Check 3: Tests if script tags are reflected unescaped."""
+    try:
+        payload = "<script>alert('xss')</script>"
+        test_url = f"{url}?q={payload}" if "?" not in url else f"{url}&q={payload}"
+        resp = client.request(method, test_url, headers=headers)
+        if payload in resp.text:
+            return {
+                "test_name": "Cross-Site Scripting (XSS)",
+                "status": "FAIL",
+                "severity": "HIGH",
+                "detail": "Input was reflected unescaped in response. Attackers can execute JavaScript.",
+                "remediation": "Escape user input using HTML entity encoding."
+            }
+        return {
+            "test_name": "Cross-Site Scripting (XSS)",
+            "status": "PASS",
+            "severity": "LOW",
+            "detail": "Script tags were safely stripped or sanitized.",
+            "remediation": "Maintain contextual output encoding."
+        }
+    except (httpx.HTTPError, OSError) as err:
+        logger.debug("XSS probe notice: %s", err)
+        return {"test_name": "Cross-Site Scripting (XSS)", "status": "PASS", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
+
+
+def test_rate_limiting(client, url: str, method: str, headers: dict) -> dict:
+    """Check 4: Sends 8 rapid requests to verify throttling."""
+    try:
+        has_limit = any(client.request(method, url, headers=headers).status_code == 429 for _ in range(8))
+        if has_limit:
+            return {
+                "test_name": "Rate Limiting",
+                "status": "PASS",
+                "severity": "LOW",
+                "detail": "Rate limiting is active. Throttled bursts with HTTP 429.",
+                "remediation": "Current rate limiting configuration is sufficient."
+            }
+        return {
+            "test_name": "Rate Limiting",
+            "status": "FAIL",
+            "severity": "MEDIUM",
+            "detail": "No rate limiting detected. Server handled 8 rapid requests without throttling.",
+            "remediation": "Implement rate limiting per IP or client token."
+        }
+    except (httpx.HTTPError, OSError) as err:
+        logger.debug("Rate probe notice: %s", err)
+        return {"test_name": "Rate Limiting", "status": "WARN", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
+
+
+def test_security_headers(client, url: str, method: str, headers: dict) -> dict:
+    """Check 5: Checks for standard defense-in-depth HTTP headers."""
+    try:
+        resp = client.request(method, url, headers=headers)
+        missing = []
+        if "x-content-type-options" not in resp.headers:
+            missing.append("X-Content-Type-Options")
+        if "x-frame-options" not in resp.headers:
+            missing.append("X-Frame-Options")
+        if "content-security-policy" not in resp.headers:
+            missing.append("Content-Security-Policy")
+
+        if missing:
+            return {
+                "test_name": "Security Headers",
+                "status": "WARN",
+                "severity": "LOW",
+                "detail": f"Missing security headers: {', '.join(missing)}",
+                "remediation": "Add middleware to send X-Content-Type-Options, X-Frame-Options, and CSP."
+            }
+        return {
+            "test_name": "Security Headers",
+            "status": "PASS",
+            "severity": "LOW",
+            "detail": "All critical security headers are present.",
+            "remediation": "Headers configured according to best practices."
+        }
+    except (httpx.HTTPError, OSError) as err:
+        logger.debug("Headers probe notice: %s", err)
+        return {"test_name": "Security Headers", "status": "WARN", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
+
+
+def test_info_disclosure(client, url: str) -> dict:
+    """Check 6: Checks if invalid JSON input exposes backend stack traces."""
+    try:
+        resp = client.post(url, headers={"Content-Type": "application/json"}, content=b"{bad_json:")
+        body = resp.text.lower()
+        leak_words = ["traceback", "file \"", "line ", "internal server error", "exception:"]
+        if any(w in body for w in leak_words):
+            return {
+                "test_name": "Information Disclosure",
+                "status": "FAIL",
+                "severity": "MEDIUM",
+                "detail": "Server leaks internal stack traces when receiving malformed JSON.",
+                "remediation": "Use generic error handling to hide server internals in production."
+            }
+        return {
+            "test_name": "Information Disclosure",
+            "status": "PASS",
+            "severity": "LOW",
+            "detail": "No stack traces or sensitive internals were leaked.",
+            "remediation": "Centralized error handling is active."
+        }
+    except (httpx.HTTPError, OSError) as err:
+        logger.debug("Info disclosure probe notice: %s", err)
+        return {"test_name": "Information Disclosure", "status": "PASS", "severity": "LOW", "detail": "Test skipped.", "remediation": "N/A"}
+
+
 def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: str) -> list[dict]:
-    findings = []
+    """Runs all 6 security checks against the target endpoint and aggregates findings."""
     headers = {"Content-Type": "application/json"}
     if auth_type == "bearer" and auth_value:
         headers["Authorization"] = f"Bearer {auth_value}"
@@ -161,184 +352,18 @@ def run_all_security_tests(url: str, method: str, auth_type: str, auth_value: st
         headers["Authorization"] = f"Basic {auth_value}"
 
     with get_scanner_client(url) as client:
-        # Broken Authentication
-        try:
-            no_auth_headers = {k: v for k, v in headers.items() if k.lower() != "authorization"}
-            resp = client.request(method, url, headers=no_auth_headers)
-            if resp.status_code == 200:
-                findings.append({
-                    "test_name": "Broken Authentication",
-                    "status": "FAIL",
-                    "severity": "CRITICAL",
-                    "detail": "Endpoint responded with HTTP 200 without authentication. Sensitive data is publicly exposed.",
-                    "remediation": "Enforce strict token or session verification on this endpoint (e.g., Bearer JWT or API Key)."
-                })
-            elif resp.status_code in [401, 403]:
-                findings.append({
-                    "test_name": "Broken Authentication",
-                    "status": "PASS",
-                    "severity": "LOW",
-                    "detail": f"Protected properly. Unauthenticated request rejected with HTTP {resp.status_code}.",
-                    "remediation": "No action needed. Authentication is active."
-                })
-            else:
-                findings.append({
-                    "test_name": "Broken Authentication",
-                    "status": "WARN",
-                    "severity": "MEDIUM",
-                    "detail": f"Endpoint returned unexpected status code {resp.status_code} without authentication.",
-                    "remediation": "Verify endpoint access control policies."
-                })
-        except (httpx.HTTPError, OSError) as e:
-            findings.append({
-                "test_name": "Broken Authentication",
-                "status": "WARN",
-                "severity": "LOW",
-                "detail": f"Could not reach endpoint: {e!s}",
-                "remediation": "Check if the target server is running."
-            })
-
-        # SQL Injection
-        try:
-            sqli_payload = "' OR '1'='1"
-            test_url = f"{url}?q={sqli_payload}" if "?" not in url else f"{url}&q={sqli_payload}"
-            resp = client.request(method, test_url, headers=headers)
-            body_text = resp.text.lower()
-            sql_errors = ["syntax error", "sqlite3", "sql", "mysql", "ora-", "unterminated quotation"]
-
-            if resp.status_code == 500 or any(err in body_text for err in sql_errors):
-                findings.append({
-                    "test_name": "SQL Injection",
-                    "status": "FAIL",
-                    "severity": "HIGH",
-                    "detail": "Potential SQL Injection detected! Response contains database error signatures.",
-                    "remediation": "Use parameterized queries (Prepared Statements) or ORM. Never concatenate user input into queries."
-                })
-            elif sqli_payload in resp.text:
-                findings.append({
-                    "test_name": "SQL Injection",
-                    "status": "WARN",
-                    "severity": "MEDIUM",
-                    "detail": "SQL payload was reflected raw in the response body. Query logic might be vulnerable.",
-                    "remediation": "Sanitize and validate all query parameters against an allow-list."
-                })
-            else:
-                findings.append({
-                    "test_name": "SQL Injection",
-                    "status": "PASS",
-                    "severity": "LOW",
-                    "detail": "No SQL syntax errors or query leakage detected for payload: ' OR '1'='1",
-                    "remediation": "Keep using parameterized inputs."
-                })
-        except (httpx.HTTPError, OSError) as err:
-            logger.debug("SQL injection probe notice: %s", err)
-
-        # Cross-Site Scripting (XSS)
-        try:
-            xss_payload = "<script>alert('xss')</script>"
-            test_url = f"{url}?q={xss_payload}" if "?" not in url else f"{url}&q={xss_payload}"
-            resp = client.request(method, test_url, headers=headers)
-            if xss_payload in resp.text:
-                findings.append({
-                    "test_name": "Cross-Site Scripting (XSS)",
-                    "status": "FAIL",
-                    "severity": "HIGH",
-                    "detail": "Input was reflected unescaped in the response body. Attackers can execute arbitrary JavaScript.",
-                    "remediation": "Encode all output with HTML entities (e.g. html.escape()) and implement a Content Security Policy."
-                })
-            else:
-                findings.append({
-                    "test_name": "Cross-Site Scripting (XSS)",
-                    "status": "PASS",
-                    "severity": "LOW",
-                    "detail": "Script tags were properly sanitized or stripped.",
-                    "remediation": "Maintain contextual output encoding."
-                })
-        except (httpx.HTTPError, OSError) as err:
-            logger.debug("XSS probe notice: %s", err)
-
-        # Rate Limiting
-        try:
-            hit_limit = any(client.request(method, url, headers=headers).status_code == 429 for _ in range(8))
-            if hit_limit:
-                findings.append({
-                    "test_name": "Rate Limiting",
-                    "status": "PASS",
-                    "severity": "LOW",
-                    "detail": "Rate limiting is active. Throttled rapid bursts with HTTP 429 Too Many Requests.",
-                    "remediation": "Keep current rate limiting configuration."
-                })
-            else:
-                findings.append({
-                    "test_name": "Rate Limiting",
-                    "status": "FAIL",
-                    "severity": "MEDIUM",
-                    "detail": "No rate limiting detected. Server processed 8 rapid requests without any throttling.",
-                    "remediation": "Implement token bucket or sliding-window rate limiting per IP or API client."
-                })
-        except (httpx.HTTPError, OSError) as err:
-            logger.debug("Rate limit probe notice: %s", err)
-
-        # Security Headers
-        try:
-            resp = client.request(method, url, headers=headers)
-            missing = []
-            if "x-content-type-options" not in resp.headers:
-                missing.append("X-Content-Type-Options: nosniff")
-            if "x-frame-options" not in resp.headers:
-                missing.append("X-Frame-Options: DENY")
-            if "content-security-policy" not in resp.headers:
-                missing.append("Content-Security-Policy")
-
-            if missing:
-                findings.append({
-                    "test_name": "Security Headers",
-                    "status": "WARN",
-                    "severity": "LOW",
-                    "detail": f"Missing recommended defense-in-depth headers: {', '.join(missing)}",
-                    "remediation": "Add security middleware to send X-Content-Type-Options, X-Frame-Options, and CSP headers."
-                })
-            else:
-                findings.append({
-                    "test_name": "Security Headers",
-                    "status": "PASS",
-                    "severity": "LOW",
-                    "detail": "All critical security headers are present in the server response.",
-                    "remediation": "Headers configured according to OWASP guidelines."
-                })
-        except (httpx.HTTPError, OSError) as err:
-            logger.debug("Security headers probe notice: %s", err)
-
-        # Information Disclosure
-        try:
-            bad_headers = dict(headers)
-            bad_headers["Content-Type"] = "application/json"
-            resp = client.post(url, headers=bad_headers, content=b"{invalid_json:")
-            body_text = resp.text.lower()
-            leak_keywords = ["traceback", "file \"", "line ", "internal server error", "exception:"]
-            if any(kw in body_text for kw in leak_keywords):
-                findings.append({
-                    "test_name": "Information Disclosure",
-                    "status": "FAIL",
-                    "severity": "MEDIUM",
-                    "detail": "Server leaks internal stack traces or debug information when receiving malformed input.",
-                    "remediation": "Enable generic error handling in production. Log stack traces privately and show generic JSON errors."
-                })
-            else:
-                findings.append({
-                    "test_name": "Information Disclosure",
-                    "status": "PASS",
-                    "severity": "LOW",
-                    "detail": "No sensitive server internals or stack traces were exposed during error states.",
-                    "remediation": "Continue using centralized exception handling."
-                })
-        except (httpx.HTTPError, OSError) as err:
-            logger.debug("Information disclosure probe notice: %s", err)
-
-    return findings
+        return [
+            test_broken_auth(client, url, method, headers),
+            test_sql_injection(client, url, method, headers),
+            test_xss(client, url, method, headers),
+            test_rate_limiting(client, url, method, headers),
+            test_security_headers(client, url, method, headers),
+            test_info_disclosure(client, url)
+        ]
 
 
 def calculate_security_score(findings: list[dict]) -> dict:
+    """Calculates a 0-100 security score based on finding severities."""
     score = 100
     penalties = {"CRITICAL": 30, "HIGH": 20, "MEDIUM": 10, "LOW": 5}
     fail_counts = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0}
@@ -362,6 +387,8 @@ def calculate_security_score(findings: list[dict]) -> dict:
         "fail_counts": fail_counts
     }
 
+
+# --- REST API Endpoints ---
 
 class EndpointCreate(BaseModel):
     name: str
