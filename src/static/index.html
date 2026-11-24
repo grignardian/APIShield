@@ -453,10 +453,6 @@
         </div>
         <div class="brand-subtitle">Automated API Security Testing & Vulnerability Assessment</div>
       </div>
-      <div class="header-actions">
-        <button class="btn btn-coral" onclick="runDemoScan(1)">Scan Insecure API</button>
-        <button class="btn btn-lime" onclick="runDemoScan(2)">Scan Hardened API</button>
-      </div>
     </header>
 
     <!-- Hero Score Summary -->
@@ -497,7 +493,7 @@
     <!-- Security Findings Grid -->
     <div class="section-title">Vulnerability Assessment Findings</div>
     <div class="checks-grid" id="checksGrid">
-      <div class="empty-state" style="grid-column: 1 / -1;">Click "Scan Insecure API" or "Scan Hardened API" above to run an evaluation.</div>
+      <div class="empty-state" style="grid-column: 1 / -1;">Select an endpoint below and click "Scan" to run an evaluation.</div>
     </div>
 
     <!-- Target Inventory -->
@@ -585,14 +581,6 @@
         renderScanResults(data);
       } catch (err) {
         alert("Scan failed: " + err.message);
-      }
-    }
-
-    function runDemoScan(index) {
-      if (currentEndpoints[index - 1]) {
-        scanEndpoint(currentEndpoints[index - 1].id);
-      } else if (currentEndpoints.length > 0) {
-        scanEndpoint(currentEndpoints[0].id);
       }
     }
 
