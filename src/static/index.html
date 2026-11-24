@@ -107,14 +107,48 @@
     }
 
     async function scanEndpoint(id) {
+      const ep = currentEndpoints.find(item => String(item.id) === String(id));
       try {
         const res = await fetch(`/api/scan/${id}`, { method: "POST" });
-        if (!res.ok) throw new Error("Scan request failed");
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(errBody.detail || "Scan request failed");
+        }
         const data = await res.json();
         renderScanResults(data);
       } catch (err) {
-        alert("Scan failed: " + err.message);
+        renderScanError(ep, err.message);
       }
+    }
+
+    function renderScanError(ep, message) {
+      document.getElementById("heroScore").innerText = "N/A";
+      document.getElementById("targetName").innerText = ep ? ep.name : "Target Error";
+      document.getElementById("targetUrl").innerText = ep ? ep.url : "-";
+
+      const riskPill = document.getElementById("heroRisk");
+      riskPill.innerText = "UNREACHABLE • 404";
+      riskPill.className = "score-status-pill danger";
+
+      document.getElementById("statPassed").innerText = "0";
+      document.getElementById("statFailed").innerText = "0";
+      document.getElementById("statWarn").innerText = "0";
+      document.getElementById("statTotal").innerText = "0";
+
+      document.getElementById("checksGrid").innerHTML = `
+        <div class="check-card fail" style="grid-column: 1 / -1;">
+          <div class="check-head">
+            <div class="check-name">Scan Aborted — Invalid or Unreachable Endpoint</div>
+            <div class="check-badges">
+              <span class="badge badge-fail">ERROR</span>
+            </div>
+          </div>
+          <div class="check-desc">${message}</div>
+          <div class="check-remediation">
+            <strong>Action:</strong> Check the endpoint URL and HTTP method on the Add & Manage Targets page, and ensure the target server is running.
+          </div>
+        </div>
+      `;
     }
 
     function renderScanResults(data) {

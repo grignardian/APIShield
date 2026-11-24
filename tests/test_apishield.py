@@ -106,3 +106,20 @@ def test_scan_secure_endpoint():
     assert auth_finding["status"] == "PASS"
     assert data["summary"]["score"] >= 80
     assert data["summary"]["risk_level"] == "LOW"
+
+
+def test_scan_nonexistent_endpoint_returns_404():
+    fake_ep = {
+        "name": "Fake Endpoint",
+        "url": "http://127.0.0.1:8000/demo/does-not-exist",
+        "method": "GET",
+        "auth_type": "none",
+        "auth_value": ""
+    }
+    ep_id = client.post("/api/endpoints", json=fake_ep).json()["id"]
+    try:
+        scan_res = client.post(f"/api/scan/{ep_id}")
+        assert scan_res.status_code == 404
+        assert "does not exist" in scan_res.json()["detail"].lower()
+    finally:
+        client.delete(f"/api/endpoints/{ep_id}")

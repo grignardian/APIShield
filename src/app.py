@@ -343,6 +343,20 @@ def scan_endpoint(endpoint_id: int):
         conn.close()
         raise HTTPException(status_code=404, detail="Endpoint not found")
 
+    # Pre-check: verify target exists and is reachable before scanning
+    try:
+        probe = make_request(ep["method"], ep["url"])
+    except (httpx.HTTPError, OSError) as err:
+        conn.close()
+        raise HTTPException(status_code=502, detail=f"Target endpoint is unreachable: {err!s}") from err
+
+    if probe.status_code == 404:
+        conn.close()
+        raise HTTPException(
+            status_code=404,
+            detail=f"Target endpoint does not exist (404 Not Found): {ep['url']}",
+        )
+
     findings = run_security_scan(ep["url"], ep["method"], ep["auth_type"], ep["auth_value"])
     summary = calculate_score(findings)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
